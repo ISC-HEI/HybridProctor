@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Frame with Upload Button</title> -->
+    <!-- This doesn't work in nginx ?  -->
+    <!-- <link href="/styles.css" rel="stylesheet">  -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        .container h1 {
+            text-align: center;
+            color: white;
+        }
+        form {
+            background-color: white;
+            padding: 30px;
+        }
+        form .input-group {
+            margin-bottom: 15px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        form input {
+            padding: 12px 20px;
+            width: 100%;
+            border: 1px solid #ccc;
+        }
+        /* .submit-btn {
+            width: 100%;
+            border: none;
+            background: rgb(37, 83, 3);
+            font-size: 18px;
+            color: white;
+            border-radius: 3px;
+            padding: 20px;
+            text-align: center;
+        } */
+        .submit-btn {
+            width: 100%;
+            border: none;
+            background: rgb(37, 83, 3);
+            font-size: 18px;
+            color: white;
+            border-radius: 3px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer; /* Change cursor to pointer on hover */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+        .submit-btn:hover {
+            background-color: rgb(47, 103, 23); /* Darker background color on hover */
+        }
+
+        .submit-btn:active {
+            background-color: rgb(17, 63, 3); /* Dark background color on click */
+        }
+
+        /* CSS to make iframe non-scrollable */
+        #contentFrame {
+            width: 100%;
+            height: 90vh;
+            overflow: hidden; /* Hide scrollbars */
+        }
+        #statusMessage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8d7da; /* Red */
+            color: #721c24; /* Dark red */
+            padding: 10px;
+            text-align: center;
+            /*display: none; /* Initially hidden */
+            z-index: 1000; /* Ensure it's on top of other content */
+        }
+
+        #statusMessage.success {
+            background-color: #d4edda; /* Green */
+            color: #155724; /* Dark green */
+        }
+
+        #statusMessage.error {
+            background-color: #f8d7da; /* Red */
+            color: #721c24; /* Dark red */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #progressBarContainer {
+            width: 100%;
+            height: 20px; /* Adjust height as needed */
+            background-color: #f0f0f0; /* Background color of progress bar container */
+            border-radius: 5px; /* Rounded corners */
+            margin-bottom: 10px; /* Optional margin for spacing */
+        }
+
+        #progressBar {
+            width: 0; /* Initial width of 0% */
+            height: 100%;
+            background-color: #4CAF50; /* Color of progress bar */
+            border-radius: 5px; /* Rounded corners */
+            transition: width 0.3s ease; /* Smooth transition for width changes */
+        }
+        .notransition {
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -o-transition: none !important;
+            transition: none !important;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Frame to display content from another HTML page -->
+    <iframe id="contentFrame" src="exam.html" width="100%"></iframe>
+    
+    <h1>Resources</h1>
+    <!-- <h2>Blabla</h2> -->
+    <ul id="fileList"></ul>
+
+    <h1>Upload</h1>
+    <div class="container">
+        
+        <form id='form'>
+            <div class="input-group">
+                <label for='name'>Your name: </label>
+                <input name='name' id='name' placeholder="Enter your full name" />
+            </div>
+            <div class="input-group">
+                <label for='fileslabel'>Select files</label>
+                <input id='files' type="file" multiple>
+            </div>
+            <button class="submit-btn" type='submit'>Upload</button>
+        </form>
+    </div>
+    <div id="progressBarContainer">
+        <div id="progressBar" class="notransition"></div>
+    </div>
+    <div id="statusMessage" class="hidden"></div> <!-- Add class="hidden" to hide initially -->
+
+    <script src='./script.js'></script>
+
+</body>
+</html>
