@@ -3,12 +3,13 @@
 Plug and play solution to deploy exam and collect answer student via a Mikrotic router.
 Profs just need to plug a USB key containing the exam instructions to the router, it will serve the exams on a webpage.
 Students will connect to the router via wifi to access the instructions and download the source material for the exam.
-At the end, students can submit their work via the webpage, which will be stored on the USB key, ready for the prof.
+
+At the end, students can submit their work via the webpage, which will be stored on the USB key, ready for the prof. to download using SFTP.
 
 ## User guide
 
 1. Plug USB key in router and power up the latter (don't forget to plug in the antenna!).
-1. Connect to it via wifi (**password: remote_exam**).
+1. Connect to it via wifi (**password: toto_1234**).
 1. Connect via sftp to router to change the exam statement html file and optionally the downloadable resources. These are located respectively in **/mount_point/html/exam.html** and **/mount_point/html/resources**. Don't delete or modify other files in **/mount_point/html/**. 
     ```bash
     sftp -P 2222 admin@10.0.0.1
@@ -16,7 +17,6 @@ At the end, students can submit their work via the webpage, which will be stored
 1. Go to [10.0.0.1]() and check if your exam/resources are really there and if everything is working.
 1. Students can then connect to router wifi and do the exam.
 1. Once finished, to access uploaded files, connect via sftp again. The files should be present in **/home/admin/uploads**. 
-
 
 ## Install guide (to setup another router..)
 
