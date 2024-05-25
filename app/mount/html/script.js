@@ -21,13 +21,23 @@ function fetchFileList(directory) {
                     isFirstItem = false;
                     return;
                 }
-                const fileName = file.href.split('/').pop();
+                const encodedFileName = file.href.split('/').pop();
+                //console.log("encoded:", encodedFileName);
+                let decodedFileName;
+                try {
+                    // Doesn't work with decodeURIComponent..
+                    //decodedFileName = decodeURIComponent(encodedFileName);  // Try to decode the filename
+                    decodedFileName = unescape(encodedFileName);  // Try to decode the filename
+                } catch (e) {
+                    console.error('Error decoding filename:', e);
+                    decodedFileName = encodedFileName;  // If an error occurs, use the encoded filename
+                }
                 const listItem = document.createElement('li');
                 const link = document.createElement('a');
-                //console.log(fileName)
-                link.href = directory + "/" + fileName;
-                link.textContent = fileName;
-                link.download = fileName; // Add download attribute to trigger download
+                //console.log(decodedFileName)
+                link.href = directory + "/" + encodedFileName;
+                link.textContent = decodedFileName;
+                link.download = decodedFileName; // Add download attribute to trigger download
                 listItem.appendChild(link);
                 fileList.appendChild(listItem);
             });
