@@ -32,16 +32,65 @@ function fetchFileList(directory) {
                 fileList.appendChild(listItem);
             });
         })
-        .catch(error => {
+        .catch(error => {   
             console.error('Error fetching file list:', error);
-    });
+        });
 }
 
-// Fetch file list when the page loads
+// Fetch the config file
+function fetchConfigFile() {
+    console.log("Fetching config file");
+    fetch('/config.yml')
+        .then(response => response.text())  // Read the response as text
+        .then(text => {
+            // Parse the YAML text
+            const config = jsyaml.load(text);
+
+            // If "enable" is false, return early
+            if (!config.enable) {
+                console.log('Display of information is disabled');
+                return;
+            }
+
+            // The description is under the "description" key
+            const description = config.description;
+
+            // The filenames are under the "files" key
+            const filenames = config.files;
+
+            // Select the ul element under the "Upload" tag
+            const ul = document.querySelector('#uploadFileList');
+
+            // Create a p element for the description
+            const p = document.createElement('p');
+
+            // Set its text to the description
+            p.textContent = description;
+
+            // Insert the p element before the ul element in the DOM
+            ul.parentNode.insertBefore(p, ul);
+
+            // For each filename
+            filenames.forEach(filename => {
+                // Create a li element
+                const li = document.createElement('li');
+
+                // Set its text to the filename
+                li.textContent = filename;
+
+                // Append it to the ul
+                ul.appendChild(li);
+            });
+        });
+}
+
+// Call the fetch function when the page loads
 window.onload = function() {
     fetchFileList('/resources');
+    fetchConfigFile();
 };
 
+// Function called when the form is submitted
 function submitForm(e) {
     e.preventDefault();
     const name = document.getElementById("name");
@@ -98,6 +147,7 @@ function submitForm(e) {
         xhr.send(formData);
     }
 }
+// Helper functions to show and hide status messages
 let timeout = setTimeout(()=>{});
 function showStatusMessage(message, type) {
     clearTimeout(timeout);
@@ -115,6 +165,7 @@ function hideStatusMessage() {
     statusMessage.classList.add("hidden");
 }
 
+// Reset progress bar after 6 seconds of inactivity
 let progressBarTimeout = setTimeout(()=>{});
 function resetProgressBar() {
     const progressBar = document.getElementById("progressBar");

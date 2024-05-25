@@ -6,6 +6,8 @@
     <!-- <title>Frame with Upload Button</title> -->
     <!-- This doesn't work in nginx ?  -->
     <!-- <link href="/styles.css" rel="stylesheet">  -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@3.14.0/dist/js-yaml.min.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -127,6 +129,8 @@
     <ul id="fileList"></ul>
 
     <h1>Upload</h1>
+    <ul id="uploadFileList"></ul>
+
     <div class="container">
         
         <form id='form'>
@@ -147,6 +151,5 @@
     <div id="statusMessage" class="hidden"></div> <!-- Add class="hidden" to hide initially -->
 
     <script src='./script.js'></script>
-
 </body>
 </html>

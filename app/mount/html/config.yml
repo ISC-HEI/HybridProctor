@@ -1,0 +1,7 @@
+# You can list here the files that the students should upload at the end.
+# Make sure to put enable: true to enable the feature.
+enable: true
+description: "Please upload the following files at the end:"
+files:
+  - file1.txt
+  - file hello.scala
