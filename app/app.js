@@ -70,6 +70,18 @@ app.post('/upload_files', upload.array('files'), (req, res) => {
     res.send('File uploaded successfully.');
 });
 
+// Define a route for getting the version number
+app.get('/version', (req, res) => {
+    fs.readFile('package.json', (err, data) => {
+        if (err) {
+            console.error('Error reading package.json:', err);
+            return res.status(500).send('Internal server error.');
+        }
+        const packageJson = JSON.parse(data);
+        res.send('Version: ' + packageJson.version);
+    });
+});
+
 // // Define a route for listing files in a directory
 // app.get('/list_files', (req, res) => {
 //     const directoryPath = 'uploads'; // Directory path to list files from

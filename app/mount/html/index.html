@@ -117,6 +117,14 @@
             -o-transition: none !important;
             transition: none !important;
         }
+        footer {
+            /* position: fixed; */
+            /* left: 0; */
+            /* bottom: 0; */
+            width: 100%;
+            text-align: center;
+            font-size: small;
+        }
 
     </style>
 </head>
@@ -149,6 +157,8 @@
         <div id="progressBar" class="notransition"></div>
     </div>
     <div id="statusMessage" class="hidden"></div> <!-- Add class="hidden" to hide initially -->
+    
+    <footer id="version"></footer>
 
     <script src='./script.js'></script>
 </body>

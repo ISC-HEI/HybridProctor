@@ -1,4 +1,6 @@
 const form = document.getElementById("form");
+//const baseUrl = "http://10.0.0.1" // Change to this in prod
+const baseUrl = "http://localhost"
 
 form.addEventListener("submit", submitForm);
 
@@ -94,6 +96,17 @@ function fetchConfigFile() {
         });
 }
 
+// Fetch the version number
+fetch(baseUrl+':3000/version')
+    .then(response => response.text())
+    .then(version => {
+        console.log("Fetching version");
+        document.getElementById('version').textContent = version;
+    })
+    .catch(error => {
+        console.error('Error fetching version:', error);
+    });
+
 // Call the fetch function when the page loads
 window.onload = function() {
     fetchFileList('/resources');
@@ -130,7 +143,7 @@ function submitForm(e) {
 
 
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://10.0.0.1:3000/upload_files"); // Adjust URL as needed
+        xhr.open("POST", baseUrl+":3000/upload_files"); // Adjust URL as needed
         //xhr.open("POST", "http://192.168.88.1:3000/upload_files"); // Adjust URL as needed
         //xhr.open("POST", "http://localhost:3000/upload_files"); // Adjust URL as needed
         xhr.upload.onprogress = function(event) {
