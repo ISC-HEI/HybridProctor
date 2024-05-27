@@ -1,6 +1,6 @@
 const form = document.getElementById("form");
-//const baseUrl = "http://10.0.0.1" // Change to this in prod
-const baseUrl = "http://localhost"
+const baseUrl = "http://10.0.0.1" // Change to this in prod
+//const baseUrl = "http://localhost" // Change to this to test locally
 
 form.addEventListener("submit", submitForm);
 
@@ -118,15 +118,14 @@ function submitForm(e) {
     e.preventDefault();
     const name = document.getElementById("name");
     const files = document.getElementById("files");
-    const progressBar = document.getElementById("progressBar"); // Reference to progress bar element
+    const progressBar = document.getElementById("progressBar");
     const formData = new FormData();
 
-    hideStatusMessage();
     if (!name.value) {
-        showStatusMessage("Please enter your name before uploading.", "error");
+        showMessageModal(false, 'Please enter your name before uploading.');
     }
     else if (files.files.length === 0) {
-        showStatusMessage("Please select at least one file for uploading.", "error");
+        showMessageModal(false, 'Please select at least one file for uploading.');
     }
     else {
         formData.append("name", name.value);
@@ -134,7 +133,7 @@ function submitForm(e) {
             formData.append("files", files.files[i]);
         }
 
-        //progressBar.classList.remove("hidden");
+        // Reset progress bar
         clearTimeout(progressBarTimeout);
         progressBar.classList.add("notransition");
         progressBar.style.width = 0;
@@ -143,9 +142,7 @@ function submitForm(e) {
 
 
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", baseUrl+":3000/upload_files"); // Adjust URL as needed
-        //xhr.open("POST", "http://192.168.88.1:3000/upload_files"); // Adjust URL as needed
-        //xhr.open("POST", "http://localhost:3000/upload_files"); // Adjust URL as needed
+        xhr.open("POST", baseUrl+":3000/upload_files");
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
@@ -155,38 +152,45 @@ function submitForm(e) {
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                showStatusMessage("File(s) uploaded successfully.", "success");
+                showMessageModal(true, 'File(s) uploaded successfully.');
             } else {
-                showStatusMessage("Failed to upload file(s).", "error");
+                showMessageModal(false, 'Failed to upload file(s).');
             }
             resetProgressBar(); // Reset progress bar after 6 seconds
         };
 
         xhr.onerror = function() {
-            showStatusMessage("Error occurred while uploading file(s).", "error");
+            showMessageModal(false, 'Error occurred while uploading file(s).');
             resetProgressBar(); // Reset progress bar after 6 seconds
         };
 
         xhr.send(formData);
     }
 }
-// Helper functions to show and hide status messages
-let timeout = setTimeout(()=>{});
-function showStatusMessage(message, type) {
-    clearTimeout(timeout);
-    const statusMessage = document.getElementById("statusMessage");
-    statusMessage.textContent = message;
-    statusMessage.classList.add(type);
-    statusMessage.classList.remove("hidden");
-    timeout = setTimeout(() => {
-        hideStatusMessage();
-        statusMessage.classList.remove(type);
-    }, 6000); // Hide after 6 seconds
-}
-function hideStatusMessage() {
-    const statusMessage = document.getElementById("statusMessage");
-    statusMessage.classList.add("hidden");
-}
+
+// Helper function to display a success/error popup message
+function showMessageModal(isSuccess, message) {
+    var modal = $('#messagePopup');
+    var modalIcon = $('#messagePopupIcon');
+    var modalHeader = $('#messagePopupHeader');
+    var modalBody = $('#messagePopupBody');
+
+    // modalLabel.text(isSuccess ? 'Success' : 'Error');
+    modalBody.text(message);
+  
+    if (isSuccess) {
+        modalIcon.removeClass('bi-x-circle').addClass('bi-check-circle');
+        modalHeader.removeClass('bg-danger').addClass('bg-success');
+        //modalBody.removeClass('text-danger').addClass('text-success');
+    } else {
+        modalIcon.removeClass('bi-check-circle').addClass('bi-x-circle');
+        modalHeader.removeClass('bg-success').addClass('bg-danger');
+        //modalBody.removeClass('text-success').addClass('text-danger');
+    }
+  
+    modal.modal('show');
+  }
+
 
 // Reset progress bar after 6 seconds of inactivity
 let progressBarTimeout = setTimeout(()=>{});

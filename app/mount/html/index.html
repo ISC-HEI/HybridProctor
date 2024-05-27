@@ -3,144 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <title>Frame with Upload Button</title> -->
+    <title>ISC Exam System</title>
     <!-- This doesn't work in nginx ?  -->
     <!-- <link href="/styles.css" rel="stylesheet">  -->
+    
+    <!-- This import is to use yaml files  -->
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@3.14.0/dist/js-yaml.min.js"></script>
+    
+    <!-- Add bootstrap  -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"> -->
+    <!-- <link href="assets/css/bootstrap-4.0.0.min.css" rel="stylesheet" /> -->
+    <link href="assets/css/bootstrap-4.6.2.min.css" rel="stylesheet" />
+    <link href="assets/css/bootstrap-icons-1.11.3.min.css" rel="stylesheet" />
+    <link href="assets/css/custom.css" rel="stylesheet" />
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        
-        .container h1 {
-            text-align: center;
-            color: white;
-        }
-        form {
-            background-color: white;
-            padding: 30px;
-        }
-        form .input-group {
-            margin-bottom: 15px;
-        }
-        form label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        form input {
-            padding: 12px 20px;
-            width: 100%;
-            border: 1px solid #ccc;
-        }
-        /* .submit-btn {
-            width: 100%;
-            border: none;
-            background: rgb(37, 83, 3);
-            font-size: 18px;
-            color: white;
-            border-radius: 3px;
-            padding: 20px;
-            text-align: center;
-        } */
-        .submit-btn {
-            width: 100%;
-            border: none;
-            background: rgb(37, 83, 3);
-            font-size: 18px;
-            color: white;
-            border-radius: 3px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer; /* Change cursor to pointer on hover */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
-        }
-        .submit-btn:hover {
-            background-color: rgb(47, 103, 23); /* Darker background color on hover */
-        }
-
-        .submit-btn:active {
-            background-color: rgb(17, 63, 3); /* Dark background color on click */
-        }
-
-        /* CSS to make iframe non-scrollable */
-        #contentFrame {
-            width: 100%;
-            height: 90vh;
-            overflow: hidden; /* Hide scrollbars */
-        }
-        #statusMessage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f8d7da; /* Red */
-            color: #721c24; /* Dark red */
-            padding: 10px;
-            text-align: center;
-            /*display: none; /* Initially hidden */
-            z-index: 1000; /* Ensure it's on top of other content */
-        }
-
-        #statusMessage.success {
-            background-color: #d4edda; /* Green */
-            color: #155724; /* Dark green */
-        }
-
-        #statusMessage.error {
-            background-color: #f8d7da; /* Red */
-            color: #721c24; /* Dark red */
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #progressBarContainer {
-            width: 100%;
-            height: 20px; /* Adjust height as needed */
-            background-color: #f0f0f0; /* Background color of progress bar container */
-            border-radius: 5px; /* Rounded corners */
-            margin-bottom: 10px; /* Optional margin for spacing */
-        }
-
-        #progressBar {
-            width: 0; /* Initial width of 0% */
-            height: 100%;
-            background-color: #4CAF50; /* Color of progress bar */
-            border-radius: 5px; /* Rounded corners */
-            transition: width 0.3s ease; /* Smooth transition for width changes */
-        }
-        .notransition {
-            -webkit-transition: none !important;
-            -moz-transition: none !important;
-            -o-transition: none !important;
-            transition: none !important;
-        }
-        footer {
-            /* position: fixed; */
-            /* left: 0; */
-            /* bottom: 0; */
-            width: 100%;
-            text-align: center;
-            font-size: small;
-        }
-
-    </style>
 </head>
 <body>
+    <div class="container main-content">
     <!-- Frame to display content from another HTML page -->
     <iframe id="contentFrame" src="exam.html" width="100%"></iframe>
+
     
+    <!-- Resources section  -->
     <h1>Resources</h1>
-    <!-- <h2>Blabla</h2> -->
     <ul id="fileList"></ul>
 
+    <!-- Upload section  -->
     <h1>Upload</h1>
     <ul id="uploadFileList"></ul>
 
-    <div class="container">
-        
+    <!-- <div class="container"> -->
         <form id='form'>
             <div class="input-group">
                 <label for='name'>Your name: </label>
@@ -150,16 +43,47 @@
                 <label for='fileslabel'>Select files</label>
                 <input id='files' type="file" multiple>
             </div>
-            <button class="submit-btn" type='submit'>Upload</button>
+            <button class="submit-btn btn-primary" type='submit'>Upload</button>
         </form>
-    </div>
+    <!-- </div> -->
     <div id="progressBarContainer">
         <div id="progressBar" class="notransition"></div>
     </div>
-    <div id="statusMessage" class="hidden"></div> <!-- Add class="hidden" to hide initially -->
-    
-    <footer id="version"></footer>
 
+    <!-- Define the modal component  -->
+    <div class="modal fade" id="messagePopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header justify-content-center" id="messagePopupHeader">
+              <div class="mx-auto">
+                <i class="bi bi-check-circle" id="messagePopupIcon" style="font-size: 5rem; color:white;"></i>
+              </div>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="messagePopupBody">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <footer id="version"></footer>
+    </div>
+    
     <script src='./script.js'></script>
+
+    <!-- Those script are required by bootstrap -->
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+    <script src="assets/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="assets/js/popper-1.12.9.min.js"></script>
+    <!-- <script src="assets/js/bootstrap-4.0.0.min.js"></script> -->
+    <script src="assets/js/bootstrap.bundle-4.6.2.js"></script>
 </body>
 </html>
