@@ -1,0 +1,49 @@
+name: Build mkdocs material to Github Pages
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10 🐍
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+  
+    - name: Install dependencies 💻
+      shell: bash
+      run: |
+        sudo apt-get update
+        echo "Install build-essential"
+        sudo apt-get install -y build-essential
+        pip install -r requirements.txt
+  
+    - name: Build mkdocs material 🔧
+      shell: bash
+      run: |
+        mkdocs build
+        ls -la
+        ls -la site
+
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.4.3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages # The branch the action should deploy to.
+        folder: site # The folder the action should deploy.
+        clean: true # Automatically remove deleted files from the deploy branch
+

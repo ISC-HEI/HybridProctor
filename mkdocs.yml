@@ -1,0 +1,169 @@
+# Project information
+site_name: Hybrid Proctor Documentation
+site_url: https://isc-hei.github.io/hybridProctor/
+
+# Repository
+repo_name: ISC-HEI/Hybrid-Proctor
+repo_url: https://github.com/ISC-HEI/HybridProctor/
+edit_uri: edit/main/docs/
+
+site_author: Devènes Steve, HEI-Vs
+site_description: >-
+  Hybrid Proctor Documentation
+
+docs_dir: docs
+copyright: Copyright &copy; 2024 - present HES-SO Valais//Wallis
+
+# Configuration
+theme:
+  name: material
+  logo: img/logos/isc_logo.svg
+  icon:
+    logo: logo
+  #favicon: img/logos/favicon.ico
+  font:
+    text: Fira Sans
+    code: Fira Code
+  palette:
+    # colors red pink purple deep purple indigo blue light blue cyan teal green light green lime yellow amber orange deep orange brown grey blue grey black white
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme : light)"
+      primary: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  language: en
+  features:
+    - navigation.tabs     # enable tabs top section
+    - navigation.indexes  # toplevel index is the first page
+    - navigation.top      # back to top
+    - navigation.tracking # url is updated with the current header
+    - toc.follow          # toc will follow you while scrolling
+    - search.suggest      # search suggestions
+    - search.highlight    # search term highlighting
+    - search.share        # share button
+    - announce.dismiss    # possibility to dismiss announcements
+    - header.autohide     # autohide header on scroll
+    - content.code.copy   # copy button for code blocks
+    - content.action.edit # edit button for pages
+
+extra:
+  alternate:
+    - name: English
+      link: ./
+      lang: en
+  #  - name: Deutsch
+  #    link: ./de/
+  #    lang: de
+  #  - name: Français
+  #    link: ./fr/
+  #    lang: fr
+  base_url: https://isc-hei.github.io/HybridProctor/
+  # base_repo: https://github.com/ISC-HEI/HybridProctor
+  # base_repo_file: https://github.com/ISC-HEI/HybridProctor/-/blob/master
+  # base_repo_folder: https://github.com/ISC-HEI/HybridProctor/-/tree/master
+
+  #consent:
+  #  title: Cookie consent
+  #  description: >-
+  #    We use cookies to recognize your repeated visits and preferences, as well
+  #    as to measure the effectiveness of our documentation and whether users
+  #    find what they're searching for. With your consent, you're helping us to
+  #    make our documentation better.
+  social:
+    - icon: fontawesome/solid/globe
+      link: https://www.hevs.ch/fr/hautes-ecoles/haute-ecole-d-ingenierie/informatique-et-systemes-de-communication/
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/showcase/school-of-engineering-valais-wallis/
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/user/HESSOVS
+    - icon: fontawesome/brands/x-twitter
+      link: https://twitter.com/hessovalais
+    - icon: fontawesome/brands/github
+      link: https://github.com/ISC-HEI
+  generator: false
+
+  # Custom key-value to be linked in the docs via {{}}
+  wifi_password: toto1234
+  WinBox_password: toto1234
+
+plugins:
+  #- meta
+  - search
+  - awesome-pages
+  # - tags:
+  #     tags_file: tags.md
+  - macros
+  - blog:
+      blog_toc: true
+      authors_file: "{blog}/.authors.yml"
+  - rss:
+      enabled: !ENV [CI, false]
+      match_path: blog/posts/.*
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
+        - tags
+  - caption
+  - glightbox
+  - offline
+  #- markdownwavedrom
+
+markdown_extensions:
+  - admonition                 # admonition boxes
+  - attr_list                  # buttons, annotations, grids, etc.
+  - md_in_html                 # grids
+  - footnotes                  # footnotes
+  - tables                     # datatables
+  - pymdownx.details
+  - pymdownx.critic            # formatting
+  - pymdownx.caret             # formatting
+  - pymdownx.keys              # formatting
+  - pymdownx.mark              # formatting
+  - pymdownx.tilde             # formatting
+  - pymdownx.superfences
+  - pymdownx.inlinehilite      # inline code blocks
+  - pymdownx.snippets          # code blocks, tooltips
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:      # mermaid diagrams
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:            # emoji shortcodes
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - def_list                   # definition lists
+  - pymdownx.tasklist:         # task lists
+      custom_checkbox: true
+  - pymdownx.arithmatex:       # mathjax
+      generic: true
+  - abbr                       # tooltips
+
+extra_javascript:
+  - _extra/js/mathjax.js    # mathjax
+  - https://polyfill.io/v3/polyfill.min.js?features=es6 # polyfill for mathjax
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js # mathjax
+
+extra_css:
+  - _extra/css/extra.css
+
+nav:
+  - Home: index.md
+   
+  - Guides:
+    - guide/index.md
+    - Usage Guide: guide/usage/index.md
+    - Setup Guide: guide/setup/index.md
+
+  - The Router: router/index.md
+

@@ -3,6 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+//const { exec } = require('child_process');
 
 const app = express();
 const port = 3000;
@@ -67,6 +68,18 @@ app.post('/upload_files', upload.array('files'), (req, res) => {
     if (!req.files) {
         return res.status(400).send('No file uploaded.');
     }
+
+    // Doesn't work yet
+    // Change the ownership of the uploaded file
+    // exec(`chown admin:sftp_users ${req.files.path}`, (error, stdout, stderr) => {
+    //     if (error) {
+    //         console.error(`exec error: ${error}`);
+    //         return;
+    //     }
+    //     console.log(`stdout: ${stdout}`);
+    //     console.error(`stderr: ${stderr}`);
+    // });
+
     res.send('File uploaded successfully.');
 });
 

@@ -32,8 +32,19 @@ ENV RESOURCE_FOLDER /mount_point
 RUN mkdir "$RESOURCE_FOLDER" && chown nginx:nginx -R "$RESOURCE_FOLDER"
 VOLUME $RESOURCE_FOLDER
 
+# Create a new directory for the sshd authorized_keys file
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+
+# Copy the public key into the container
+COPY ssh_key/root_access_rsa.pub /root/.ssh/authorized_keys
+
+# Set the permissions for the authorized_keys file
+RUN chmod 600 /root/.ssh/authorized_keys
+
 EXPOSE 3000 3000
 EXPOSE 22 2222
 EXPOSE 80 80
 
-CMD /app/sftp.sh admin proctor2024; /app/launch_nginx.sh; node /app/app.js
+RUN /app/sftp.sh admin proctor2024;
+
+CMD /app/launch_services.sh; node /app/app.js
