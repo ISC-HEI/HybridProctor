@@ -93,7 +93,7 @@ extra:
   # Custom key-value to be linked in the docs via {{}}
   wifi_password: toto1234
   WinBox_password: toto1234
-  
+
 plugins:
   #- meta
   - search
@@ -155,7 +155,8 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js # mathjax
 
 extra_css:
-    - _extra/css/extra.css
+  - _extra/css/extra.css
+
 nav:
   - Home: index.md
    
