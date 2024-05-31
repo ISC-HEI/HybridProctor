@@ -44,6 +44,12 @@ connectSftpProd: ## Connect via sftp to container running in Mikrotik router
 connectSftpProdWifi: ## Connect via sftp to container running in Mikrotik router
 	sftp -P 2222 admin@10.0.0.1
 
+docs: ## Generate docs
+	mkdocs build
+
+serveDocs: ## Serve docs
+	mkdocs serve
+
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; \
 	{printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
