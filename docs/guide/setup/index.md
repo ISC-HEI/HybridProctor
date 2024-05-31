@@ -5,92 +5,50 @@ tags:
 
 # Setup Guide
 
-You will need a Mikrotik router and a USB key with an ext4 partition.
+You will need a [Mikrotik router](../../router/index.md), a USB key with an ext4 partition and two ethernet cables, one to connect the router to your pc and the other one to give internet access to the router.
+
+## Powering up and updating os version
 
 1. Power up router (don't forget to plug in the antenna!). Connect to your PC via ethernet cable.
-2. Install and start winBox, you should see your device listed.
-3. Login to it with the admin pwd written on the bottom of your device (**admin/WBJ6PZ033W**), now it should be **admin/toto1234**.
-4. (Optional) Install latest version of routerOS, you will need routerOS > V7.5 to be able to run containers. This can be done from inside WinBox.
-5. Install the container.npk. Download the all_package zip corresponding to your hardware architecture and software version (check with */system/resource/print*), extract and drop the container.npk into winBox and restart the router with */sys reboot*. After restarting, you should see a new tab called container in WinBox.
-6. To activate the container feature, enter */system device-mode update container=yes* in the terminal. Then press the reset button of the router when asked so.
+1. Provide an internet connection to the router via another ethernet cable. 
+1. Install and start winBox, you should see your device listed.
+1. Login to it with the admin pwd written on the bottom of your device (**admin/WBJ6PZ033W**), now it should be **admin/{{WinBox_password}}**.
+1. Install latest version (*7.14.1*) of routerOS, you will need routerOS > *V7.5* to be able to run containers. This can be done from inside WinBox by opening **System/Package**.
+1. You may also need to update the routerBoard Version in **system/RouterBOARD**.
+    ![](../../img/routeros_packages.jpg){: .center width="600px"}
 
-## Network setup
-Open a terminal in winBox and run the following commands to setup the network stuff:
-```bash
-/interface bridge
-add name=dockers
-/ip address/
-add address=172.17.0.1/24 interface=dockers network=172.17.0.0
-add address=10.0.0.1/24 interface=wifi1 network=10.0.0.0
-/interface veth
-add name=veth1 address=172.17.0.2/24 gateway=172.17.0.1
-/interface bridge port
-add bridge=dockers interface=veth1
-```
+1. Install the container.npk. Download the [all_package zip](https://mikrotik.com/download) corresponding to your hardware architecture and software version (check with */system/resource/print*), extract and drop the container.npk into winBox and restart the router with */sys reboot*. After restarting, you should see a new tab called container in WinBox.
+1. To activate the container feature, enter */system device-mode update container=yes* in the terminal. Then press the reset button of the router when asked so.
 
-## Container setup
-Normally, it's possible to simply build the image on a PC and then upload the .tar to the router via WinBox to create the container but it doesn't seem to work, so instead I published the image to dockerHub and then pulled the image from inside the router.
-Check the makefile to create and publish the docker image, you will need an account on dockerHub.
+## Configuration setup
 
-The container has 2 volumes linked to the USB device. One to serve the html and the downloadable ressources, and the other to save uploaded files. This could be merged in the future to only have one mount point.
+A configuration script of a working system has been exported and is available in the github repo in **router_config/config.rsc**.
 
-```bash
-/container config
-set registry-url=https://registry-1.docker.io
-set tmpdir=usb1/pull
-/container/mounts/
-add dst=/mount_point src=usb1/mount name=mount
-add dst=/home/admin/upload src=usb1/uploads name=uploads
-/container
-add remote-image=stevedevenes/hybridproctor-arm:latest interface=veth1 root-dir=usb1/hybridProctorContainer mounts=mount,uploads
-/ip firewall/nat
-add chain=dstnat action=dst-nat protocol=tcp dst-port=80 to-ports=80 to-addresses=172.17.0.2 # frontend
-add chain=dstnat action=dst-nat protocol=tcp dst-port=2222 to-ports=22 to-addresses=172.17.0.2 # sftp to upload container
-add chain=dstnat action=dst-nat protocol=tcp dst-port=3000 to-ports=3000 to-addresses=172.17.0.2 # upload route
-```
-Important: Don't forget to tick the "start on boot" option in container config.
+1. Upload config.rsc to the router via WinBox.
+2. Import the script if not executed automatically:
+    ```bash
+    import config.rsc
+    ```
+3. You can also run and adapt the commands listed in config.rsc manually in the router terminal if something is not working.
 
-Once done, you should be able to see the container with
-```bash
-/container/pr
-```
-and start it with 
-```bash
-/container start <container number>
-```
-You can also access it's shell with
-```bash
-/container shell <container number>
-```
+## Upgrading the container image
 
-## Wifi config
-```bash
-/interface wifiwave2 security
-add authentication-type=wpa3-psk name=hybridProctor disabled=no
-/interface/wifiwave2/configuration/
-add mode=ap name=hybridProctor security hybridProctor ssid=MThybridProctor
-/interface/wifiwave2/
-set [ find default-name=wifi1 ] configuration=hybridProctor disabled=no
-set wifi1 datapath.client-isolation=yes
-/ip pool
-add name=pool0 ranges=10.0.0.10-10.0.0.100
-/ip dhcp-server
-add address-pool=pool0 interface=wifi1 name dhcp1 server-address=10.0.0.1
-/ip/dhcp-server/network
-add address=10.0.0.0/24 dns-server=10.0.0.1 gateway=10.0.0.1
-```
-Note: If the last command throw an error mentionning slave interface, go to Brige/Ports and disable wifi1 form the list.
+If you already have a working router but need to upgrade only the container image you can do the following:
 
-## DNS config
-Doesn't seems to work, at least for the wifi IP..
-```bash
-/ip/dns
-set allow-remote-requests=yes
-/ip/dns/static
-add name=exam.local address=10.0.0.1
-```
+1. Login via WinBox.
+1. Make sure to give an internet access to the router via a ethernet cable.
+1. Open the **Container** window to stop and delete the current container.
+1. Open a terminal and enter:
+    ```bash
+    add remote-image=stevedevenes/hybridproctor-arm:latest interface=veth1 root-dir=usb1/hybridProctorContainer start-on-boot=yes mounts=mount,uploads
+    ```
+1. The container should appear in the **Container** window: Start it!
+    ![](../../img/container_config.jpg){: .center width="600px"}
 
-## Wifi password
 
-This can be changed in **Wifi** menu, opening the wifi1 network pannel and then in Security.
-For now it is set to **toto1234**
+## Changing the Wifi SSID / password
+To avoid having multiple wifi with the same name, please change the SSID of any new configured system.
+
+1. In the **Wifi** window, open the *wifi1* network pannel.
+1. Change the SSID in the *Configuration* tab
+1. Change the passphrase in the *Security* tab.

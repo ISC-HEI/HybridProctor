@@ -89,12 +89,18 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/ISC-HEI
   generator: false
+
+  # Custom key-value to be linked in the docs via {{}}
+  wifi_password: toto1234
+  WinBox_password: toto1234
+  
 plugins:
   #- meta
   - search
   - awesome-pages
   # - tags:
   #     tags_file: tags.md
+  - macros
   - blog:
       blog_toc: true
       authors_file: "{blog}/.authors.yml"

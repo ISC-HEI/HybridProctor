@@ -36,18 +36,15 @@ exploreContainer:
 
 connectSftp: ## Connect via sftp to container running locally
 # password: proctor2024
-	sftp -P 2222 admin@localhost
+	sftp -i ssh_key/root_access_rsa -P 2222 root@localhost
 
 connectSftpProd: ## Connect via sftp to container running in Mikrotik router
-	sftp -P 2222 admin@192.168.88.1
+	sftp -i ssh_key/root_access_rsa -P 2222 root@10.0.0.1
 
-connectSftpProdWifi: ## Connect via sftp to container running in Mikrotik router
-	sftp -P 2222 admin@10.0.0.1
-
-docs: ## Generate docs
+docs: ## Generate project docs
 	mkdocs build
 
-serveDocs: ## Serve docs
+serveDocs: ## Serve project docs
 	mkdocs serve
 
 help: ## Show this help
