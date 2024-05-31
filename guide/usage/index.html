@@ -459,6 +459,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Usage Guide
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="index.html" class="md-nav__link md-nav__link--active">
         
   
@@ -468,6 +479,52 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-exam-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the exam statement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploying-the-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploying the exam
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#during-the-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      During the exam
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -542,6 +599,41 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-exam-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the exam statement
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploying-the-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploying the exam
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#during-the-exam" class="md-nav__link">
+    <span class="md-ellipsis">
+      During the exam
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -564,24 +656,54 @@
 
 
 <h1 id="usage-guide">Usage Guide</h1>
+<h2 id="creating-the-exam-statement">Creating the exam statement</h2>
+<p>To use this system you need to have your exam statement in a single html file. Please have a look at <a href="https://github.com/ISC-HEI/isc_templates">this repo</a> which provide tools and examples to generate html from markdown or latex.</p>
+<h2 id="deploying-the-exam">Deploying the exam</h2>
 <ol>
-<li>Plug USB key in router and power up the later (don't forget to plug in the antenna!).</li>
-<li>Connect to it via wifi (<strong>password: toto_1234</strong>).</li>
+<li>Plug the USB key in the router and power up the later (don't forget to plug in the antenna!).</li>
+<li>Connect to it via wifi (<strong>password: toto1234</strong>).</li>
 <li>
-<p>Connect to router via sftp to adapt the config for your exam. </p>
-<p></p><div class="highlight"><pre><span></span><code>sftp<span class="w"> </span>-P<span class="w"> </span><span class="m">2222</span><span class="w"> </span>admin@10.0.0.1
+<p>Connect to router via sftp to adapt the config for your exam. You will need the private ssh key provided by <a href="mailto:steve.devenes@hevs.ch">Steve Devènes</a> to connect.</p>
+<p>You can connect either via a terminal or by using a ssh client like FileZilla:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Terminal</label><label for="__tabbed_1_2">FileZilla</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>sftp<span class="w"> </span>-i<span class="w"> </span>/path/to/ssh_key<span class="w"> </span>-P<span class="w"> </span><span class="m">2222</span><span class="w"> </span>root@10.0.0.1
 </code></pre></div>
-Here's what you can change:
-- The <em>statement of your exam</em>, replace <strong>/mount_point/html/exam.html</strong>.
-- The <em>ressources</em> to be downloaded by the students, put them in <strong>/mount_point/html/resources</strong>. Delete the content of the directory if you don't have any.
-- Optionally: The <em>list of files the students have to submit</em>. You can list these files in  <strong>/mount_point/html/config.yml</strong>, or disable the option.
+</div>
+<div class="tabbed-block">
+<p>This is the config you need to connect via FileZilla, make sure to adapt the <key file> to match your ssh key path.
+<a class="glightbox" href="../../img/Filezilla_ssh_config.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" class="center" src="../../img/Filezilla_ssh_config.png" width="600px"></a></key></p>
+</div>
+</div>
+</div>
+<p>Once connected, here's what you can change:</p>
+<ul>
+<li>The <em>statement of your exam</em>, replace <strong>/mount_point/html/exam.html</strong>.</li>
+<li>The <em>ressources</em> to be downloaded by the students, put them in <strong>/mount_point/html/resources</strong>. Delete the content of the directory if you don't have any.</li>
+<li>Optionally: The <em>list of files the students have to submit</em>. You can list these files in  <strong>/mount_point/html/config.yml</strong>, or disable the option.</li>
+</ul>
 <p>Please, don't delete or modify any other files in <strong>/mount_point/html/</strong>.</p>
 </li>
 <li>
-<p>Go to <a href="">10.0.0.1</a> and check if your exam/resources are really there and if everything is working.</p>
+<p>Go to <a href="">10.0.0.1</a> and check if your exam/resources are really there and if everything is working (try downloading ressources and uploading files).</p>
 </li>
-<li>Students can then connect to router wifi and do the exam.</li>
-<li>Once finished, to access uploaded files, connect via sftp again. The files should be present in <strong>/home/admin/uploads</strong>. </li>
+</ol>
+<h2 id="during-the-exam">During the exam</h2>
+<ol>
+<li>Provide the wifi password to the students and ask them to connect.</li>
+<li>Students can then do the exam and upload their files.</li>
+<li>
+<p>Once finished, you can retrieve the submitted files via sftp, they are located in <strong>/home/admin/uploads</strong>. </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure the students files are really uploaded and accessible through sftp before they leave!</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>The current version of the system doesn't provide a way to check if students still have an internet access, and also if they are still connected to the router. This is planned in future version. For now you will have to keep an eye on the students during the exam.</p>
+</div>
+</li>
 </ol>
 
 

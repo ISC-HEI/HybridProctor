@@ -16,6 +16,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://isc-hei.github.io/hybridProctor/guide/old_setup.html</loc>
+         <lastmod>2024-05-31</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://isc-hei.github.io/hybridProctor/guide/setup/index.html</loc>
          <lastmod>2024-05-31</lastmod>
          <changefreq>daily</changefreq>
