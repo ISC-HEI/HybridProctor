@@ -28,7 +28,7 @@ export default function NameForm({ ref }: NameFormProps) {
           <label htmlFor='name'>Your name: </label>
           <input type="text" name='name' id='name' placeholder="Enter your full name" value={name} onChange={e => setName(e.target.value)}/>
         </div>
-        <p>{state.message}</p>
+        <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
         <button className="submit-btn btn-primary" type='submit'>Start</button>
       </form> 
     </dialog>

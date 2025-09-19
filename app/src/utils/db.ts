@@ -1,7 +1,19 @@
 import Database from "better-sqlite3";
 import logger from "./logger";
+import { existsSync } from "fs";
+import fs from 'fs/promises';
+import path from 'path';
 
-const DB_FILE = "src/resources/db/students.db";
+const DB_DIR = "src/resources/db";
+const DB_FILE = path.join(DB_DIR, "students.db");
+
+if (!existsSync(DB_FILE)) {
+  if (!existsSync(DB_DIR)) {
+    await fs.mkdir(DB_DIR, { recursive: true });
+  }
+
+  await fs.writeFile(DB_FILE, "");
+}
 
 const db = new Database(DB_FILE);
 

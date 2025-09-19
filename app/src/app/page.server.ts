@@ -7,6 +7,13 @@ import { Yamlconf } from '@/utils/types/yamlconf';
 import fs from 'fs/promises';
 import yaml from "js-yaml";
 
+interface Ps {
+  ok: boolean;
+  message: string;
+}
+
+let yamlconf: Yamlconf;
+
 export async function fetchResources(): Promise<string[]> {
   const files = await fs.readdir("public/resources");
   logger.debug("Fetched resources.");
@@ -14,7 +21,7 @@ export async function fetchResources(): Promise<string[]> {
 }
 
 export async function fetchConfig(): Promise<Yamlconf> {
-  const yamlconf = yaml.load(await fs.readFile("public/config.yml", "utf8")) as Yamlconf;
+  yamlconf = yaml.load(await fs.readFile("public/config.yml", "utf8")) as Yamlconf;
   logger.debug("Fetched config.");
 
   return yamlconf
@@ -30,7 +37,31 @@ export async function fetchVersion(): Promise<string> {
   return `Version : ${packageJson.version}`
 }
 
-export async function uploadFiles(formData: FormData) {
+export async function uploadFiles(ps: Ps, formData: FormData) {
   const files = formData.getAll("files") as File[];
-  await storage.write(await getIp(), files); 
+  const uploadedNames = files.map(f => f.name);
+  
+  for (const file of files) {
+    if (!yamlconf.files.includes(file.name)) {
+      return {
+        ok: false,
+        message: `File "${file.name}" is not part of the required files.`,
+      }
+    }
+  }
+
+  const missing = yamlconf.files.filter(req => !uploadedNames.includes(req));
+  if (missing.length > 0) {
+    return {
+      ok: false,
+      message: `Missing required files: "${missing.join('", ')}"`,
+    }
+  }
+
+  await storage.write(await getIp(), files);
+
+  return {
+    ok: true,
+    message: "Files successfully sent.",
+  };
 }

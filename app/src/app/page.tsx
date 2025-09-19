@@ -3,7 +3,7 @@
 import BootstrapClient from '@/components/bootstrapClient';
 
 import { fetchConfig, fetchResources, fetchVersion, uploadFiles } from './page.server';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { Yamlconf } from '@/utils/types/yamlconf';
 import NameForm from '@/components/nameForm';
 import { nameInDb } from '@/utils/dbHelpers';
@@ -13,6 +13,8 @@ export default function Page() {
   const [yamlconf, setYamlconf] = useState<Yamlconf>();
   const [version, setVersion] = useState<string>();
   const nameFormRef = useRef<HTMLDialogElement>(null);
+
+  const [state, formAction] = useActionState(uploadFiles, { ok: true, message: "" });
 
   useEffect(() => {(
     async () => {
@@ -57,12 +59,13 @@ export default function Page() {
           }
         </ul>
 
-        <form id='form' action={uploadFiles}>
+        <form id='form' action={formAction}>
           <div className="input-group">
             <label htmlFor='fileslabel'>Select files</label>
             <input name='files' id='files' type="file" multiple />
           </div>
           <input type="hidden"/>
+          <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
           <button className="submit-btn btn-primary" type='submit'>Upload</button>
         </form>
         <div id="progressBarContainer">
