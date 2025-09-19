@@ -1,0 +1,98 @@
+'use client'
+
+import BootstrapClient from '@/components/bootstrapClient';
+
+import { fetchConfig, fetchResources, fetchVersion, uploadFiles } from './page.server';
+import { useEffect, useRef, useState } from 'react';
+import { Yamlconf } from '@/utils/types/yamlconf';
+import NameForm from '@/components/nameForm';
+import { nameInDb } from '@/utils/dbHelpers';
+
+export default function Page() {
+  const [files, setFiles] = useState<string[]>([]);
+  const [yamlconf, setYamlconf] = useState<Yamlconf>();
+  const [version, setVersion] = useState<string>();
+  const nameFormRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {(
+    async () => {
+      setFiles(await fetchResources());
+      setYamlconf(await fetchConfig());
+      setVersion(await fetchVersion());
+
+      const name = localStorage.getItem("name");
+
+      if (!name || !await nameInDb(name)) {
+        nameFormRef.current!.show();
+      }
+    }
+  )()}, []);
+
+  return (
+    <>
+      <NameForm ref={nameFormRef} />
+      <div className="container main-content">
+        <iframe id="contentFrame" src="exam.html" width="100%"></iframe>
+
+
+        <h1>Resources</h1>
+        <ul id="fileList">
+          {
+            files.map((v, i) =>
+              <li key={i}>
+                <a href={`/resources/${v}`} download={v}>{v}</a>
+              </li>)
+          }
+        </ul>
+
+        <h1>Upload</h1>
+        {
+          yamlconf?.enable && <p>{yamlconf?.description}</p>
+        }
+        <ul id="uploadFileList">
+          {
+            yamlconf?.files && yamlconf.files.map((v, i) =>
+            <li key={i}>{v}</li>
+            )
+          }
+        </ul>
+
+        <form id='form' action={uploadFiles}>
+          <div className="input-group">
+            <label htmlFor='fileslabel'>Select files</label>
+            <input name='files' id='files' type="file" multiple />
+          </div>
+          <input type="hidden"/>
+          <button className="submit-btn btn-primary" type='submit'>Upload</button>
+        </form>
+        <div id="progressBarContainer">
+          <div id="progressBar" className="notransition"></div>
+        </div>
+
+        <div className="modal fade" id="messagePopup" tabIndex={-1} role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header justify-content-center" id="messagePopupHeader">
+                <div className="mx-auto">
+                  <i className="bi bi-check-circle" id="messagePopupIcon" style={{fontSize: "5rem", color: "white"}}></i>
+                </div>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body" id="messagePopupBody">
+                <p>Modal body text goes here.</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer id="version">{version}</footer>
+      </div>
+      <BootstrapClient/>
+    </>
+  )
+}
