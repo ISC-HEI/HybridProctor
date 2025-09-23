@@ -1,5 +1,6 @@
 'use server'
 
+import { getNameFromIp } from '@/utils/dbHelpers';
 import logger from '@/utils/logger';
 import { getIp } from '@/utils/network';
 import storage from '@/utils/storage';
@@ -57,7 +58,8 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
       message: `Missing required files: "${missing.join('", ')}"`,
     }
   }
-
+  
+  logger.info(`files uploaded by ${await getNameFromIp(await getIp())}`)
   await storage.write(await getIp(), files);
 
   return {

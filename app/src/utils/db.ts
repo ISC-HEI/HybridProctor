@@ -15,7 +15,9 @@ if (!existsSync(DB_FILE)) {
   await fs.writeFile(DB_FILE, "");
 }
 
-const db = new Database(DB_FILE);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = (globalThis as any).db || ((globalThis as any).db = new Database(DB_FILE));
 
 db.pragma("journal_mode = WAL");
 db.pragma("synchronous = NORMAL");
@@ -29,6 +31,7 @@ db.exec(`
         `);
 
 logger.debug("Initiated database.");
+
 
 export default db;
 

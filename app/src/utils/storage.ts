@@ -4,6 +4,8 @@ import { existsSync } from "fs";
 import path from "path";
 import db from "./db";
 
+const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
+
 class Storage {
   location: string;
   initialized: boolean = false;
@@ -13,7 +15,7 @@ class Storage {
       throw new Error(".env is not configured correctly!!!");
     }
 
-    this.location = process.env.UPLOAD_PATH; 
+    this.location = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH; 
   }
 
   public async init() {
@@ -45,7 +47,11 @@ class Storage {
   }
 }
 
-const storage = new Storage();
-await storage.init();
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+const storage: Storage = (globalThis as any).logger || ((globalThis as any).logger = new Storage());
+
+if (!storage.initialized) {
+  await storage.init();
+}
 
 export default storage;

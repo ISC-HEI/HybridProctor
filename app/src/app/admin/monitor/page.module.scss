@@ -1,0 +1,9 @@
+@use "@style/_vars.scss";
+
+
+.logs {
+  width: 30em;
+  height: 100vh;
+  background-color: vars.$primary-background-color;
+  box-shadow: 10px 0 15px 0 rgba(0, 0, 0, .1);
+}
