@@ -1,0 +1,63 @@
+
+@use "@style/_vars.scss";
+
+.field {
+  width: 50em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  .label {
+    width: 100%;
+    height: 20em;
+    border: 2pt dashed vars.$lightblue;
+    background: linear-gradient(45deg, rgba(240, 255, 252, 0.3), rgba(207, 255, 252, 0.1));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1em;
+    }
+
+    input {
+      display: none;
+    }
+
+    &:hover {
+      background: linear-gradient(45deg, rgba(240, 255, 252, 0.4), rgba(207, 255, 252, 0.2));
+    }
+  }
+
+  .file_zone {
+    width: 100%;
+    height: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .file {
+      border-radius: 10px;
+      border: 2pt solid lightblue;
+      padding: 1em 4em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2em;
+
+      .delete {
+        color: #DC143C;
+
+        &:hover {
+          color: #B31B1B;
+        }
+      }
+    }
+  }
+}

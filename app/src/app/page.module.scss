@@ -1,36 +1,12 @@
 .main_content {
-    max-width: 100%;
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 .h1 {
     font-size: 2em;
     margin: .67em 0;
     padding-bottom: .3em;
     border-bottom: 2px solid #eaecef;
-}
-
-.form {
-    background-color: white;
-    padding: 30px;
-}
-.form input-group {
-    margin-bottom: 15px;
-}
-.form label {
-    display: block;
-    margin-bottom: 10px;
-}
-.form input {
-    padding: 12px 20px;
-    width: 100%;
-    border: 1px solid #ccc;
-}
-
-.submit_btn {
-    width: 100%;
-    font-size: 18px;
-    border-radius: 3px;
-    padding: 20px;
-    cursor: pointer; /* Change cursor to pointer on hover */
 }
 
 /* CSS to make iframe non-scrollable */

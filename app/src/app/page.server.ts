@@ -1,31 +1,24 @@
 'use server'
 
-import { getNameFromIp } from '@/utils/dbHelpers';
-import logger from '@/utils/logger';
-import { getIp } from '@/utils/network';
-import storage from '@/utils/storage';
-import { Yamlconf } from '@/utils/types/yamlconf';
+import { getNameFromIp } from '@services/db/helpers';
+import logger from '@services/logger';
+import { getIp } from '@utils/network';
+import storage from '@services/storage';
+import { Yamlconf } from '@lib/types/yamlconf';
 import fs from 'fs/promises';
-import yaml from "js-yaml";
+import { network } from '@/lib/services/network';
 
 interface Ps {
   ok: boolean;
   message: string;
 }
 
-let yamlconf: Yamlconf;
-
 export async function fetchResources(): Promise<string[]> {
-  const files = await fs.readdir("public/resources");
-  logger.debug("Fetched resources.");
-  return files
+  return storage.resources;
 }
 
 export async function fetchConfig(): Promise<Yamlconf> {
-  yamlconf = yaml.load(await fs.readFile("public/config.yml", "utf8")) as Yamlconf;
-  logger.debug("Fetched config.");
-
-  return yamlconf
+  return storage.examConfig;
 }
 
 export async function fetchVersion(): Promise<string> {
@@ -41,9 +34,11 @@ export async function fetchVersion(): Promise<string> {
 export async function uploadFiles(ps: Ps, formData: FormData) {
   const files = formData.getAll("files") as File[];
   const uploadedNames = files.map(f => f.name);
+
+  const ip = await getIp();
   
   for (const file of files) {
-    if (!yamlconf.files.includes(file.name)) {
+    if (!storage.examConfig.files.includes(file.name)) {
       return {
         ok: false,
         message: `File "${file.name}" is not part of the required files.`,
@@ -51,7 +46,7 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
     }
   }
 
-  const missing = yamlconf.files.filter(req => !uploadedNames.includes(req));
+  const missing = storage.examConfig.files.filter(req => !uploadedNames.includes(req));
   if (missing.length > 0) {
     return {
       ok: false,
@@ -59,8 +54,12 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
     }
   }
   
-  logger.info(`files uploaded by ${await getNameFromIp(await getIp())}`)
-  await storage.write(await getIp(), files);
+  const name = await getNameFromIp(ip);
+
+  logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
+  await storage.writeStudentFiles(ip, files);
+
+  await network.addUpdate(ip, { ip, allFilesSent: true });
 
   return {
     ok: true,

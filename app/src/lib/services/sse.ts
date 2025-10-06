@@ -1,4 +1,7 @@
-import logger, { LogLine } from "./logger";
+import logger from "./logger";
+import { network } from "./network";
+
+export type SSEEvent = "log"|"state";
 
 class SSEManager {
   clients: WritableStreamDefaultWriter<Uint8Array>[];
@@ -11,7 +14,10 @@ class SSEManager {
 
   public async addClient(writer: WritableStreamDefaultWriter<Uint8Array>) {
     this.clients.push(writer);
-    writer.write(this.encoder.encode(`data: ${JSON.stringify({ message: await logger.read() })}\n\n`))
+    writer.write(this.encoder.encode("event: log\n"));
+    writer.write(this.encoder.encode(`data: ${JSON.stringify({ message: logger.getLogs() })}\n\n`));
+    writer.write(this.encoder.encode("event: state\n"));
+    writer.write(this.encoder.encode(`data: ${JSON.stringify({ message: await network.getStudents() })}\n\n`));
   }
 
   public removeClient(writer: WritableStreamDefaultWriter<Uint8Array>) {
@@ -21,10 +27,12 @@ class SSEManager {
     }
   }
 
-  public broadcast(message: LogLine) {
-    const data = this.encoder.encode(`data: ${JSON.stringify({ message: [message] })}\n\n`);
+  public broadcast(message: object, event: SSEEvent) {
+    const evt = this.encoder.encode(`event: ${event}\n`);
+    const data = this.encoder.encode(`data: ${JSON.stringify({ message: message })}\n\n`);
     
     for (const writer of this.clients) {
+      writer.write(evt).catch(() => {})
       writer.write(data).catch(() => {});
     }
   }

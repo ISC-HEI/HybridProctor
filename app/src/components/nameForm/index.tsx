@@ -1,32 +1,42 @@
 'use client'
 
-import { RefObject, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { registerStudent } from "./index.server";
 import { useActionState } from "react";
 
-interface NameFormProps {
-  ref: RefObject<HTMLDialogElement|null>;
-}
+import style from './index.module.scss';
+import { nameInDb } from "@services/db/helpers";
 
-export default function NameForm({ ref }: NameFormProps) {
+
+export default function NameForm() {
   const [name, setName] = useState<string>("");
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", name: "" });
 
   useEffect(() => {
-    console.log("test")
     if (state.ok && state.name !== "") {
       localStorage.setItem("name", state.name);
-      ref.current!.close();
+      dialogRef.current?.close();
     }
-  }, [state, ref]);
+  }, [state]);
+
+  useEffect(() => {(
+    async () => {
+      const name = localStorage.getItem("name");
+
+      if (!name || !await nameInDb(name)) {
+        dialogRef.current?.showModal();
+      }
+    }
+  )()}, []);
 
   return (
-    <dialog ref={ref}>
-      <form id='form' action={formAction}>
+    <dialog className={style.dialog} ref={dialogRef}>
+      <form className={style.form} id='form' action={formAction}>
         <p>Please enter your name</p>
         <div className="input-group">
           <label htmlFor='name'>Your name: </label>
-          <input type="text" name='name' id='name' placeholder="Enter your full name" value={name} onChange={e => setName(e.target.value)}/>
+          <input type="text" name='name' id='name' placeholder="Enter your full name" value={name} required onChange={e => setName(e.target.value)}/>
         </div>
         <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
         <button className="submit-btn btn-primary" type='submit'>Start</button>

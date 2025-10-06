@@ -1,13 +1,28 @@
 
+@use "@style/_vars.scss";
+
 .form {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 2em;
+  position: relative;
 
   .label {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1em;
+  }
+
+  &::after {
+    content: "";
+    height: 1pt;
+    width: 95%;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    background-color: vars.$gray4;
   }
 }

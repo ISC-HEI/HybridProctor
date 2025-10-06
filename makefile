@@ -1,5 +1,6 @@
 ## This should correspond to your dockerhub username to be able to publish the image
 USER_NAME = stevedevenes
+DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
 VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/package.json)
 
@@ -18,10 +19,24 @@ imageProd: ## Build docker image for Mikrotik armV7
 	@docker buildx build --platform=linux/arm/v7 --output=type=docker -t $(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION) .
 	@echo ">>> Docker image created ($(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
+imageDev: 
+	@docker buildx build --platform=linux/arm/v7 --output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) .
+	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
+
+build:
+	@cd app && npm i && npm run build
+	@echo ">>> Next builded."
+
 publish: ## Push the docker image on dockerhub
 	@docker image push $(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION)
 	@docker tag $(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION) $(USER_NAME)/$(IMAGE_NAME)-arm:latest
 	@docker image push $(USER_NAME)/$(IMAGE_NAME)-arm:latest
+
+publishDev:
+	@docker image push $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)
+	@docker tag $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:latest
+	@docker image push $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:latest
+
 
 container: ## Start image as container
 	@docker container rm -f $(IMAGE_NAME)

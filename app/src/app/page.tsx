@@ -1,44 +1,20 @@
-'use client'
-
-import BootstrapClient from '@/components/bootstrapClient';
-
-import { fetchConfig, fetchResources, fetchVersion, uploadFiles } from './page.server';
-import { useActionState, useEffect, useRef, useState } from 'react';
-import { Yamlconf } from '@/utils/types/yamlconf';
-import NameForm from '@/components/nameForm';
-import { nameInDb } from '@/utils/dbHelpers';
 
 import style from './page.module.scss';
+import BootstrapClient from '@/components/bootstrapClient';
+import { fetchConfig, fetchResources, fetchVersion } from './page.server';
+import Exam from './exam';
+import NameForm from '@/components/nameForm';
 
-export default function Page() {
-  const [files, setFiles] = useState<string[]>([]);
-  const [yamlconf, setYamlconf] = useState<Yamlconf>();
-  const [version, setVersion] = useState<string>();
-  const nameFormRef = useRef<HTMLDialogElement>(null);
-
-  const [state, formAction] = useActionState(uploadFiles, { ok: true, message: "" });
-
-  useEffect(() => {(
-    async () => {
-      setFiles(await fetchResources());
-      setYamlconf(await fetchConfig());
-      setVersion(await fetchVersion());
-
-      const name = localStorage.getItem("name");
-
-      if (!name || !await nameInDb(name)) {
-        nameFormRef.current!.show();
-      }
-    }
-  )()}, []);
+export default async function Page() {
+  const files = await fetchResources();
+  const yamlconf = await fetchConfig();
+  const version = await fetchVersion();
 
   return (
     <>
-      <NameForm ref={nameFormRef} />
+      <NameForm />
       <div className={`container ${style.main_content}`}>
-        <iframe className={style.content_frame} src="exam.html" width="100%"></iframe>
-
-
+        <iframe className={style.content_frame} src="/exam.html" width="100%"></iframe>
         <h1 className={style.h1}>Resources</h1>
         <ul className={style.file_list}>
           {
@@ -56,20 +32,13 @@ export default function Page() {
         <ul className={style.upload_file_list}>
           {
             yamlconf?.files && yamlconf.files.map((v, i) =>
-            <li key={i}>{v}</li>
+              <li key={i}>{v}</li>
             )
           }
         </ul>
 
-        <form className={style.form} action={formAction}>
-          <div className={`input-group`}>
-            <label htmlFor='fileslabel'>Select files</label>
-            <input name='files' id='files' type="file" multiple />
-          </div>
-          <input type="hidden"/>
-          <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
-          <button className={`submit-btn ${style.submit_btn} btn-primary`} type='submit'>Upload</button>
-        </form>
+        <Exam />
+
         <div id="progressBarContainer">
           <div id="progressBar" className="notransition"></div>
         </div>
@@ -95,9 +64,11 @@ export default function Page() {
           </div>
         </div>
 
-        <footer className={style.footer} id="version">{version}</footer>
       </div>
+
       <BootstrapClient/>
+
+      <footer className={style.footer} id="version">{version}</footer>
     </>
   )
 }

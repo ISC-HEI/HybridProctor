@@ -1,10 +1,10 @@
 import Database from "better-sqlite3";
-import logger from "./logger";
+import logger from "@services/logger";
 import { existsSync } from "fs";
 import fs from 'fs/promises';
 import path from 'path';
 
-const DB_DIR = "src/resources/db";
+const DB_DIR = "resources/db";
 const DB_FILE = path.join(DB_DIR, "students.db");
 
 if (!existsSync(DB_FILE)) {
@@ -14,7 +14,6 @@ if (!existsSync(DB_FILE)) {
 
   await fs.writeFile(DB_FILE, "");
 }
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = (globalThis as any).db || ((globalThis as any).db = new Database(DB_FILE));

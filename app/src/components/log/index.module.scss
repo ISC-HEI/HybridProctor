@@ -1,0 +1,103 @@
+
+@use "@style/_vars.scss";
+
+$record-height: 4em;
+$type-size: 3em;
+$line-size: $record-height - $type-size;
+
+.record {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2em;
+  align-items: center;
+  position: relative;
+  min-height: $record-height;
+
+  .type {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $type-size;
+    height: $type-size;
+    background-color: vars.$gray3;
+    border-radius: 50%;
+    color: vars.$blue;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: -$line-size;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      background-color: vars.$gray4;
+    }
+  }
+
+  &:not(.new) .type::before {
+    height: $line-size;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    color: vars.$secondary-text-color;
+
+    strong {
+      color: vars.$primary-text-color;
+    }
+
+    .bullet {
+      display: inline-block;
+      height: 5px;
+      width: 5px;
+      border-radius: 50%;
+      background-color: vars.$gray4;
+      vertical-align: middle;
+    }
+  }
+
+  &:last-child .type::before {
+    display: none;
+  }
+
+  &.new {
+    height: 0;
+    animation: popIn 0.4s ease-out forwards;
+
+    .type::before {
+      height: 0;
+      animation: growLine 0.5s ease-out forwards;
+      animation-delay: 0.6;
+    }
+  }
+}
+
+@keyframes growLine {
+0% {
+  height: 0;
+}
+
+100% {
+  height: $line-size;
+}
+}
+
+@keyframes popIn {
+0% {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);    
+}
+60% {
+  opacity: 1;
+  transform: scale(1.02) translateY(0);
+}
+100% {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+}

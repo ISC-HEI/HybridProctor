@@ -1,4 +1,8 @@
 
 .logs {
-  padding: 0 2em;
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  max-height: 100%;
+  overflow-y: auto;
 }

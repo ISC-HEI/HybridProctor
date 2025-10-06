@@ -40,4 +40,4 @@ next-env.d.ts
 
 /logs/
 /uploads/
-/src/resources/db/*.db-*
+/resources/db/*.db-*

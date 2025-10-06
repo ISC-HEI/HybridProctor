@@ -1,9 +1,36 @@
 @use "@style/_vars.scss";
 
-
-.logs {
-  width: 30em;
+.page {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   height: 100vh;
-  background-color: vars.$primary-background-color;
-  box-shadow: 10px 0 15px 0 rgba(0, 0, 0, .1);
+  width: 100%;
+  overflow-y: hidden;
+  background-color: vars.$secondary-background-color;
+  
+  .main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 7em;
+
+    .tableContainer {
+      max-height: 100%;
+      display: inline-block;
+      overflow-y: scroll;
+      border: 1pt solid vars.$gray4;
+      border-radius: 25px;
+    }
+  }
+
+  .logs {
+    width: 100em;
+    height: 100vh;
+    background-color: vars.$primary-background-color;
+    padding: 2em 0;
+    position: relative;
+    border-right: 1pt solid vars.$gray4;
+  }
 }

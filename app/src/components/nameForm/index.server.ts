@@ -1,17 +1,16 @@
 'use server'
 
-import db from "@/utils/db";
-import { nameInDb } from '@utils/dbHelpers';
-import logger from "@/utils/logger";
-import { getIp } from "@/utils/network";
+import { network } from "@/lib/services/network";
+import db from "@services/db";
+import { nameInDb } from '@services/db/helpers';
+import logger from "@services/logger";
+import { getIp } from "@utils/network";
 
 
 export async function registerStudent(ps: { ok: boolean, message: string, name: string }, formData: FormData) {
   const name = formData.get("name") as string;
 
   const ip = await getIp();
-
-  logger.info(`Got ip ${ip} for name ${name}.`);
 
   const exists = await nameInDb(name);
 
@@ -29,7 +28,7 @@ export async function registerStudent(ps: { ok: boolean, message: string, name: 
 
     const message = "Name already taken by another student!";
 
-    logger.warn(message + `, ${ip} used name ${name} whose already in use by ${originalOwner.ip}!`);
+    logger.warn(message + ` ${ip} used name ${name} whose already in use by ${originalOwner.ip}!`, { issuer: ip, action: "Conflict" });
 
     return { ok: false, message, name }
   }
@@ -40,6 +39,10 @@ export async function registerStudent(ps: { ok: boolean, message: string, name: 
                           `);
 
   stmt.run(name, ip);
+
+  await network.addUpdate(ip, { ip, name });
+
+  logger.info(`${ip} Registered as ${name}.`, { issuer: name, action: "Registered" });
 
   return {
     ok: true,

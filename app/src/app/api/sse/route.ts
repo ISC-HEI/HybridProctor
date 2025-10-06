@@ -1,4 +1,5 @@
-import { sseManager } from "@/utils/sse";
+
+import { sseManager } from "@services/sse";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {

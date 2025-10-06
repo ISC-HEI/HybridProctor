@@ -1,37 +1,29 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { LogLine, LogType } from "@/utils/logger";
+import { type LogRecord, type LogType } from "@services/logger";
 import style from './index.module.scss';
+import Log from "../log";
 
 interface LogsProps {
+  logs: LogRecord[];
   type: LogType;  
 }
 
-export default function Logs({ type }: LogsProps) {
-  const [logs, setLogs] = useState<LogLine[]>([]);
+export default function Logs({ type, logs }: LogsProps) {
+  const reversedLogs = logs.toReversed();
 
-  useEffect(() => {(
-    async () => {
-      const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_URL}/api/logs`);
+  const lastIndex = type === "all" 
+    ? 0 
+    : reversedLogs.indexOf(reversedLogs.filter((v, i) => v.type === type)[0]);
 
-      eventSource.onmessage = async (e) => {
-        const data = await JSON.parse(e.data) as { message: LogLine[] };
-
-        setLogs(prevLogs => [...prevLogs, ...data.message]);
-      }
-
-      return () => eventSource.close();
-    }
-  )()}, [])
 
   return (
     <>
       <ul className={style.logs}>
         {
-          logs.map((v, i) =>
+          reversedLogs.map((v, i) =>
             {
-              return (type === "all" || v.type === type) && <li key={i}>{v.line}</li>
+              return (type === "all" || v.type === type) && <Log key={i} record={v} isNew={i === lastIndex}></Log>
             }
           )
         }
