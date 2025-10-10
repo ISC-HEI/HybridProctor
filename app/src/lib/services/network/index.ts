@@ -79,7 +79,8 @@ class Network {
 
         logger.warn(
           `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "deconnected"}.`,
-          student.name ? { issuer: student.name, action: connected ? "reconnected" : "deconnected" } : {} );
+          { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "deconnected" }
+        );
       }
     }
 

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "./globals.scss";
+import storage from "@/lib/services/storage";
+import NewPassword from "@/components/newPassword";
+
 
 const font = Inter({
   variable: "--font-poppins",
@@ -22,7 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className}`}>
-        {children}
+        {
+          !storage.newPassword
+            ?
+            children
+            :
+            <NewPassword password={storage.newPassword} /> 
+        }
       </body>
     </html>
   );

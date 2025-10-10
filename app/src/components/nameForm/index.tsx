@@ -31,7 +31,7 @@ export default function NameForm() {
   )()}, []);
 
   return (
-    <dialog className={style.dialog} ref={dialogRef}>
+    <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <form className={style.form} id='form' action={formAction}>
         <p>Please enter your name</p>
         <div className="input-group">

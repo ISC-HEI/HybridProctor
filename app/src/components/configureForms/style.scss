@@ -1,0 +1,42 @@
+
+@use "@style/_vars.scss";
+
+.formClass {
+  max-height: 50em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2em;
+  padding: 2em;
+  border: 1pt solid vars.$gray4;
+  border-radius: 25px;
+  background-color: vars.$primary-background-color;
+
+  .field {
+    width: 40em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2em;
+    height: 100%;
+
+    .title {
+      position: relative;
+      width: 100%;
+      padding: 0 0 1em 1em;
+
+      &::after {
+        content: "";
+        height: 1pt;
+        width: 100%;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        background-color: vars.$gray4;
+      }
+    }
+  }
+}

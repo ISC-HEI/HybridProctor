@@ -1,0 +1,21 @@
+
+@use "@style/_vars.scss";
+
+.page {
+  padding: 7em 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: vars.$secondary-background-color;
+  gap: 3em;
+
+  .progress {
+    position: absolute;
+    left: 50%;
+    bottom: 10em;
+    transform: translateX(-50%);
+  } 
+}

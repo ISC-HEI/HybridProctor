@@ -6,23 +6,38 @@ import { type Yamlconf } from "@lib/types/yamlconf";
 import logger from "./logger";
 import yaml from 'js-yaml';
 import { getNameFromIp } from "./db/helpers";
+import extract from "extract-zip";
+import crypto from "crypto";
+import argon2 from "argon2";
+import { Session } from "../types/session";
+import dayjs from "dayjs";
+import { getIp } from "../utils/network";
+
+const RESOURCES_ZIP = path.join(process.cwd(), "public/resources.zip");
 
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
 
+const DEFAULT_PASSWORD_FILE = "resources/.password";
+
 class Storage {
   examLocation: string;
   uploadLocation: string;
+  passwordLocation: string;
   initialized: boolean = false;
   examConfig!: Yamlconf;
-
   resources!: string[];
 
+  private sessions: Map<string, Session> = new Map<string, Session>();
+  newPassword: string|undefined;
+  private password!: string;
+
   constructor() {
-    if (!process.env.UPLOAD_PATH || !process.env.EXAM_FILE_NAME) {
+    if (!process.env.UPLOAD_PATH || !process.env.EXAM_FILE_NAME || !process.env.PASSWORD_FILE) {
       throw new Error(".env is not configured correctly!!!");
     }
 
+    this.passwordLocation = process.env.PASSWORD_FILE !== "default" ? process.env.PASSWORD_FILE : DEFAULT_PASSWORD_FILE;
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
     this.examLocation = path.join("public", process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
   }
@@ -33,6 +48,12 @@ class Storage {
     }
 
     this.initialized = true;
+
+    if (!existsSync(this.passwordLocation)) {
+      await this.generatePassword();
+    }
+
+    this.password = await fs.readFile(this.passwordLocation, "utf8");
 
     if (!existsSync(this.uploadLocation)) {
       await fs.mkdir(this.uploadLocation, { recursive: true });
@@ -48,6 +69,15 @@ class Storage {
     logger.debug("Initialized storage.");
   }
 
+  private async generatePassword() {
+    this.newPassword = Buffer.from(crypto.randomBytes(20)).toString("base64").replace('=', '');
+    const hash = await argon2.hash(this.newPassword);
+
+    await fs.writeFile(this.passwordLocation, hash);
+
+    logger.debug("New password generated.");
+  }
+
   private async write(location: string, file: File) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const fullLocation = path.join(location, file.name);
@@ -57,12 +87,77 @@ class Storage {
     logger.debug(`Created file "${fullLocation}".`);
   }
 
+  public async verifyPassword(password: string) {
+    return await (argon2.verify(this.password, password));
+  }
+
+  public async verifySession(id: string, ip: string) {
+    console.log(id, ip);
+
+    if (!this.sessions.has(id)) {
+      console.log(id)
+      return false;
+    }
+
+    const session = this.sessions.get(id) as Session;
+
+    if (session.until <= Date.now()) {
+      logger.warn(`session '${id}' expired.`, { issuer: id, action: "expired" });
+
+      this.sessions.delete(id);
+
+      return false;
+    }
+
+    if (session.ip !== ip) {
+      logger.warn(`IP '${ip}' tried to login using session with IP '${session.ip}'.`, { issuer: ip, action: "tried" })
+
+      return false;
+    }
+
+    logger.info(`IP ${ip} logged in as admin.`, { issuer: ip, action: "logged in" });
+
+    return true;
+  }
+
+  public createSession(ip: string) {
+    const id = crypto.randomUUID();
+
+    this.sessions.set(id, {
+      id,
+      ip,
+      until: dayjs().add(2, "hours").valueOf(),
+    });
+
+    return id;
+  }
+
   public async writeExam(file: File) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     await fs.writeFile(this.examLocation, buffer);
 
     logger.debug(`Exam created at "${this.examLocation}".`)
+  }
+
+  public async writeConfig(conf: Yamlconf) {
+    const yamlConfString = yaml.dump(conf);
+
+    await fs.writeFile("public/config.yml", yamlConfString);
+
+    this.examConfig = conf;
+  }
+
+  public async writeResources(file: File) {
+
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    await fs.writeFile(RESOURCES_ZIP, buffer);
+    await extract(RESOURCES_ZIP, { dir: path.join(process.cwd(), "public/resources") });
+    await fs.rm(RESOURCES_ZIP);
+
+    this.resources = await fs.readdir("public/resources");
   }
 
   public async writeStudentFiles(ip: string, files: File[]) {

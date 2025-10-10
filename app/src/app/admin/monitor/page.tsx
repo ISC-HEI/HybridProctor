@@ -5,7 +5,7 @@ import style from './page.module.scss';
 import { useEffect, useState } from 'react';
 import { LogRecord, type LogType } from '@services/logger';
 import LogTypeChoice from '@/components/logTypeChoice';
-import { fetchUrl } from './index.server';
+import { fetchUrl } from './page.server';
 import { Student, StudentUpdate } from '@/lib/types/student';
 import StudentsTable from '@/components/studentsTable';
 

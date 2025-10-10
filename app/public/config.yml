@@ -1,6 +1,5 @@
-
 enable: true
-description: "feur"
+description: Une courte description d'un truc
 files:
-  - test.txt
-  - test2.scala
+  - log.c
+  - ml.py
