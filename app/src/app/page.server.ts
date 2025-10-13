@@ -56,6 +56,13 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
   
   const name = await getNameFromIp(ip);
 
+  if (!name) {
+    return {
+      ok: false,
+      message: "Please refresh and enter your name.",
+    }
+  }
+
   logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
   await storage.writeStudentFiles(ip, files);
 

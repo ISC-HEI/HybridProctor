@@ -6,6 +6,7 @@ import { useActionState } from "react";
 
 import style from './index.module.scss';
 import { nameInDb } from "@services/db/helpers";
+import Input from "../input";
 
 
 export default function NameForm() {
@@ -32,14 +33,16 @@ export default function NameForm() {
 
   return (
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
+      <h2>Please enter your full name</h2>
       <form className={style.form} id='form' action={formAction}>
-        <p>Please enter your name</p>
         <div className="input-group">
-          <label htmlFor='name'>Your name: </label>
-          <input type="text" name='name' id='name' placeholder="Enter your full name" value={name} required onChange={e => setName(e.target.value)}/>
+          <label className={style.label}>
+            Name
+            <Input type="text" name='name' value={name} required onChange={e => setName(e.target.value)}/>
+          </label>
         </div>
         <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
-        <button className="submit-btn btn-primary" type='submit'>Start</button>
+        <button className={`${style.btn} submit-btn btn-primary`} type='submit'>Start</button>
       </form> 
     </dialog>
   )

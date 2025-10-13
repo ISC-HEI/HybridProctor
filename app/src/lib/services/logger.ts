@@ -138,7 +138,7 @@ class Logger {
 const logger: Logger = (globalThis as any).logger || ((globalThis as any).logger = new Logger());
 
 if (!logger.isInitialized()) {
-  logger.init();
+  await logger.init();
 }
 
 export default logger;

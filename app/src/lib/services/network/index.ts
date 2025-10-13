@@ -74,8 +74,9 @@ class Network {
       }
 
       if (student && connected !== student.connected) {
-        this.students.set(ip, { ...student, connected: connected });
-        this.studentUpdates.set(ip, { ip, connected });
+        const since = Date.now();
+
+        this.update(ip, { ip, connected, since });
 
         logger.warn(
           `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "deconnected"}.`,
@@ -103,11 +104,22 @@ class Network {
   private async addNewStudent(ip: string) {
     const unlock = await this.studentsMutex.lock();
 
-    const student = { ip, name: "", connected: true, allFilesSent: false }
+    const student = { ip, name: "", connected: true, allFilesSent: false, since: Date.now() }
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
 
     unlock();
+  }
+
+  private update(ip: string, update: StudentUpdate) {
+    if (!this.studentUpdates.has(ip)) {
+      this.studentUpdates.set(ip, update);
+    }
+    else {
+      this.studentUpdates.set(ip, { ...this.studentUpdates.get(ip), ...update });
+    }
+
+    this.students.set(ip, { ...this.students.get(ip)!, ...this.studentUpdates.get(ip) });
   }
 
   public async getStudent(ip: string): Promise<Student> {
@@ -139,15 +151,8 @@ class Network {
 
     const unlock = await this.studentsMutex.lock();
 
-    if (!this.studentUpdates.has(ip)) {
-      this.studentUpdates.set(ip, update);
-    }
-    else {
-      this.studentUpdates.set(ip, { ...this.studentUpdates.get(ip), ...update });
-    }
+    this.update(ip, update);
 
-    this.students.set(ip, { ...this.students.get(ip)!, ...this.studentUpdates.get(ip) });
-    
     unlock();
   }
 }

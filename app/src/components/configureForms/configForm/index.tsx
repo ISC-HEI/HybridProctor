@@ -8,6 +8,7 @@ import Input from "@/components/input";
 import { StepContext } from "@/lib/utils/hooks/stepContext";
 import uploadConfig from "./index.server";
 
+const DEFAULT_DESC = "Please upload the following files at the end: ";
 
 export default function ConfigForm() {
   const [enable, setEnable] = useState<boolean>(true);
@@ -29,7 +30,7 @@ export default function ConfigForm() {
     
     startTransition(async () => {
       try {
-        await uploadConfig({ enable, description, files });
+        await uploadConfig({ enable, description: description !== "" ? description : DEFAULT_DESC, files });
         
         stepContext?.setStep(stepContext.step + 1);
       }
@@ -64,7 +65,7 @@ export default function ConfigForm() {
         </label>
         <label className={`${style.label} ${style.desc}`}>
           Description
-          <Input name="description" area value={description} onChange={evt => setDescription(evt.currentTarget.value)}/>
+          <Input name="description" placeholder={DEFAULT_DESC} area value={description} onChange={evt => setDescription(evt.currentTarget.value)}/>
         </label>
 
         <div className={style.filesContainer}>

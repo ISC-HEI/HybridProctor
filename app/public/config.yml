@@ -1,5 +1,5 @@
 enable: true
-description: Une courte description d'un truc
+description: 'Please upload the following files at the end: '
 files:
-  - log.c
-  - ml.py
+  - file1.txt
+  - file hello.scala

@@ -52,6 +52,10 @@
       }
 
       .files {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
         position: relative;
         width: 100%;
         height: 100%;
@@ -60,6 +64,7 @@
         border: 1pt solid vars.$gray4;
         padding: 1em;
         border-radius: 25px;
+        gap: 1em;
 
         .noFiles {
           position: absolute;

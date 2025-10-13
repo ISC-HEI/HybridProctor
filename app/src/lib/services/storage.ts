@@ -92,10 +92,7 @@ class Storage {
   }
 
   public async verifySession(id: string, ip: string) {
-    console.log(id, ip);
-
     if (!this.sessions.has(id)) {
-      console.log(id)
       return false;
     }
 
@@ -149,7 +146,8 @@ class Storage {
   }
 
   public async writeResources(file: File) {
-
+    await fs.rmdir("public/resources", { recursive: true });
+    await fs.mkdir("public/resources");
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
