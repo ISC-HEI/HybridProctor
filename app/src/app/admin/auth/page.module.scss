@@ -15,7 +15,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 5em;
+    gap: 2em;
     width: 30em;
     background-color: vars.$primary_background_color;
     border: 1pt solid vars.$gray4;
@@ -44,6 +44,24 @@
       justify-content: center;
       gap: 2em;
       width: 100%;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1em;
+      background: none;
+      color: vars.$blue;
+
+      &:not(:disabled):hover {
+        cursor: pointer;
+        color: vars.$darkblue;
+      }
+
+      &:disabled {
+        color: vars.$gray4;
+      }
     }
   }
 }
