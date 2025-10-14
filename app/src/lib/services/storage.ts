@@ -17,8 +17,7 @@ const RESOURCES_ZIP = path.join(process.cwd(), "public/resources.zip");
 
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
-
-const DEFAULT_PASSWORD_FILE = "resources/.password";
+const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
 
 class Storage {
   examLocation: string;
