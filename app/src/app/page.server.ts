@@ -6,7 +6,7 @@ import { getIp } from '@utils/network';
 import storage from '@services/storage';
 import { Yamlconf } from '@lib/types/yamlconf';
 import fs from 'fs/promises';
-import { network } from '@/lib/services/network';
+import network from '@/lib/services/network';
 
 interface Ps {
   ok: boolean;
@@ -22,13 +22,7 @@ export async function fetchConfig(): Promise<Yamlconf> {
 }
 
 export async function fetchVersion(): Promise<string> {
-  const data = await fs.readFile("package.json", "utf8");
-
-  const packageJson = await JSON.parse(data);
-  
-  logger.debug("Fetched and parsed version.");
-
-  return `Version : ${packageJson.version}`
+  return storage.version
 }
 
 export async function uploadFiles(ps: Ps, formData: FormData) {

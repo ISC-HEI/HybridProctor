@@ -1,14 +1,25 @@
+'use client'
 
 import style from './page.module.scss';
 import BootstrapClient from '@/components/bootstrapClient';
 import { fetchConfig, fetchResources, fetchVersion } from './page.server';
 import Exam from './exam';
 import NameForm from '@/components/nameForm';
+import { useEffect, useState } from 'react';
+import { Yamlconf } from '@/lib/types/yamlconf';
 
-export default async function Page() {
-  const files = await fetchResources();
-  const yamlconf = await fetchConfig();
-  const version = await fetchVersion();
+export default function Page() {
+  const [files, setFiles] = useState<string[]>([]);
+  const [yamlconf, setYamlconf] = useState<Yamlconf>();
+  const [version, setVersion] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      setFiles(await fetchResources());
+      setYamlconf(await fetchConfig());
+      setVersion(await fetchVersion());
+    })()
+  }, []);
 
   return (
     <>
@@ -68,7 +79,7 @@ export default async function Page() {
 
       <BootstrapClient/>
 
-      <footer className={style.footer} id="version">{version}</footer>
+      <footer className={style.footer} id="version">Version: {version}</footer>
     </>
   )
 }

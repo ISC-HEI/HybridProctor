@@ -1,11 +1,14 @@
 'use server'
 
-import { network } from "@/lib/services/network";
+import network from "@/lib/services/network";
 import db from "@services/db";
-import { nameInDb } from '@services/db/helpers';
+import { getIpFromName, nameInDb } from '@services/db/helpers';
 import logger from "@services/logger";
 import { getIp } from "@utils/network";
 
+export async function isRegistered(name: string) {
+  return await nameInDb(name) && await getIp() === await getIpFromName(name);
+}
 
 export async function registerStudent(ps: { ok: boolean, message: string, name: string }, formData: FormData) {
   const name = formData.get("name") as string;

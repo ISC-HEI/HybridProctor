@@ -11,7 +11,6 @@ import crypto from "crypto";
 import argon2 from "argon2";
 import { Session } from "../types/session";
 import dayjs from "dayjs";
-import { getIp } from "../utils/network";
 
 const RESOURCES_ZIP = path.join(process.cwd(), "public/resources.zip");
 
@@ -26,6 +25,7 @@ class Storage {
   initialized: boolean = false;
   examConfig!: Yamlconf;
   resources!: string[];
+  version!: string;
 
   private sessions: Map<string, Session> = new Map<string, Session>();
   newPassword: string|undefined;
@@ -65,6 +65,14 @@ class Storage {
     this.examConfig = yaml.load(await fs.readFile("public/config.yml", "utf8")) as Yamlconf;
     logger.debug("Loaded config.")
 
+    const data = await fs.readFile("package.json", "utf8");
+
+    const packageJson = await JSON.parse(data);
+    
+    this.version = packageJson.version;
+
+    logger.debug("Fetched and parsed version.");
+
     logger.debug("Initialized storage.");
   }
 
@@ -74,7 +82,7 @@ class Storage {
 
     await fs.writeFile(this.passwordLocation, hash);
 
-    logger.debug("New password generated.");
+    logger.info("New password generated.");
   }
 
   private async write(location: string, file: File) {

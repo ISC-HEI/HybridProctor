@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { registerStudent } from "./index.server";
+import { isRegistered, registerStudent } from "./index.server";
 import { useActionState } from "react";
 
 import style from './index.module.scss';
-import { nameInDb } from "@services/db/helpers";
 import Input from "../input";
 
 
@@ -25,7 +24,7 @@ export default function NameForm() {
     async () => {
       const name = localStorage.getItem("name");
 
-      if (!name || !await nameInDb(name)) {
+      if (!name || !await isRegistered(name)) {
         dialogRef.current?.showModal();
       }
     }

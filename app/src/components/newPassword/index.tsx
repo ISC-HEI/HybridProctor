@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useRouter } from 'next/navigation';
 import style from './index.module.scss';
 import { undefinePassword } from './index.server';

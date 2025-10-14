@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "./globals.scss";
-import storage from "@/lib/services/storage";
-import NewPassword from "@/components/newPassword";
 
 
 const font = Inter({
@@ -17,7 +15,7 @@ export const metadata: Metadata = {
   description: "HybridProctor for exams",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -26,11 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${font.className}`}>
         {
-          !storage.newPassword
-            ?
             children
-            :
-            <NewPassword password={storage.newPassword} /> 
         }
       </body>
     </html>

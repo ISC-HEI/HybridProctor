@@ -1,5 +1,6 @@
+
 import logger from "./logger";
-import { network } from "./network";
+import network from "./network";
 
 export type SSEEvent = "log"|"state";
 
@@ -39,4 +40,6 @@ class SSEManager {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const sseManager: SSEManager = (globalThis as any).sseManager || ((globalThis as any).sseManager = new SSEManager());
+const sseManager: SSEManager = (globalThis as any).sseManager || ((globalThis as any).sseManager = new SSEManager());
+
+export default sseManager;

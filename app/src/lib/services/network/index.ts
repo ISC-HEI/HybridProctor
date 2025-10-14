@@ -1,5 +1,5 @@
 import { Student, StudentUpdate } from "@/lib/types/student";
-import { sseManager } from "../sse";
+import sseManager from "../sse";
 import Mutex from "@/lib/utils/mutex";
 import logger from "../logger";
 
@@ -158,4 +158,6 @@ class Network {
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const network: Network = (globalThis as any).network || ((globalThis as any).network = new Network());
+const network: Network = (globalThis as any).network || ((globalThis as any).network = new Network());
+
+export default network;

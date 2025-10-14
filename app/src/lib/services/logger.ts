@@ -5,7 +5,7 @@ import { join } from "path";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/fr-ch";
 import firstline from "firstline";
-import { sseManager } from "@services/sse";
+import sseManager from "@services/sse";
 import Mutex from "../utils/mutex";
 
 dayjs.locale("fr-ch");
@@ -105,6 +105,8 @@ class Logger {
     unlock();
 
     sseManager.broadcast([record], "log");
+
+    console.log(record.message);
   }
 
   public async info(message: string, opts?: LogRecordOpts) {
