@@ -74,14 +74,21 @@ class Network {
       }
 
       if (student && connected !== student.connected) {
-        const since = Date.now();
+        if (connected === false && student.attempts < 1) {
+          student.attempts++;
+        }
+        else {
+          student.attempts = 0;
 
-        this.update(ip, { ip, connected, since });
+          const since = Date.now();
 
-        logger.warn(
-          `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "deconnected"}.`,
-          { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "deconnected" }
-        );
+          this.update(ip, { ip, connected, since });
+
+          logger.warn(
+            `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "deconnected"}.`,
+            { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "deconnected" }
+          );
+        }
       }
     }
 
@@ -104,7 +111,7 @@ class Network {
   private async addNewStudent(ip: string) {
     const unlock = await this.studentsMutex.lock();
 
-    const student = { ip, name: "", connected: true, allFilesSent: false, since: Date.now() }
+    const student = { ip, name: "", connected: true, allFilesSent: false, since: Date.now(), attempts: 0 };
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
 

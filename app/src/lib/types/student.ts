@@ -6,6 +6,7 @@ export type Student = {
   connected: boolean;
   since: number
   allFilesSent: boolean;
+  attempts: number;
 }
 
 export type StudentUpdate = {
