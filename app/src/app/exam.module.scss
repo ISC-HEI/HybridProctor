@@ -1,26 +1,32 @@
 
+@use "@style/_vars.scss";
 
 .form {
-    background-color: white;
-    padding: 30px;
+  background-color: white;
+  padding: 30px;
 }
 .form input-group {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 .form label {
-    display: block;
-    margin-bottom: 10px;
+  display: block;
+  margin-bottom: 10px;
 }
 .form input {
-    padding: 12px 20px;
-    width: 100%;
-    border: 1px solid #ccc;
+  padding: 12px 20px;
+  width: 100%;
+  border: 1px solid #ccc;
 }
 
 .submit_btn {
-    width: 100%;
-    font-size: 18px;
-    border-radius: 3px;
-    padding: 20px;
-    cursor: pointer; /* Change cursor to pointer on hover */
+  width: 100%;
+  font-size: 18px;
+  border-radius: 3px;
+  padding: 20px;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: vars.$gray4;
+    cursor: default;
+  }
 }

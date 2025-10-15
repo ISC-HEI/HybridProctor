@@ -48,7 +48,7 @@ export default function Page() {
           }
         </ul>
 
-        <Exam />
+        <Exam conf={yamlconf} />
 
         <div id="progressBarContainer">
           <div id="progressBar" className="notransition"></div>

@@ -106,8 +106,6 @@ class Storage {
     const session = this.sessions.get(id) as Session;
 
     if (session.until <= Date.now()) {
-      logger.warn(`session '${id}' expired.`, { issuer: id, action: "expired" });
-
       this.sessions.delete(id);
 
       return false;

@@ -5,7 +5,7 @@ import { StepContext } from "@/lib/utils/hooks/stepContext";
 import { ChevronLeftIcon, ChevronRightIcon, LoaderCircleIcon } from "lucide-react";
 
 interface FormButtonsProps {
-  disabled: boolean;
+  disabled?: boolean;
   loading: boolean;
 }
 

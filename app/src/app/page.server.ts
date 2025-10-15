@@ -26,11 +26,30 @@ export async function fetchVersion(): Promise<string> {
 }
 
 export async function uploadFiles(ps: Ps, formData: FormData) {
+  const ip = await getIp();
+  const name = await getNameFromIp(ip);
+
+  if (!name) {
+    return {
+      ok: false,
+      message: "Please refresh and enter your name.",
+    }
+  }
+
+  if (storage.examConfig.files.length === 0) {
+    logger.info(`${name} finished the exam.`, { issuer: name, action: "Finished" })
+
+    await network.addUpdate(ip, { ip, allFilesSent: true });
+
+    return {
+      ok: true,
+      message: "Exam ended successfully",
+    }
+  }
+
   const files = formData.getAll("files") as File[];
   const uploadedNames = files.map(f => f.name);
 
-  const ip = await getIp();
-  
   for (const file of files) {
     if (!storage.examConfig.files.includes(file.name)) {
       return {
@@ -45,15 +64,6 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
     return {
       ok: false,
       message: `Missing required files: "${missing.join('", ')}"`,
-    }
-  }
-  
-  const name = await getNameFromIp(ip);
-
-  if (!name) {
-    return {
-      ok: false,
-      message: "Please refresh and enter your name.",
     }
   }
 

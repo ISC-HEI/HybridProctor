@@ -23,10 +23,6 @@ export default function ConfigForm() {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
-    if (files.length === 0) {
-      return alert("Students should have at least one file to send.");
-    }
     
     startTransition(async () => {
       try {
@@ -99,7 +95,7 @@ export default function ConfigForm() {
         </div>
       </fieldset> 
 
-      <FormButtons disabled={files.length === 0} loading={isPending}/>
+      <FormButtons loading={isPending}/>
     </form>
   )
 }
