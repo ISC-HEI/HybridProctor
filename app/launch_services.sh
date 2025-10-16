@@ -7,5 +7,5 @@ echo "Starting SSH"
 
 # Start the nextjs server
 npm start
-echo "Starting NGINX"
+echo "Starting nextjs"
 
