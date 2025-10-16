@@ -6,7 +6,6 @@ import { type Yamlconf } from "@lib/types/yamlconf";
 import logger from "./logger";
 import yaml from 'js-yaml';
 import { getNameFromIp } from "./db/helpers";
-import extract from "extract-zip";
 import crypto from "crypto";
 import argon2 from "argon2";
 import { Session } from "../types/session";
@@ -94,6 +93,14 @@ class Storage {
     logger.debug(`Created file "${fullLocation}".`);
   }
 
+  private async deleteContent(directory: string) {
+    const files = await fs.readdir(directory);
+
+    for (const file of files) {
+      await fs.rm(path.join(directory, file));
+    }
+  }
+
   public async verifyPassword(password: string) {
     return await (argon2.verify(this.password, password));
   }
@@ -150,15 +157,12 @@ class Storage {
     this.examConfig = conf;
   }
 
-  public async writeResources(file: File) {
-    await fs.rmdir("public/resources", { recursive: true });
-    await fs.mkdir("public/resources");
+  public async writeResources(files: File[]) {
+    await this.deleteContent("public/resources");
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    await fs.writeFile(RESOURCES_ZIP, buffer);
-    await extract(RESOURCES_ZIP, { dir: path.join(process.cwd(), "public/resources") });
-    await fs.rm(RESOURCES_ZIP);
+    for (const file of files) {
+      await this.write("public/resources", file);
+    }
 
     this.resources = await fs.readdir("public/resources");
   }
@@ -171,11 +175,15 @@ class Storage {
       return false;
     }
 
-    const nameFolder = path.join(this.uploadLocation, name);
+    const regex = new RegExp(`^${name}\\d+$`, 'i');
 
-    if (!existsSync(nameFolder)) {
-      await fs.mkdir(nameFolder, { recursive: true });
-    }
+    const entries = await fs.readdir(this.uploadLocation, { withFileTypes: true });
+
+    const version = entries.filter(entry => entry.isDirectory() && regex.test(entry.name)).length + 1;
+
+    const nameFolder = path.join(this.uploadLocation, `${name} v${version}`);
+
+    await fs.mkdir(nameFolder, { recursive: true });
 
     for (const file of files) {
       this.write(nameFolder, file);

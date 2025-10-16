@@ -50,15 +50,6 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
   const files = formData.getAll("files") as File[];
   const uploadedNames = files.map(f => f.name);
 
-  for (const file of files) {
-    if (!storage.examConfig.files.includes(file.name)) {
-      return {
-        ok: false,
-        message: `File "${file.name}" is not part of the required files.`,
-      }
-    }
-  }
-
   const missing = storage.examConfig.files.filter(req => !uploadedNames.includes(req));
   if (missing.length > 0) {
     return {

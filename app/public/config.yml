@@ -1,5 +1,5 @@
 enable: true
 description: 'Please upload the following files at the end: '
 files:
-  - file1.txt
-  - file hello.scala
+  - tests.java
+  - protocol.md
