@@ -1,6 +1,10 @@
 FROM arm32v7/node:22-slim
 
-RUN apt-get update && apt-get install -y openssh-server curl libatomic1 vim bash python3 make g++ findutils
+RUN apt-get update && apt-get install -y nginx openssh-server curl libatomic1 vim bash python3 make g++ findutils
+
+COPY proxy/nginx.conf /etc/nginx/nginx.conf
+COPY proxy/default.conf /etc/nginx/sites-available/default
+RUN nginx -t
 
 WORKDIR /app
 
@@ -20,14 +24,13 @@ ENV RESOURCE_FOLDER=/mount_point
 RUN mkdir -p "$RESOURCE_FOLDER"
 VOLUME $RESOURCE_FOLDER
 
-# Config SSH
+# Config ssh
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
-COPY ssh_key/root_access_rsa.pub /root/.ssh/authorized_keys
+COPY ssh/root_access_rsa.pub /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys
 
 # Ports exposés
-EXPOSE 22 2222
-EXPOSE 80 80
+EXPOSE 22 80 2222
 
 # Commande de démarrage
 CMD ["/bin/sh", "-c", "/app/sftp.sh admin proctor2024 && /app/launch_services.sh"]
