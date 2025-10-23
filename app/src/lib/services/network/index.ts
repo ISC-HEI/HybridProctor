@@ -90,8 +90,8 @@ class Network {
           this.update(ip, { ip, connected, since });
 
           logger.warn(
-            `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "deconnected"}.`,
-            { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "deconnected" }
+            `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
+            { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
           );
         }
       }
