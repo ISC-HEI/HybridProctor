@@ -52,16 +52,21 @@ class Network {
         pingHeaders.set("Content-Type", "application/json");
         pingHeaders.set("Accept", "application/json");
 
-        const res = await fetch(this.api + PING_ROUTE, {
-          method: "POST",
-          headers: pingHeaders,
-          body: JSON.stringify({ address: address, count: "1" })
-        });
-        
-        const data = await res.json();
+        try {
+          const res = await fetch(this.api + PING_ROUTE, {
+            method: "POST",
+            headers: pingHeaders,
+            body: JSON.stringify({ address: address, count: "1" })
+          });
 
-        if (data[0] && data[0].received === '1') {
-          connectedIps.add(address);
+          const data = await res.json();
+
+          if (data[0] && data[0].received === '1') {
+            connectedIps.add(address);
+          }
+        }
+        catch (e) {
+          logger.error("Cannot send ping command to router.");
         }
       }
     }
