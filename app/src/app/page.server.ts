@@ -25,7 +25,7 @@ export async function fetchVersion(): Promise<string> {
   return storage.version
 }
 
-export async function uploadFiles(ps: Ps, formData: FormData) {
+export async function uploadFiles(files: File[]) {
   const ip = await getIp();
   const name = await getNameFromIp(ip);
 
@@ -47,7 +47,6 @@ export async function uploadFiles(ps: Ps, formData: FormData) {
     }
   }
 
-  const files = formData.getAll("files") as File[];
   const uploadedNames = files.map(f => f.name);
 
   const missing = storage.examConfig.files.filter(req => !uploadedNames.includes(req));

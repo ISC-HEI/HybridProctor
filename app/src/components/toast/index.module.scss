@@ -1,0 +1,92 @@
+
+@use "@style/_vars.scss";
+
+.toast {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: vars.$dark-background-color;
+  height: 5em;
+  width: 35em;
+  border-radius: 1em;
+  padding: 1em;
+
+  .left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1em;
+
+    .message {
+      margin: 0 !important;
+      color: vars.$gray4;
+    }
+
+    .iconWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      padding: 1em;
+
+      .icon {
+        border-radius: 50%;
+      }
+
+      &.error {
+        background-color: vars.$transparent_pink;
+
+        .icon {
+          outline: 3pt solid vars.$pink;
+          background-color: vars.$pink;
+        }
+      }
+
+      &.success {
+        background-color: vars.$transparent_lightblue;
+
+        .icon {
+          outline: 3pt solid vars.$blue;
+          background-color: vars.$blue;
+        }
+      }
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 1em;
+    width: calc(100% - 2em);
+    height: 2px;
+    background-color: #001B2B;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 1em;
+    height: 2px;
+    animation: progress 4.7s linear forwards;
+  }
+
+  &.success::after {
+    background-color: vars.$blue;
+  }
+
+  &.error::after {
+    background-color: vars.$pink;
+  }
+}
+
+@keyframes progress {
+from {
+  width: 0;
+}
+to {
+  width: calc(100% - 2em);
+}
+}
