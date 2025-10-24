@@ -13,10 +13,7 @@ const NOTIFICATION_COUNTDOWN = 5000;
 const MAX_NOTIFICATIONS = 3;
 
 export default function NotificationProvider({ children }: ProvidersProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: uuidv4(), success: true, text: "En vrai les notifs qui marchent c'est stylé et je suis sûr qu'un texte long ça fonctionne bien", infinite: true },
-    { id: uuidv4(), success: false, text: "Erreur courte", infinite: true }
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const shift = () => {
     return notifications.filter((v, i) => i !== 0);
