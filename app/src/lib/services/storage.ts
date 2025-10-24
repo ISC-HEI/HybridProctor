@@ -173,7 +173,7 @@ class Storage {
       return false;
     }
 
-    const regex = new RegExp(`^${name}\\d+$`, 'i');
+    const regex = new RegExp(`^${name} v[0-9]+$`, 'i');
 
     const entries = await fs.readdir(this.uploadLocation, { withFileTypes: true });
 

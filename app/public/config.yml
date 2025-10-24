@@ -1,4 +1,5 @@
 enable: true
 label: 'Please upload the following files at the end: '
 studentsFiles:
-  - feur.ts
+  - tests.java
+  - protocol.md
