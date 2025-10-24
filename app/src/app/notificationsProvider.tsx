@@ -3,6 +3,7 @@
 import { NotificationsContext } from "@/lib/utils/hooks/notificationsContext";
 import { ReactNode, useEffect, useState } from "react";
 import { Notification } from "@/lib/types/notification";
+import { v4 as uuidv4 } from "uuid";
 
 interface ProvidersProps {
   children: ReactNode
@@ -14,7 +15,7 @@ export default function NotificationProvider({ children }: ProvidersProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = (notification: Notification) => {
-    const id = crypto.randomUUID();
+    const id = uuidv4();
 
     setNotifications(prev => [...prev, { ...notification, id }]);
   };
