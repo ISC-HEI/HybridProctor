@@ -38,11 +38,11 @@ export default function Page() {
 
         <h1 className={style.h1}>Upload</h1>
         {
-          yamlconf?.enable && <p>{yamlconf?.description}</p>
+          yamlconf?.enable && <p>{yamlconf?.label}</p>
         }
         <ul className={style.upload_file_list}>
           {
-            yamlconf?.files && yamlconf.files.map((v, i) =>
+            yamlconf?.studentsFiles && yamlconf.studentsFiles.map((v, i) =>
               <li key={i}>{v}</li>
             )
           }

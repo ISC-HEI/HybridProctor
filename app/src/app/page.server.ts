@@ -5,7 +5,6 @@ import logger from '@services/logger';
 import { getIp } from '@utils/network';
 import storage from '@services/storage';
 import { Yamlconf } from '@lib/types/yamlconf';
-import fs from 'fs/promises';
 import network from '@/lib/services/network';
 
 interface Ps {
@@ -36,7 +35,7 @@ export async function uploadFiles(files: File[]) {
     }
   }
 
-  if (storage.examConfig.files.length === 0) {
+  if (storage.examConfig.studentsFiles.length === 0) {
     logger.info(`${name} finished the exam.`, { issuer: name, action: "Finished" })
 
     await network.addUpdate(ip, { ip, allFilesSent: true });
@@ -49,7 +48,7 @@ export async function uploadFiles(files: File[]) {
 
   const uploadedNames = files.map(f => f.name);
 
-  const missing = storage.examConfig.files.filter(req => !uploadedNames.includes(req));
+  const missing = storage.examConfig.studentsFiles.filter(req => !uploadedNames.includes(req));
   if (missing.length > 0) {
     return {
       ok: false,

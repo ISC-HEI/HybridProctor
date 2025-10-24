@@ -19,7 +19,7 @@ const STEPS: StepPair[] = [
 ];
 
 export default function Configure() {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(2);
 
   const stepContextValue = useMemo<StepContextPayload>(() => ({
     step,

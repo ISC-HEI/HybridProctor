@@ -44,13 +44,13 @@ export default function Exam({ conf }: ExamProps) {
     <>
       <form className={style.form} onSubmit={handleSubmit}>
         {
-          conf && conf.files.length !== 0 &&
+          conf && conf.enable &&
             <div className={`input-group`}>
               <label htmlFor='fileslabel'>Select files</label>
               <input name='files' id='files' type="file" multiple onChange={handleChooseFiles} ref={fileInputRef} />
             </div>
         }
-        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf} type='submit'>{conf?.files.length !== 0 ? "Upload" : "Finish"}</button>
+        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf} type='submit'>{conf && conf.enable ? "Upload" : "Finish"}</button>
       </form>
     </>
   )

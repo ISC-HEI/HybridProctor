@@ -8,11 +8,11 @@ import Input from "@/components/input";
 import { StepContext } from "@/lib/utils/hooks/stepContext";
 import uploadConfig from "./index.server";
 
-const DEFAULT_DESC = "Please upload the following files at the end: ";
+const DEFAULT_LABEL = "Please upload the following files at the end: ";
 
 export default function ConfigForm() {
   const [enable, setEnable] = useState<boolean>(true);
-  const [description, setDescription] = useState<string>("");
+  const [label, setLabel] = useState<string>("");
   const [files, setFiles] = useState<string[]>([]);
   const [fileToAdd, setFileToAdd] = useState<string>("");
 
@@ -26,7 +26,7 @@ export default function ConfigForm() {
     
     startTransition(async () => {
       try {
-        await uploadConfig({ enable, description: description !== "" ? description : DEFAULT_DESC, files });
+        await uploadConfig({ enable, label: label !== "" ? label : DEFAULT_LABEL, studentsFiles: files });
         
         stepContext?.setStep(stepContext.step + 1);
       }
@@ -56,46 +56,51 @@ export default function ConfigForm() {
         <h2 className={style.title}>Configuration</h2>
 
         <label className={style.label}>
-          Enabled
+          Students need to upload files
           <input type="checkbox" checked={enable} onChange={evt => setEnable(evt.currentTarget.checked)} name="enabled" />
         </label>
-        <label className={`${style.label} ${style.desc}`}>
-          Description
-          <Input name="description" placeholder={DEFAULT_DESC} area value={description} onChange={evt => setDescription(evt.currentTarget.value)}/>
-        </label>
+        { enable &&
+          <>
+            <label className={`${style.label} ${style.desc}`}>
+              Label
+              <Input name="label" placeholder={DEFAULT_LABEL} area value={label} onChange={evt => setLabel(evt.currentTarget.value)}/>
+            </label>
 
-        <div className={style.filesContainer}>
-          <label className={style.label}>
-            <span>
-              Add file <span className="required">*</span>
-            </span>
-            <Input value={fileToAdd} onChange={evt => setFileToAdd(evt.currentTarget.value)} />
-            <button onClick={handleAddFile} className={style.addButton}>Add</button>
-          </label> 
+            <div className={style.filesContainer}>
+              <label className={style.label}>
+                <span>
+                  Add file <span className="required">*</span>
+                </span>
+                <Input value={fileToAdd} onChange={evt => setFileToAdd(evt.currentTarget.value)} />
+                <button onClick={handleAddFile} className={style.addButton}>Add</button>
+              </label> 
 
-          <ol className={style.files}>
-            {
-              files.length !== 0
-                ?
-                files.map(
-                  (file, idx) =>
-                    <li className={style.file} key={idx}>
-                      <p><strong>{file}</strong></p>
-                      <button className={style.delete} onClick={evt => { evt.preventDefault(); handleDeleteFile(file) }}>
-                        <XIcon size={16}/>
-                      </button>
+              <ol className={style.files}>
+                {
+                  files.length !== 0
+                    ?
+                    files.map(
+                      (file, idx) =>
+                        <li className={style.file} key={idx}>
+                          <p><strong>{file}</strong></p>
+                          <button className={style.delete} onClick={evt => { evt.preventDefault(); handleDeleteFile(file) }}>
+                            <XIcon size={16}/>
+                          </button>
+                        </li>
+                    )
+                    :
+                    <li className={style.noFiles}>
+                      <p><strong>No files</strong></p>
                     </li>
-                )
-                :
-                <li className={style.noFiles}>
-                  <p><strong>No files</strong></p>
-                </li>
-            }
-          </ol>
-        </div>
+                }
+              </ol>
+            </div>
+
+          </>
+        }
       </fieldset> 
 
-      <FormButtons loading={isPending}/>
+      <FormButtons disabled={enable && files.length === 0} loading={isPending}/>
     </form>
   )
 }

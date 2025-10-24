@@ -1,5 +1,4 @@
 enable: true
-description: 'Please upload the following files at the end: '
-files:
-  - tests.java
-  - protocol.md
+label: 'Please upload the following files at the end: '
+studentsFiles:
+  - feur.ts

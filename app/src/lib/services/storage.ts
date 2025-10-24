@@ -11,8 +11,6 @@ import argon2 from "argon2";
 import { Session } from "../types/session";
 import dayjs from "dayjs";
 
-const RESOURCES_ZIP = path.join(process.cwd(), "public/resources.zip");
-
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
 const DEFAULT_PASSWORD_FILE = "/mount_point/.password";

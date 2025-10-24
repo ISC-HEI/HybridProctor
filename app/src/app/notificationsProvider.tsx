@@ -16,8 +16,6 @@ export default function NotificationProvider({ children }: ProvidersProps) {
   const addNotification = (notification: Notification) => {
     const id = crypto.randomUUID();
 
-    console.log(id);
-
     setNotifications(prev => [...prev, { ...notification, id }]);
   };
 
@@ -29,8 +27,8 @@ export default function NotificationProvider({ children }: ProvidersProps) {
     notifications.forEach(notification => {
       if (!notification.infinite) {
         const timeoutId = setTimeout(() => {
-          console.log(notification.id);
           removeNotification(notification.id!);
+
         }, NOTIFICATION_COUNTDOWN);
 
         return () => clearTimeout(timeoutId);

@@ -54,12 +54,12 @@ export default function ExamForm() {
   return (
     <form onSubmit={handleSubmit} className={style.form}>
     <fieldset className={style.field}>
-        <h2 className={style.title}>Upload Resources</h2>
+        <h2 className={style.title}>Upload resources to be download by students</h2>
 
         <label className={style.label}>
           <div className={style.text}>
             <HardDriveUploadIcon className={style.uploadIcon} size={56} />
-            Upload resources here (.zip)
+            Upload resources here
           </div>
           <input ref={fileInputRef} type="file" name="resourcesFiles" onChange={handleChooseFiles} multiple required/>
         </label>
