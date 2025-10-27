@@ -33,82 +33,87 @@ class Network {
 
     headers.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
 
-    const res = await fetch(this.api + IPS_ROUTE, {
-      method: "POST",
-      headers: headers,
-    });
+    try {
+      const res = await fetch(this.api + IPS_ROUTE, {
+        method: "POST",
+        headers: headers,
+      });
 
-    const connections = await res.json();
+      const connections = await res.json();
 
-    const connectedIps = new Set<string>();
+      const connectedIps = new Set<string>();
 
-    for (const conn of connections) {
-      const address = conn["address"];
+      for (const conn of connections) {
+        const address = conn["address"];
 
-      if (address && !address.match(IP_REGEX)) {
-        const pingHeaders = new Headers();
+        if (address && !address.match(IP_REGEX)) {
+          const pingHeaders = new Headers();
 
-        pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
-        pingHeaders.set("Content-Type", "application/json");
-        pingHeaders.set("Accept", "application/json");
+          pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
+          pingHeaders.set("Content-Type", "application/json");
+          pingHeaders.set("Accept", "application/json");
 
-        try {
-          const res = await fetch(this.api + PING_ROUTE, {
-            method: "POST",
-            headers: pingHeaders,
-            body: JSON.stringify({ address: address, count: "1" })
-          });
+          try {
+            const res = await fetch(this.api + PING_ROUTE, {
+              method: "POST",
+              headers: pingHeaders,
+              body: JSON.stringify({ address: address, count: "1" })
+            });
 
-          const data = await res.json();
+            const data = await res.json();
 
-          if (data[0] && data[0].received === '1') {
-            connectedIps.add(address);
+            if (data[0] && data[0].received === '1') {
+              connectedIps.add(address);
+            }
+          }
+          catch (e) {
+            logger.error("Error sending ping command to router.");
           }
         }
-        catch (e) {
-          logger.error("Cannot send ping command to router.");
+      }
+
+      for (const [ip, student] of this.students) {
+        let connected = true;
+
+        if (!connectedIps.has(ip)) {
+          connected = false;
+        }
+
+        if (student && connected !== student.connected) {
+          if (connected === false && student.attempts < 1) {
+            student.attempts++;
+          }
+          else {
+            student.attempts = 0;
+
+            const since = Date.now();
+
+            this.update(ip, { ip, connected, since });
+
+            logger.warn(
+              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
+              { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
+            );
+          }
         }
       }
-    }
 
-    for (const [ip, student] of this.students) {
-      let connected = true;
-
-      if (!connectedIps.has(ip)) {
-        connected = false;
-      }
-
-      if (student && connected !== student.connected) {
-        if (connected === false && student.attempts < 1) {
-          student.attempts++;
-        }
-        else {
-          student.attempts = 0;
-
-          const since = Date.now();
-
-          this.update(ip, { ip, connected, since });
-
-          logger.warn(
-            `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
-            { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
-          );
+      for (const studentIp of connectedIps) {
+        if (!this.students.has(studentIp)) {
+          this.addNewStudent(studentIp);
         }
       }
-    }
 
-    for (const studentIp of connectedIps) {
-      if (!this.students.has(studentIp)) {
-        this.addNewStudent(studentIp);
+
+      if (this.studentUpdates.size > 0) {
+        sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
       }
+
+      this.studentUpdates.clear();
     }
-
-
-    if (this.studentUpdates.size > 0) {
-      sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
+    catch (e) {
+      logger.error("Error fetching IPs.");
     }
-
-    this.studentUpdates.clear();
 
     unlock();
   }
