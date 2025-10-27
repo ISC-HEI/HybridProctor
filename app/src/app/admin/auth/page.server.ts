@@ -15,7 +15,7 @@ export async function verify(formData: FormData) {
     const next = cookiesStore.get("desired_url");
 
     if (!next || !next.value) {
-      permanentRedirect("/")
+      return permanentRedirect("/")
     }
 
     const id = storage.createSession(ip);
@@ -26,11 +26,13 @@ export async function verify(formData: FormData) {
       path: '/admin'
     })
 
-    permanentRedirect(next.value);
+    logger.info(`IP ${ip} logged in as admin.`, { issuer: ip, action: "logged in" });
+
+    return permanentRedirect(next.value);
   }
   else {
     logger.warn(`IP '${ip}' tried wrong password.`, { issuer: ip, action: "tried" });
 
-    permanentRedirect("/");
+    return permanentRedirect("/");
   }
 }

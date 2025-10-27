@@ -10,6 +10,7 @@ import crypto from "crypto";
 import argon2 from "argon2";
 import { Session } from "../types/session";
 import dayjs from "dayjs";
+import { getIp } from "../utils/network";
 
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
@@ -121,8 +122,6 @@ class Storage {
 
       return false;
     }
-
-    logger.info(`IP ${ip} logged in as admin.`, { issuer: ip, action: "logged in" });
 
     return true;
   }
