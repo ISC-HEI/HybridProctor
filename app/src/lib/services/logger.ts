@@ -7,6 +7,7 @@ import "dayjs/locale/fr-ch";
 import firstline from "firstline";
 import sseManager from "@services/sse";
 import Mutex from "../utils/mutex";
+import { v4 as uuidv4 } from "uuid";
 
 dayjs.locale("fr-ch");
 
@@ -20,6 +21,7 @@ interface LogRecordOpts {
 
 export type LogType = "all"|"errors"|"warnings"|"infos"|"debug";
 export type LogRecord = {
+  uuid: string;
   type: LogType;
   timestamp: string;
   issuer?: string;
@@ -87,8 +89,10 @@ class Logger {
     const timestamp = dayjs();
     const formatedTime = this.getFormatedTime(timestamp);
     const raw = `[${ type[0].toUpperCase() }] ${formatedTime} | ${message}`;
+    const uuid = uuidv4();
 
     return {
+      uuid,
       type,
       timestamp: timestamp.toISOString(),
       message,

@@ -2,6 +2,7 @@
 
 import { useRelativeTime } from "@/lib/utils/hooks/useRelativeTime";
 import { LogRecord } from "@services/logger";
+import { motion } from "motion/react";
 
 import style from "./index.module.scss"
 
@@ -14,7 +15,10 @@ export default function Log({ record, isNew }: LogProps) {
   const relative = useRelativeTime(record.timestamp);
 
   return (
-    <li className={`${style.record} ${isNew ? style.new : ''}`}>
+    <motion.li 
+      layout initial={{ opacity: 0, right: "-80%" }} animate={{ opacity: 1, right: 0 }} exit={{ opacity: 0, right: "-80%" }}
+      className={`${style.record} ${isNew ? style.new : ''}`}
+    >
       <div className={style.type}>
         <span>{record.type[0].toUpperCase()}</span>
       </div>
@@ -24,6 +28,6 @@ export default function Log({ record, isNew }: LogProps) {
         }
         <p>{record.message} {!record.issuer && (<span><span className={style.bullet}></span> {relative}</span>)}</p>
       </div>
-    </li>
+    </motion.li>
   )
 }

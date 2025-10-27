@@ -23,8 +23,17 @@ export default function Monitor() {
 
       eventSource.addEventListener("log", async (evt) => {
         const data = await JSON.parse(evt.data) as { message: LogRecord[] };
+        
 
-        setLogs(prevLogs => [...prevLogs, ...data.message]);
+        setLogs(prevLogs => {
+          const set = new Set(prevLogs);
+          
+          for (const log of data.message) {
+            set.add(log);
+          }
+
+          return [...set];
+        });
       })
 
       eventSource.addEventListener("state", async (evt) => {
