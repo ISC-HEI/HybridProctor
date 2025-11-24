@@ -1,4 +1,4 @@
-# 2025-11-24 08:53:51 by RouterOS 7.19.6
+# 2025-11-24 10:33:24 by RouterOS 7.19.6
 # software id = XI8L-JHJW
 #
 # model = L009UiGS-2HaxD
@@ -35,7 +35,7 @@ set 0 name=serial0
 /container
 add interface=veth1 logging=yes mounts=mount,uploads name=\
     hybridproctor-arm-dev:latest root-dir=usb1/HybridProctorDevContainer \
-    start-on-boot=yes workdir=/app
+    workdir=/app
 /container config
 set registry-url=https://registry-1.docker.io tmpdir=usb1/pull
 /disk settings
@@ -57,6 +57,7 @@ set discover-interface-list=LAN
 add comment=defconf interface=bridge list=LAN
 add comment=defconf interface=ether1 list=WAN
 add interface=dockers list=LAN
+add interface=bridge-wifi list=LAN
 /ip address
 add address=192.168.88.1/24 comment=defconf interface=bridge network=\
     192.168.88.0
@@ -111,13 +112,15 @@ add action=dst-nat chain=dstnat dst-port=2222 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=22
 add action=dst-nat chain=dstnat dst-port=3000 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=3000
-add action=dst-nat chain=dstnat dst-port=80 protocol=tcp to-addresses=\
-    172.17.0.2 to-ports=80
-add action=dst-nat chain=dstnat comment="Redirect HTTP to proxy" dst-port=80 \
-    protocol=tcp src-address=192.168.89.0 to-addresses=10.0.0.1 to-ports=80
 add action=dst-nat chain=dstnat comment="Redirect HTTPS to proxy" dst-port=\
-    443 protocol=tcp src-address=192.168.89.0 to-addresses=10.0.0.1 to-ports=\
-    443
+    443 protocol=tcp src-address=192.168.89.0/24 to-addresses=10.0.0.1 \
+    to-ports=443
+add action=dst-nat chain=dstnat comment="Redirect HTTP to proxy" dst-port=80 \
+    protocol=tcp src-address=192.168.89.0/24 to-addresses=172.17.0.2 \
+    to-ports=80
+add action=dst-nat chain=dstnat comment="Accept 10.0.0.1" dst-address=\
+    10.0.0.1 protocol=tcp src-address=192.168.88.0/24 to-addresses=172.17.0.2 \
+    to-ports=80
 /ip service
 set www port=3131
 /ip upnp interfaces
