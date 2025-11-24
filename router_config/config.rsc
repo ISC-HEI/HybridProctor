@@ -1,37 +1,45 @@
-# 2024-05-31 14:18:27 by RouterOS 7.14.1
-# software id = JJ1A-EPSF
+# 2025-11-24 08:53:51 by RouterOS 7.19.6
+# software id = XI8L-JHJW
 #
 # model = L009UiGS-2HaxD
-# serial number = HF3099M4VG6
+# serial number = HG509KFNBYH
 /container mounts
 add dst=/mount_point name=mount src=/usb1/mount
 add dst=/home/admin/upload name=uploads src=/usb1/uploads
 /interface bridge
-add admin-mac=78:9A:18:62:EF:4C auto-mac=no comment=defconf name=bridge \
-    port-cost-mode=short
+add admin-mac=D4:01:C3:30:B1:44 auto-mac=no comment=defconf name=bridge
+add name=bridge-wifi
 add name=dockers
 /interface wifi
-set [ find default-name=wifi1 ] configuration.country=Switzerland .mode=ap \
-    .ssid=ISC_Exam datapath.client-isolation=yes disabled=no
+set [ find default-name=wifi1 ] channel.band=2ghz-ax .skip-dfs-channels=\
+    10min-cac .width=20/40mhz configuration.country=Switzerland .mode=ap \
+    .ssid=ISC_Exam datapath.client-isolation=yes disabled=no \
+    security.authentication-types=wpa2-psk,wpa3-psk .ft=yes .ft-over-ds=yes
 /interface veth
 add address=172.17.0.2/24 gateway=172.17.0.1 gateway6="" name=veth1
 /interface list
 add comment=defconf name=WAN
 add comment=defconf name=LAN
 /ip pool
+add name=default-dhcp ranges=192.168.88.10-192.168.88.254
 add name=dhcp ranges=10.0.0.10-10.0.0.254
 add name=pool0 ranges=10.0.0.10-10.0.0.100
+add name=wifi-pool ranges=192.168.89.10-192.168.89.254
 /ip dhcp-server
-add add-arp=yes address-pool=dhcp always-broadcast=yes authoritative=\
-    after-2sec-delay bootp-support=none conflict-detection=no interface=\
-    bridge lease-time=10m name=defconf
+add address-pool=default-dhcp interface=bridge name=defconf
+add address-pool=pool0 disabled=yes interface=ether1 name=dhcp1 \
+    server-address=10.0.0.1
+add address-pool=wifi-pool interface=bridge-wifi lease-time=6h name=wifi-dhcp
 /port
 set 0 name=serial0
 /container
-add interface=veth1 mounts=mount,uploads root-dir=usb1/hybridProctorContainer \
+add interface=veth1 logging=yes mounts=mount,uploads name=\
+    hybridproctor-arm-dev:latest root-dir=usb1/HybridProctorDevContainer \
     start-on-boot=yes workdir=/app
 /container config
 set registry-url=https://registry-1.docker.io tmpdir=usb1/pull
+/disk settings
+set auto-media-interface=bridge auto-media-sharing=yes auto-smb-sharing=yes
 /interface bridge port
 add bridge=bridge comment=defconf interface=ether2
 add bridge=bridge comment=defconf interface=ether3
@@ -41,30 +49,32 @@ add bridge=bridge comment=defconf interface=ether6
 add bridge=bridge comment=defconf interface=ether7
 add bridge=bridge comment=defconf interface=ether8
 add bridge=bridge comment=defconf interface=sfp1
-add bridge=bridge comment=defconf interface=*2
 add bridge=dockers interface=veth1
-add bridge=bridge interface=wifi1
+add bridge=bridge-wifi interface=wifi1
 /ip neighbor discovery-settings
 set discover-interface-list=LAN
 /interface list member
 add comment=defconf interface=bridge list=LAN
 add comment=defconf interface=ether1 list=WAN
+add interface=dockers list=LAN
 /ip address
 add address=192.168.88.1/24 comment=defconf interface=bridge network=\
     192.168.88.0
 add address=172.17.0.1/24 interface=dockers network=172.17.0.0
 add address=10.0.0.1/24 interface=bridge network=10.0.0.0
+add address=192.168.89.1/24 interface=bridge-wifi network=192.168.89.0
 /ip dhcp-client
 add comment=defconf interface=ether1
-/ip dhcp-server
-add address-pool=pool0 disabled=yes interface=*2 name=dhcp1 server-address=\
-    10.0.0.1
 /ip dhcp-server network
 add address=10.0.0.0/24 dns-none=yes domain=isc gateway=10.0.0.1
+add address=192.168.88.0/24 comment=defconf dns-server=192.168.88.1 gateway=\
+    192.168.88.1
+add address=192.168.89.0/24 dns-server=192.168.89.1 gateway=192.168.89.1
 /ip dns
 set allow-remote-requests=yes
 /ip dns static
-add address=10.0.0.1 comment=defconf name=router.lan
+add address=192.168.88.1 comment=defconf name=router.lan type=A
+add address=10.0.0.1 comment=defconf name=router.lan type=A
 /ip firewall filter
 add action=accept chain=input comment=\
     "defconf: accept established,related,untracked" connection-state=\
@@ -90,8 +100,10 @@ add action=drop chain=forward comment="defconf: drop invalid" \
 add action=drop chain=forward comment=\
     "defconf: drop all from WAN not DSTNATed" connection-nat-state=!dstnat \
     connection-state=new in-interface-list=WAN
+add action=drop chain=forward dst-address=192.168.88.0/24 src-address=\
+    192.168.89.0/24
 /ip firewall nat
-add action=masquerade chain=srcnat comment="defconf: masquerade" disabled=yes \
+add action=masquerade chain=srcnat comment="defconf: masquerade" \
     ipsec-policy=out,none out-interface-list=WAN
 add action=dst-nat chain=dstnat dst-port=8001 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=8001
@@ -101,6 +113,13 @@ add action=dst-nat chain=dstnat dst-port=3000 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=3000
 add action=dst-nat chain=dstnat dst-port=80 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=80
+add action=dst-nat chain=dstnat comment="Redirect HTTP to proxy" dst-port=80 \
+    protocol=tcp src-address=192.168.89.0 to-addresses=10.0.0.1 to-ports=80
+add action=dst-nat chain=dstnat comment="Redirect HTTPS to proxy" dst-port=\
+    443 protocol=tcp src-address=192.168.89.0 to-addresses=10.0.0.1 to-ports=\
+    443
+/ip service
+set www port=3131
 /ip upnp interfaces
 add interface=bridge type=internal
 add interface=ether1 type=external
@@ -138,6 +157,8 @@ add action=accept chain=input comment=\
 add action=drop chain=input comment=\
     "defconf: drop everything else not coming from LAN" in-interface-list=\
     !LAN
+add action=fasttrack-connection chain=forward comment="defconf: fasttrack6" \
+    connection-state=established,related
 add action=accept chain=forward comment=\
     "defconf: accept established,related,untracked" connection-state=\
     established,related,untracked
@@ -168,10 +189,6 @@ set time-zone-name=Europe/Zurich
 /system logging
 add topics=wireless,debug
 add topics=wireless,debug
-/system note
-set note="HybridProctor,14.5.2024\r\
-    \n- WiFI can be accessed with a mac or pc, corrected\r\
-    \n- Config backup" show-at-cli-login=yes
 /system ntp client
 set enabled=yes
 /system ntp client servers
