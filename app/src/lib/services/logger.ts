@@ -106,6 +106,11 @@ class Logger {
     const unlock = await this.logsMutex.lock();
     await fs.appendFile(this.logFilePath, record.raw + '\n', "utf8");
     this.logs.push(record);
+    
+    if (this.logs.length > 500) {
+      this.logs.shift();
+    }
+
     unlock();
 
     sseManager.broadcast([record], "log");

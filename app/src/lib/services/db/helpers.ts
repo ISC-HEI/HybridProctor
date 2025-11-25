@@ -3,13 +3,31 @@
 import db from "./";
 
 export async function nameInDb(name: string) {
-  return db.prepare("SELECT 1 FROM students WHERE name = ?").get(name);
+  const data = db.prepare("SELECT 1 FROM students WHERE name = ?").get(name);
+
+  if (data == undefined) {
+    return false;
+  }
+
+  return data;
 }
 
 export async function getNameFromIp(ip: string) {
-  return (db.prepare("SELECT name FROM students WHERE ip = ?").get(ip) as { name: string }).name;
+  const data = db.prepare("SELECT name FROM students WHERE ip = ?").get(ip);
+  
+  if (data == undefined) {
+    return false;
+  }
+
+  return data.name
 }
 
 export async function getIpFromName(name: string) {
-  return (db.prepare("SELECT ip FROM students WHERE name = ?").get(name) as { ip: string }).ip;
+  const data = db.prepare("SELECT ip FROM students WHERE name = ?").get(name);
+
+  if (data == undefined) {
+    return false;
+  }
+
+  return data.ip;
 }

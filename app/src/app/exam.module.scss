@@ -24,6 +24,8 @@
   border-radius: 3px;
   padding: 20px;
   cursor: pointer;
+  position: relative;
+  height: 4em;
 
   &:disabled {
     background-color: vars.$gray4;

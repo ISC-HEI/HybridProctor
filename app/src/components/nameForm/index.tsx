@@ -6,17 +6,20 @@ import { useActionState } from "react";
 
 import style from './index.module.scss';
 import Input from "../input";
+import Loader from "../loader";
 
 
 export default function NameForm() {
   const [name, setName] = useState<string>("");
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", name: "" });
 
   useEffect(() => {
     if (state.ok && state.name !== "") {
       localStorage.setItem("name", state.name);
       dialogRef.current?.close();
+      setLoading(false);
     }
   }, [state]);
 
@@ -33,7 +36,7 @@ export default function NameForm() {
   return (
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <h2>Please enter your full name</h2>
-      <form className={style.form} id='form' action={formAction}>
+      <form className={style.form} id='form' action={formAction} onSubmit={() => setLoading(true)}>
         <div className="input-group">
           <label className={style.label}>
             Name
@@ -41,7 +44,12 @@ export default function NameForm() {
           </label>
         </div>
         <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
-        <button className={`${style.btn} submit-btn btn-primary`} type='submit'>Start</button>
+        <button className={`${style.btn} submit-btn btn-primary`} type='submit'>
+          { loading
+            ? <Loader />
+            : "Start"
+          }
+        </button>
       </form> 
     </dialog>
   )

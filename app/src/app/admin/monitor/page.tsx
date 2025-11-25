@@ -2,53 +2,53 @@
 
 import Logs from '@/components/logs';
 import style from './page.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LogRecord, type LogType } from '@services/logger';
 import LogTypeChoice from '@/components/logTypeChoice';
 import { fetchUrl } from './page.server';
 import { Student, StudentUpdate } from '@/lib/types/student';
 import StudentsTable from '@/components/studentsTable';
+import Loader from '@/components/loader';
 
 export default function Monitor() {
   const [type, setType] = useState<LogType>("all");
   const [logs, setLogs] = useState<LogRecord[]>([]);
   const [students, setStudents] = useState<Map<string, Student>>(new Map());
 
+  const hasRun = useRef(false);
+
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     let eventSource: EventSource;
 
     (async () => {
       const url = await fetchUrl();
       eventSource = new EventSource(`${url}/api/sse`);
 
-      eventSource.addEventListener("log", async (evt) => {
-        const data = await JSON.parse(evt.data) as { message: LogRecord[] };
-        
-
-        setLogs(prevLogs => {
-          const set = new Set(prevLogs);
-          
-          for (const log of data.message) {
-            set.add(log);
-          }
-
-          return [...set];
-        });
+      eventSource.addEventListener("open", async (evt) => {
+        console.log("Connected");
       })
 
-      eventSource.addEventListener("state", async (evt) => {
-        const data = await JSON.parse(evt.data) as { message: StudentUpdate[] };
+      eventSource.addEventListener("log", (evt) => {
+        const data = JSON.parse(evt.data) as { message: LogRecord[] };
+        
+        // This is much more efficient than creating a Set from the entire
+        // previous state on every update.
+        setLogs(prevLogs => [...prevLogs, ...data.message]);
+      })
+
+      eventSource.addEventListener("state", (evt) => {
+        const data = JSON.parse(evt.data) as { message: StudentUpdate[] };
 
         setStudents(prevStudents => {
-          const tempStudents: Map<string, Student> = new Map(prevStudents);
+          const tempStudents = new Map(prevStudents);
 
           for (const studentUpdate of data.message) {
-            if (!prevStudents.has(studentUpdate.ip)) {
-              tempStudents.set(studentUpdate.ip, studentUpdate as Student);
-              continue;
-            }
-
-            tempStudents.set(studentUpdate.ip, { ...prevStudents.get(studentUpdate.ip) as Student, ...studentUpdate });
+            const existing = tempStudents.get(studentUpdate.ip);
+            // This correctly creates a new student entry or merges with an existing one.
+            tempStudents.set(studentUpdate.ip, { ...existing, ...studentUpdate } as Student);
           }
 
           return tempStudents;
@@ -71,14 +71,21 @@ export default function Monitor() {
     <div className={style.page}>
       <aside className={style.logs}>
         <LogTypeChoice onChoice={setType} />
+        { logs.length == 0
+          ? <Loader />
+          : <Logs logs={logs} type={type} />
+        }
 
-        <Logs logs={logs} type={type} />
       </aside>
 
       <main className={style.main}>
-        <div className={style.tableContainer}>
-          <StudentsTable students={students} />
-        </div>
+        { students.size == 0
+          ? <Loader />
+          :
+          <div className={style.tableContainer}>
+            <StudentsTable students={students} />
+          </div>
+        }
       </main>
     </div>
   )

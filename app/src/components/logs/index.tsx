@@ -11,11 +11,11 @@ interface LogsProps {
 }
 
 export default function Logs({ type, logs }: LogsProps) {
-  const reversedLogs = logs.toReversed();
+  const filteredLogs = logs.filter(log => type === "all" || log.type === type).reverse();
 
   const lastIndex = type === "all" 
     ? 0 
-    : reversedLogs.indexOf(reversedLogs.filter(log => log.type === type)[0]);
+    : filteredLogs.indexOf(filteredLogs.filter(log => log.type === type)[0]);
 
 
   return (
@@ -23,7 +23,7 @@ export default function Logs({ type, logs }: LogsProps) {
       <ol className={style.logs}>
         <AnimatePresence>
           {
-            reversedLogs.map((v, i) =>
+            filteredLogs.map((v, i) =>
             {
                 return (type === "all" || v.type === type) && <Log key={v.uuid} record={v} isNew={i === lastIndex}></Log>
               }

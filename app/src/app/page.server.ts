@@ -7,11 +7,6 @@ import storage from '@services/storage';
 import { Yamlconf } from '@lib/types/yamlconf';
 import network from '@/lib/services/network';
 
-interface Ps {
-  ok: boolean;
-  message: string;
-}
-
 export async function fetchResources(): Promise<string[]> {
   return storage.resources;
 }

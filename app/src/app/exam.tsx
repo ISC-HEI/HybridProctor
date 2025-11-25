@@ -10,6 +10,7 @@ import { FormEvent, useRef, useState } from 'react';
 import style from './exam.module.scss';
 import { Yamlconf } from '@/lib/types/yamlconf';
 import { useNotifications } from '@/lib/utils/hooks/useNotifications';
+import Loader from '@/components/loader';
 
 interface ExamProps {
   conf: Yamlconf|undefined;
@@ -19,6 +20,7 @@ export default function Exam({ conf }: ExamProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const addNotification = useNotifications().addNotification;
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChooseFiles = () => {
     const newFiles: File[] = [];
@@ -35,7 +37,11 @@ export default function Exam({ conf }: ExamProps) {
   const handleSubmit = async (evt: FormEvent) => {
     evt.preventDefault();
     
+    setLoading(true);
+    
     const state = await uploadFiles(files);
+
+    setLoading(false);
     
     addNotification({ success: state.ok, text: state.message, infinite: false }); 
   } 
@@ -50,7 +56,12 @@ export default function Exam({ conf }: ExamProps) {
               <input name='files' id='files' type="file" multiple onChange={handleChooseFiles} ref={fileInputRef} />
             </div>
         }
-        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf} type='submit'>{conf && conf.enable ? "Upload" : "Finish"}</button>
+        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf} type='submit'>
+          { loading
+            ? <Loader light />
+            : conf && conf.enable ? "Upload" : "Finish"
+          }
+        </button>
       </form>
     </>
   )

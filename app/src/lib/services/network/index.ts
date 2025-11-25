@@ -27,8 +27,6 @@ class Network {
   }
 
   private async callback() {
-    const unlock = await this.studentsMutex.lock();
-    
     const headers = new Headers();
 
     headers.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
@@ -41,67 +39,70 @@ class Network {
 
       const connections = await res.json();
 
-      const connectedIps = new Set<string>();
-
-      for (const conn of connections) {
-        const address = conn["address"];
-
-        if (address && !address.match(IP_REGEX)) {
+      const pingPromises = connections
+        .map((conn: { [x: string]: string; }) => conn["address"])
+        .filter((address: string) => address && !address.match(IP_REGEX))
+        .map(async (address: string) => {
           const pingHeaders = new Headers();
-
           pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
           pingHeaders.set("Content-Type", "application/json");
           pingHeaders.set("Accept", "application/json");
 
           try {
-            const res = await fetch(this.api + PING_ROUTE, {
+            const pingRes = await fetch(this.api + PING_ROUTE, {
               method: "POST",
               headers: pingHeaders,
               body: JSON.stringify({ address: address, count: "1" })
             });
-
-            const data = await res.json();
-
+            const data = await pingRes.json();
             if (data[0] && data[0].received === '1') {
-              connectedIps.add(address);
+              return address; // Return the IP if the ping was successful
+            }
+          } catch (e) {
+            logger.error(`Error sending ping command to router for IP ${address}.`);
+          }
+          return null; // Return null for failed or unresponsive pings
+        });
+
+      const pingResults = await Promise.all(pingPromises);
+      const connectedIps = new Set(pingResults.filter((ip): ip is string => ip !== null));
+
+      const unlock = await this.studentsMutex.lock();
+      try {
+        for (const [ip, student] of this.students) {
+          let connected = true;
+
+          if (!connectedIps.has(ip)) {
+            connected = false;
+          }
+
+          if (student && connected !== student.connected) {
+            if (connected === false && student.attempts < 1) {
+              student.attempts++;
+            }
+            else {
+              student.attempts = 0;
+
+              const since = Date.now();
+
+              this.update(ip, { ip, connected, since });
+
+              logger.warn(
+                `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
+                { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
+              );
             }
           }
-          catch (e) {
-            logger.error("Error sending ping command to router.");
+        }
+
+        for (const studentIp of connectedIps) {
+          if (!this.students.has(studentIp)) {
+            this.addNewStudent(studentIp);
           }
         }
       }
-
-      for (const [ip, student] of this.students) {
-        let connected = true;
-
-        if (!connectedIps.has(ip)) {
-          connected = false;
-        }
-
-        if (student && connected !== student.connected) {
-          if (connected === false && student.attempts < 1) {
-            student.attempts++;
-          }
-          else {
-            student.attempts = 0;
-
-            const since = Date.now();
-
-            this.update(ip, { ip, connected, since });
-
-            logger.warn(
-              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
-              { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
-            );
-          }
-        }
-      }
-
-      for (const studentIp of connectedIps) {
-        if (!this.students.has(studentIp)) {
-          this.addNewStudent(studentIp);
-        }
+      finally {
+        unlock();
       }
 
 
@@ -114,18 +115,12 @@ class Network {
     catch (e) {
       logger.error("Error fetching IPs.");
     }
-
-    unlock();
   }
 
-  private async addNewStudent(ip: string) {
-    const unlock = await this.studentsMutex.lock();
-
+  private addNewStudent(ip: string) {
     const student = { ip, name: "", connected: true, allFilesSent: false, since: Date.now(), attempts: 0 };
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
-
-    unlock();
   }
 
   private update(ip: string, update: StudentUpdate) {

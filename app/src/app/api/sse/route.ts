@@ -1,25 +1,41 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const preferredRegion = "auto";
+export const fetchCache = "force-no-store";
+
 
 import sseManager from "@services/sse";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const responseStream = new TransformStream();
-  const writer = responseStream.writable.getWriter();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        controller.enqueue(sseManager.encode("init", "Connecting..."));
 
-  await sseManager.addClient(writer);
+        sseManager.addClient(controller);
 
-  req.signal.addEventListener("abort", () => {
-    sseManager.removeClient(writer);
-    writer.close();
-  })
+        req.signal.addEventListener("abort", () => {
+          sseManager.removeClient(controller);
+          controller.close();
+        })
 
-  return new Response(responseStream.readable, {
+      } catch (error) {
+        console.error("Stream error:", error);
+        controller.enqueue(sseManager.encode("error", "Stream interrupted"));
+        sseManager.removeClient(controller);
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Connection": "keep-alive",
-      "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache, no-transform",
-      "X-Accel-Buffering": "no",
-    }
-  })
+      Connection: "keep-alive",
+      "Content-Type": "text/event-stream",
+    },
+    status: 200,
+  });
 }

@@ -2,10 +2,10 @@
 import logger from "./logger";
 import network from "./network";
 
-export type SSEEvent = "log"|"state";
+export type SSEEvent = "log"|"state"|"error";
 
 class SSEManager {
-  clients: WritableStreamDefaultWriter<Uint8Array>[];
+  clients: ReadableStreamDefaultController[];
   encoder: TextEncoder;
   
   constructor() {
@@ -13,29 +13,30 @@ class SSEManager {
     this.encoder = new TextEncoder();
   }
 
-  public async addClient(writer: WritableStreamDefaultWriter<Uint8Array>) {
-    this.clients.push(writer);
-    writer.write(this.encoder.encode("event: log\n"));
-    writer.write(this.encoder.encode(`data: ${JSON.stringify({ message: logger.getLogs() })}\n\n`));
-    writer.write(this.encoder.encode("event: state\n"));
-    writer.write(this.encoder.encode(`data: ${JSON.stringify({ message: await network.getStudents() })}\n\n`));
+  public async addClient(controller: ReadableStreamDefaultController) {
+    this.clients.push(controller);
+    
+    controller.enqueue(this.encode("log", `${JSON.stringify({ message: logger.getLogs() })}`));
+    controller.enqueue(this.encode("state", `${JSON.stringify({ message: await network.getStudents() })}`));
   }
 
-  public removeClient(writer: WritableStreamDefaultWriter<Uint8Array>) {
-    const idx = this.clients.indexOf(writer);
+  public removeClient(controller: ReadableStreamDefaultController) {
+    const idx = this.clients.indexOf(controller);
     if (idx !== -1) {
       this.clients.splice(idx, 1);
     }
   }
 
   public broadcast(message: object, event: SSEEvent) {
-    const evt = this.encoder.encode(`event: ${event}\n`);
-    const data = this.encoder.encode(`data: ${JSON.stringify({ message: message })}\n\n`);
-    
-    for (const writer of this.clients) {
-      writer.write(evt).catch(() => {})
-      writer.write(data).catch(() => {});
+    const data = this.encode(event, `${JSON.stringify({ message: message })}`);
+
+    for (const controller of this.clients) {
+      controller.enqueue(data);
     }
+  }
+
+  public encode(event: string, data: string) {
+    return this.encoder.encode(`event: ${event}\ndata: ${data}\n\n`);
   }
 }
 
