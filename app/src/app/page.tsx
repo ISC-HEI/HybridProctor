@@ -31,7 +31,7 @@ export default function Page() {
           {
             files.map((v, i) =>
               <li key={i}>
-                <a href={`/resources/${v}`} download={v}>{v}</a>
+                <a href={`/api/resources/${v}`} download={v}>{v}</a>
               </li>)
           }
         </ul>
