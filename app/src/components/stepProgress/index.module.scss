@@ -85,3 +85,45 @@ $icon_padding: 10px;
     }
   }
 }
+
+@media (max-height: 1300px) {
+  .progress {
+    .list {
+      flex-direction: column;
+
+      .step {
+        flex-direction: row;
+        justify-content: flex-start;
+        height: $step_width;
+
+        .iconContainer {
+          &::before, &::after {
+            left: 50%;
+            top: calc(100% + $step_gap / 2 - $icon_padding);
+            transform: translateX(-50%);
+            width: 2px;
+            height: $line_size;
+          }
+
+          &::after {
+            height: 0;
+          }
+
+          &.active {
+            position: relative;
+            left: 2px;
+
+            &::after, &::before {
+              top: calc(100% + ( $step_gap / 2 - $icon_padding + 2px ));
+              left: 50%;
+            }
+          }
+
+          &.done {
+            height: $line_size;
+          }
+        }
+      }
+    }
+  }
+}

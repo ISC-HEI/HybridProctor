@@ -17,7 +17,7 @@ COPY app/node_modules ./node_modules
 COPY app/*.sh /app/
 
 RUN chmod +x /app/*.sh
-RUN npm install --platform=linux --arch=arm --target_arch=arm better-sqlite3
+RUN npm install --loglevel verbose --platform=linux --arch=arm --target_arch=arm better-sqlite3
 
 # Config de ressources
 ENV RESOURCE_FOLDER=/mount_point

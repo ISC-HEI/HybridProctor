@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       "Content-Type": "text/event-stream",
+      "X-Accel-Buffering": "no",
     },
     status: 200,
   });

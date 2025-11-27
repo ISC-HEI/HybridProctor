@@ -2,7 +2,7 @@
 @use "@style/_vars.scss";
 
 .page {
-  padding: 7em 0;
+  padding: 7em;
   height: 100vh;
   width: 100%;
   display: flex;
@@ -17,5 +17,17 @@
     left: 50%;
     bottom: 10em;
     transform: translateX(-50%);
+    height: fit-content;
   } 
+}
+
+@media (max-height: 1300px) {
+  .page {
+    .progress {
+      position: absolute;
+      left: 5em;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
 }
