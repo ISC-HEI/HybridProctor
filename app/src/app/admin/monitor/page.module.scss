@@ -14,7 +14,12 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 7em;
+    padding: {
+      top: 7em;
+      left: 7em;
+      right: 7em;
+      bottom: 10em;
+    }
     position: relative;
 
     .tableContainer {

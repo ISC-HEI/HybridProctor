@@ -1,3 +1,5 @@
-enable: false
+enable: true
 label: 'Please upload the following files at the end: '
-studentsFiles: []
+studentsFiles:
+  - tests.java
+  - protocol.md

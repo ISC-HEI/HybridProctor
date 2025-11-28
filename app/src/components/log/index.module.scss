@@ -22,6 +22,7 @@ $line-size: $record-height - $type-size;
     background-color: vars.$gray3;
     border-radius: 50%;
     color: vars.$blue;
+    flex-shrink: 0;
 
     &::before {
       content: "";
@@ -41,10 +42,11 @@ $line-size: $record-height - $type-size;
   .content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
-    gap: 10px;
     color: vars.$secondary-text-color;
+    min-width: 0;
+    overflow-wrap: break-word;
 
     strong {
       color: vars.$primary-text-color;

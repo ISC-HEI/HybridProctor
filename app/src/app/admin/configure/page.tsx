@@ -8,9 +8,10 @@ import { StepContext, StepContextPayload } from "@/lib/utils/hooks/stepContext";
 import { useMemo, useState } from "react";
 import StepProgress from "@/components/stepProgress";
 import { StepPair } from "@/lib/types/StepPair";
-import { BookCheckIcon, CogIcon, FolderPlusIcon } from "lucide-react";
+import { BookCheckIcon, CogIcon, FolderPlusIcon, SquareActivityIcon } from "lucide-react";
 import ConfigForm from "@/components/configureForms/configForm";
 import ResourcesForm from "@components/configureForms/resourcesForm";
+import Goto from "@/components/goto";
 
 const STEPS: StepPair[] = [
   { icon: BookCheckIcon, label: "Exam" },
@@ -37,6 +38,7 @@ export default function Configure() {
 
   return (
     <main className={style.page}>
+      <Goto href="/admin/monitor" Icon={SquareActivityIcon} />
       <StepContext.Provider value={stepContextValue}>
         {
           renderStep()

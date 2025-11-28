@@ -9,6 +9,8 @@ import { fetchUrl } from './page.server';
 import { Student, StudentUpdate } from '@/lib/types/student';
 import StudentsTable from '@/components/studentsTable';
 import Loader from '@/components/loader';
+import Goto from '@/components/goto';
+import { CogIcon } from 'lucide-react';
 
 export default function Monitor() {
   const [type, setType] = useState<LogType>("all");
@@ -33,7 +35,7 @@ export default function Monitor() {
 
       eventSource.addEventListener("log", (evt) => {
         const data = JSON.parse(evt.data) as { message: LogRecord[] };
-        
+
         // This is much more efficient than creating a Set from the entire
         // previous state on every update.
         setLogs(prevLogs => [...prevLogs, ...data.message]);
@@ -69,6 +71,7 @@ export default function Monitor() {
 
   return (
     <div className={style.page}>
+      <Goto href="/admin/configure" Icon={CogIcon} />
       <aside className={style.logs}>
         <LogTypeChoice onChoice={setType} />
         { logs.length == 0
