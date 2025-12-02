@@ -195,22 +195,18 @@ class Storage {
     return true;
   }
 
-  public async readDir(path?: PathLike) {
-    if (!path) {
-      path = this.rootLocation;
-    }
-    else {
-      path = join(this.rootLocation, path.toString());
-    }
+  public async readDir(relativePath?: PathLike) {
+    const currentPath = relativePath?.toString() || "";
+    const absolutePath = join(this.rootLocation, currentPath);
 
     try {
-      const items = await readdir(path, { withFileTypes: true });
+      const items = await readdir(absolutePath, { withFileTypes: true });
 
       const dirItems: DirItem[] = items.map(entry => (
         {
           id: uuidv4(),
           name: entry.name,
-          path: entry.parentPath,
+          path: currentPath,
           type: entry.isDirectory() ? "directory" : "file"
         }
       ));
@@ -218,6 +214,8 @@ class Storage {
       return dirItems
 
     } catch (e) {
+      logger.error(`Error reading directory: ${absolutePath}`)
+      console.log(e);
       return false
     }
   }
@@ -256,7 +254,7 @@ class Storage {
       archive.pipe(output);
 
       for (const item of items) {
-        const itemPath = path.join(item.path.toString(), item.name);
+        const itemPath = path.join(this.rootLocation, item.path.toString(), item.name);
         if (item.type === "directory") {
           archive.directory(itemPath, item.name);
         } else {

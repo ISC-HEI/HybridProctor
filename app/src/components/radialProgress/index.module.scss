@@ -1,6 +1,9 @@
 
 @use "@style/_vars.scss";
 
+.radialContainer {
+  position: relative;
+}
 
 .radial {
   --holesize: 65%;
