@@ -1,0 +1,51 @@
+
+@use "@style/_vars.scss";
+
+
+.radial {
+  --holesize: 65%;
+  
+  block-size: 4em;
+  inline-size: 4em;
+  min-inline-size: 100px;
+  min-block-size: 100px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  font-weight: 700;
+  font-size: 4em;
+  z-index: 2;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 50%;
+    z-index: 1;
+    background: conic-gradient(
+      vars.$blue,
+      vars.$lightblue,
+      vars.$blue var(--progress, 0%),
+      vars.$gray4 var(--progress, 0%) 100%
+    );
+    
+    -webkit-mask-image: radial-gradient(
+      transparent var(--holesize),
+      black calc(var(--holesize) + 0.5px)
+    );
+    mask-image: radial-gradient(
+      transparent var(--holesize),
+      black calc(var(--holesize) + 0.5px)
+    );
+  }
+}
+
+@media (max-width: 820px) {
+  .radial {
+    block-size: 3em;
+    inline-size: 3em;
+  }
+}

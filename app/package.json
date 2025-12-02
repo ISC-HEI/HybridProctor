@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.13",
+    "archiver": "^7.0.1",
     "argon2": "^0.44.0",
     "better-sqlite3": "^12.2.0",
     "bootstrap": "^5.3.8",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/archiver": "^7.0.0",
     "@types/firstline": "^2.0.4",
     "@types/js-yaml": "^4.0.9",
     "@types/mime-types": "^3.0.1",
