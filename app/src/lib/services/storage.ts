@@ -1,7 +1,7 @@
 
 import fs, { readdir, statfs } from "fs/promises";
 import { existsSync, PathLike, createWriteStream } from "fs";
-import path from "path";
+import path, { join } from "path";
 import os from "os";
 import archiver from "archiver";
 import { type Yamlconf } from "@lib/types/yamlconf";
@@ -199,19 +199,27 @@ class Storage {
     if (!path) {
       path = this.rootLocation;
     }
+    else {
+      path = join(this.rootLocation, path.toString());
+    }
 
-    const items = await readdir(path, { withFileTypes: true });
+    try {
+      const items = await readdir(path, { withFileTypes: true });
 
-    const dirItems: DirItem[] = items.map(entry => (
-      {
-        id: uuidv4(),
-        name: entry.name,
-        path: entry.parentPath,
-        type: entry.isDirectory() ? "directory" : "file"
-      }
-    ));
+      const dirItems: DirItem[] = items.map(entry => (
+        {
+          id: uuidv4(),
+          name: entry.name,
+          path: entry.parentPath,
+          type: entry.isDirectory() ? "directory" : "file"
+        }
+      ));
 
-    return dirItems
+      return dirItems
+
+    } catch (e) {
+      return false
+    }
   }
 
   public async getDiskUsage() {

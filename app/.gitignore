@@ -40,5 +40,5 @@ next-env.d.ts
 
 /logs/
 /uploads/
-/resources/db/*.db-*
+/resources/db/*
 /resources/.password

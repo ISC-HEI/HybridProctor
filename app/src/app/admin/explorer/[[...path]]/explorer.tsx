@@ -27,8 +27,19 @@ export default function Explorer({ path }: ExplorerProps) {
 
   useEffect(() => {(
     async () => {
-      setItems(await fetchItems(path));
-      
+      const data = await fetchItems(path);
+
+      if (!data) {
+        addNotification({
+          infinite: false,
+          success: false,
+          text: "Can't read directory"
+        });
+      }
+      else {
+        setItems(data);
+      }
+
       const { total, used } = await fetchDisk();
 
       setTotal(total);
