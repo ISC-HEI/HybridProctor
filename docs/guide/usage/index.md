@@ -13,7 +13,7 @@ To use this system you need to have your exam statement in a single html file. P
 
 1. Plug the USB key in the router and power up the later (don't forget to plug in the antenna!).
 1. Connect to it via wifi (**password: {{wifi_password}}**).
-1. Go to [http://10.0.0.1/admin/configure]() and copy the displayed password somewhere safe.
+1. Go to [http://10.0.0.1/admin/configure]() and copy the displayed password somewhere safe (if a new password was generated).
 1. Follow the instructions. First, upload the statement. Then, optionally set the list of files the students have to submit (can be skipped by unchecking "enable"). And finally, the resources to be downloaded by the students.
 1. Alternatively, you can connect to router via sftp to adapt the config for your exam. You will need the private ssh key provided by [Steve Devènes](mailto:steve.devenes@hevs.ch) to connect.
 
@@ -38,15 +38,15 @@ To use this system you need to have your exam statement in a single html file. P
 
 1. Go to [http://10.0.0.1]() and check if your exam/resources are really there and if everything is working (try downloading ressources and uploading files).
 
-## During the exam
+## During the exam and after
 
 1. Provide the wifi password to the students and ask them to connect.
 1. Students can then do the exam and upload their files.
 1. You can monitor the exam on [http://10.0.0.1/admin/monitor](). Here you can see logs in real time and who's connected since when.
-1. Once finished, you can retrieve the submitted files via sftp (or power off the router and mount the usb key onto your computer), they are located in **/mount_point/uploads** (or **mount/uploads** if done "physically"). 
+1. Once finished, you can retrieve the submitted files using the integrated file explorer at [http://10.0.0.1/admin/explorer]() or via sftp (or power off the router and mount the usb key onto your computer), they are located in **/mount_point/uploads** (or **mount/uploads** if done using the USB key). 
 
     !!! warning
-        Make sure the students files are really uploaded and accessible through sftp before they leave!
+        Make sure the students files are really uploaded and accessible through the file explorer or sftp before they leave!
 
     !!! danger
         The current version of the system doesn't provide a way to check if students still have an internet access. For now you will have to keep an eye on the students during the exam.
@@ -55,6 +55,6 @@ To use this system you need to have your exam statement in a single html file. P
 
 It is really simple to reset the password if it has been leaked.
 
-1. Power off the router and mount the USB key onto your computer and remove **mount/.password**.
+1. Power off the router and mount the USB key onto your computer and remove the **mount/.password** file.
 1. Plug the USB key back in the router and power it on.
 1. Go to [http://10.0.0.1]() and copy the displayed password somewhere safer.
