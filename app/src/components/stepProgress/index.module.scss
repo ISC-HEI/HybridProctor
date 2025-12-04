@@ -69,7 +69,7 @@ $icon_padding: 10px;
           background-color: vars.$transparent_blue;
 
           &::after {
-            width: $line_size;
+            height: $line_size;
           }
         }
 
