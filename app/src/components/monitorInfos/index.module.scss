@@ -1,0 +1,39 @@
+
+@use "@style/_vars.scss";
+
+
+.container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 7em;
+
+  .infos {
+    height: 6em;
+    width: 100%;
+    background-color: vars.$primary-background-color;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border: 1pt solid vars.$gray4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2em;
+
+    .students {
+      .number {
+        color: vars.$pink;
+      }
+    }
+
+    .link {
+      text-decoration: none;
+      color: vars.$blue;
+    }
+  }
+}

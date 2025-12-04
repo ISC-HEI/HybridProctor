@@ -1,0 +1,23 @@
+
+import style from "./index.module.scss";
+
+interface MonitorInfosProps {
+  connected: number;
+  total: number;
+}
+
+export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
+
+  return (
+    <div className={style.container}>
+      <div className={style.infos}>
+        <div className={style.students}>
+          <p>Connected students : <span className={style.number}>{connected}</span></p>
+          <p>Total students : <span className={style.number}>{total}</span></p>
+        </div>
+
+        <a href="/admin/explorer" className={style.link}>File Explorer</a>
+      </div>
+    </div>
+  )
+}

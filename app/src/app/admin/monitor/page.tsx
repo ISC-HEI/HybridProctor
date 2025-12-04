@@ -11,6 +11,7 @@ import StudentsTable from '@/components/studentsTable';
 import Loader from '@/components/loader';
 import Goto from '@/components/goto';
 import { CogIcon } from 'lucide-react';
+import MonitorInfos from '@/components/monitorInfos';
 
 export default function Monitor() {
   const [type, setType] = useState<LogType>("all");
@@ -89,6 +90,8 @@ export default function Monitor() {
             <StudentsTable students={students} />
           </div>
         }
+        
+        <MonitorInfos connected={[...students.values()].filter(student => student.connected).length} total={students.size} />
       </main>
     </div>
   )
