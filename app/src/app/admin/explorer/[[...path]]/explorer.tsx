@@ -7,10 +7,11 @@ import { DirItem } from "@/lib/types/dirItem";
 import Item from "@/components/item";
 import { useRouter } from "next/navigation";
 import PathIndicator from "@/components/pathIndicator";
-import { DownloadIcon } from "lucide-react";
+import { DownloadIcon, SquareActivityIcon } from "lucide-react";
 import RadialProgress from "@/components/radialProgress";
 import { useNotifications } from "@/lib/utils/hooks/useNotifications";
 import Loader from "@/components/loader";
+import Goto from "@/components/goto";
 
 interface ExplorerProps {
   path: string|undefined
@@ -102,6 +103,7 @@ export default function Explorer({ path }: ExplorerProps) {
 
   return (
     <div className={style.page}>
+      <Goto href="/admin/monitor" Icon={SquareActivityIcon} />
       <main className={style.explorer}>
         <div className={style.manage}>
           <PathIndicator path={path} />
