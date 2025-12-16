@@ -1,6 +1,8 @@
 
 import fs, { readdir, statfs } from "fs/promises";
 import { existsSync, PathLike, createWriteStream } from "fs";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
 import path, { join } from "path";
 import os from "os";
 import archiver from "archiver";
@@ -90,10 +92,12 @@ class Storage {
   }
 
   private async write(location: string, file: File) {
-    const buffer = Buffer.from(await file.arrayBuffer());
     const fullLocation = path.join(location, file.name);
+    const nodeStream = createWriteStream(fullLocation);
+    const webStream = file.stream();
 
-    await fs.writeFile(fullLocation, buffer);
+    // @ts-ignore
+    await pipeline(Readable.fromWeb(webStream), nodeStream);
 
     logger.debug(`Created file "${fullLocation}".`);
   }
@@ -145,11 +149,13 @@ class Storage {
   }
 
   public async writeExam(file: File) {
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const nodeStream = createWriteStream(this.examLocation);
+    const webStream = file.stream();
+    
+    // @ts-ignore
+    await pipeline(Readable.fromWeb(webStream), nodeStream);
 
-    await fs.writeFile(this.examLocation, buffer);
-
-    logger.debug(`Exam created at "${this.examLocation}".`)
+    logger.debug(`Exam created at "${this.examLocation}".`);
   }
 
   public async writeConfig(conf: Yamlconf) {

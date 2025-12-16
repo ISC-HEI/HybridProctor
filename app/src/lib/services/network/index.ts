@@ -39,10 +39,17 @@ class Network {
 
       const connections = await res.json();
 
-      const pingPromises = connections
+      const addressesToPing = connections
         .map((conn: { [x: string]: string; }) => conn["address"])
-        .filter((address: string) => address && !address.match(IP_REGEX))
-        .map(async (address: string) => {
+        .filter((address: string) => address && !address.match(IP_REGEX));
+
+      const pingResults: (string | null)[] = [];
+      const chunkSize = 2;
+      const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+      for (let i = 0; i < addressesToPing.length; i += chunkSize) {
+        const chunk = addressesToPing.slice(i, i + chunkSize);
+        const pingPromises = chunk.map(async (address: string) => {
           const pingHeaders = new Headers();
           pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
           pingHeaders.set("Content-Type", "application/json");
@@ -56,15 +63,21 @@ class Network {
             });
             const data = await pingRes.json();
             if (data[0] && data[0].received === '1') {
-              return address; // Return the IP if the ping was successful
+              return address;
             }
           } catch (e) {
-            logger.error(`Error sending ping command to router for IP ${address}.`);
+            logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
           }
-          return null; // Return null for failed or unresponsive pings
+          return null;
         });
+        
+        pingResults.push(...await Promise.all(pingPromises));
 
-      const pingResults = await Promise.all(pingPromises);
+        if (i + chunkSize < addressesToPing.length) {
+          await delay(1000);
+        }
+      }
+      
       const connectedIps = new Set(pingResults.filter((ip): ip is string => ip !== null));
 
       const unlock = await this.studentsMutex.lock();
@@ -113,7 +126,7 @@ class Network {
       this.studentUpdates.clear();
     }
     catch (e) {
-      logger.error("Error fetching IPs.");
+      logger.error(`Error fetching IPs : ${e}`);
     }
   }
 

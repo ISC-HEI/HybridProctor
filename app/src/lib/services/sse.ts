@@ -16,7 +16,7 @@ class SSEManager {
   public async addClient(controller: ReadableStreamDefaultController) {
     this.clients.push(controller);
     
-    controller.enqueue(this.encode("log", `${JSON.stringify({ message: logger.getLogs() })}`));
+    controller.enqueue(this.encode("log", `${JSON.stringify({ message: logger.getLogs().slice(-20) })}`));
     controller.enqueue(this.encode("state", `${JSON.stringify({ message: await network.getStudents() })}`));
   }
 
