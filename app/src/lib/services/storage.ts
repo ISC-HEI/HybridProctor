@@ -184,18 +184,24 @@ class Storage {
       return false;
     }
 
-    const regex = new RegExp(`^${name} v[0-9]+$`, 'i');
+    const namePath = join(this.uploadLocation, name);
 
-    const entries = await fs.readdir(this.uploadLocation, { withFileTypes: true });
+    if (!existsSync(namePath)) {
+      await fs.mkdir(namePath);
+    }
+
+    const regex = new RegExp(`^v[0-9]+$`, 'i');
+
+    const entries = await fs.readdir(namePath, { withFileTypes: true });
 
     const version = entries.filter(entry => entry.isDirectory() && regex.test(entry.name)).length + 1;
 
-    const nameFolder = path.join(this.uploadLocation, `${name} v${version}`);
+    const versionFolder = path.join(namePath, `v${version}`);
 
-    await fs.mkdir(nameFolder, { recursive: true });
+    await fs.mkdir(versionFolder, { recursive: true });
 
     for (const file of files) {
-      this.write(nameFolder, file);
+      this.write(versionFolder, file);
     }
 
     return true;
