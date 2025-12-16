@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, FormEvent, useContext, useRef, useState, useTransition } from 'react';
+import { ChangeEvent, DragEvent, FormEvent, useContext, useRef, useState, useTransition } from 'react';
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-react';
 import { uploadExam } from './index.server';
@@ -12,16 +12,21 @@ export default function ExamForm() {
   const [fileName, setFileName] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
+  const [isDragging, setIsDragging] = useState(false);
 
   const stepContext = useContext(StepContext);
 
   const handleChooseFile = (e: ChangeEvent<HTMLInputElement>) => {
-    setFileName(e.currentTarget.files![0].name || "");
+    if (e.currentTarget.files && e.currentTarget.files.length > 0) {
+      setFileName(e.currentTarget.files[0].name);
+    }
   }
 
   const handleDeleteFile = () => {
     setFileName("");
-    fileInputRef.current!.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
@@ -43,12 +48,44 @@ export default function ExamForm() {
     });
   }
 
+  const handleDragEnter = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      if (fileInputRef.current) {
+        fileInputRef.current.files = e.dataTransfer.files;
+      }
+      setFileName(e.dataTransfer.files[0].name);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className={style.form}>
     <fieldset className={style.field}>
         <h2 className={style.title}>Upload Exam</h2>
 
-        <label className={style.label}>
+        <label
+          className={`${style.label} ${isDragging ? style.dragging : ''}`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           <div className={style.text}>
             <HardDriveUploadIcon className={style.uploadIcon} size={56} />
             Upload exam here
@@ -57,7 +94,7 @@ export default function ExamForm() {
         </label>
       <div className={style.file_zone}>
         {
-          fileName !== ""
+          fileName !== "" && fileInputRef.current?.files?.length !== 0
             ?
             <article className={style.file}>
               <div className={style.text}>
@@ -65,7 +102,7 @@ export default function ExamForm() {
                   <FileIcon className={style.icon}/>
                   <p><strong>{fileName}</strong></p>
                 </div>
-                <p className={style.size}>{formatSize(fileInputRef.current!.files![0].size)}</p>
+                {fileInputRef.current!.files![0] && <p className={style.size}>{formatSize(fileInputRef.current!.files![0].size)}</p>}
               </div>
 
               <button className={style.delete} onClick={handleDeleteFile}>
@@ -80,7 +117,7 @@ export default function ExamForm() {
       </div>
     </fieldset>
 
-    <FormButtons disabled={fileInputRef.current?.value === "" || fileName === ""} loading={isPending}/>
+    <FormButtons disabled={fileName === ""} loading={isPending}/>
     </form>
   )
 }

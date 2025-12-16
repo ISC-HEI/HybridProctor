@@ -36,6 +36,11 @@
     }
   }
 
+  .dragging {
+    background: vars.$transparent_blue;
+    border: 2pt solid vars.$blue;
+  }
+
   .file_zone {
     width: 100%;
     height: 5em;

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, MouseEvent, useRef, useState, useTransition } from 'react';
+import { ChangeEvent, DragEvent, FormEvent, MouseEvent, useRef, useState, useTransition } from 'react';
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-react';
 import { uploadResources } from './index.server';
@@ -8,41 +8,51 @@ import FormButtons from '@components/formButtons';
 import { formatSize } from '@/lib/utils/file';
 import { useRouter } from 'next/navigation';
 
-export default function ExamForm() {
+export default function ResourcesForm() {
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
+  const [isDragging, setIsDragging] = useState(false);
   const router = useRouter();
 
-  const handleChooseFiles = () => {
-    const newFiles: File[] = [];
-
-    if (!fileInputRef.current || !fileInputRef.current.files) return;
-
-    for (const file of fileInputRef.current.files) {
-      newFiles.push(file);
-    }
-
+  const updateFileList = (newFiles: File[]) => {
     setFiles(newFiles);
+    const dataTransfer = new DataTransfer();
+    newFiles.forEach(file => dataTransfer.items.add(file));
+    if (fileInputRef.current) {
+        fileInputRef.current.files = dataTransfer.files;
+    }
   }
 
-  const handleDeleteFile = (evt: MouseEvent) => {
-    evt.preventDefault();
+  const addFiles = (newFiles: FileList) => {
+    const filesArr = Array.from(newFiles);
+    const newFilesToAdd = filesArr.filter(newFile => !files.some(existingFile => existingFile.name === newFile.name));
+    updateFileList([...files, ...newFilesToAdd]);
+  }
 
-    setFiles(files.filter(v => v.name !== evt.currentTarget.id));
+  const handleChooseFiles = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.files) {
+        addFiles(e.currentTarget.files);
+    }
+  }
+
+  const handleDeleteFile = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    const fileName = evt.currentTarget.id;
+    const newFiles = files.filter(v => v.name !== fileName);
+    updateFileList(newFiles);
   }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (!fileInputRef.current?.files?.[0]) {
-      return alert("Please upload a file.");
+    if (files.length === 0) {
+      return alert("Please upload at least one file.");
     }
     
     startTransition(async () => {
       try {
         await uploadResources(files);
-        
         router.push("/admin/monitor");
       }
       catch (err) {
@@ -51,17 +61,46 @@ export default function ExamForm() {
     });
   }
 
+  const handleDragEnter = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        addFiles(e.dataTransfer.files);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className={style.form}>
     <fieldset className={style.field}>
         <h2 className={style.title}>Upload resources to be download by students</h2>
 
-        <label className={style.label}>
+        <label
+          className={`${style.label} ${isDragging ? style.dragging : ''}`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           <div className={style.text}>
             <HardDriveUploadIcon className={style.uploadIcon} size={56} />
             Upload resources here
           </div>
-          <input ref={fileInputRef} type="file" name="resourcesFiles" onChange={handleChooseFiles} multiple required/>
+          <input ref={fileInputRef} type="file" name="resourcesFiles" onChange={handleChooseFiles} multiple />
         </label>
       <ul className={style.file_zone}>
         {
@@ -75,10 +114,10 @@ export default function ExamForm() {
                         <FileIcon className={style.icon}/>
                         <p><strong>{file.name}</strong></p>
                       </div>
-                      <p className={style.size}>{formatSize(fileInputRef.current!.files![0].size)}</p>
+                      <p className={style.size}>{formatSize(file.size)}</p>
                     </div>
                     
-                    <button className={style.delete} onClick={handleDeleteFile}>
+                    <button id={file.name} className={style.delete} onClick={handleDeleteFile}>
                       <XIcon size={16}/>
                     </button>
                   </article>
@@ -91,7 +130,7 @@ export default function ExamForm() {
         </ul>
       </fieldset>
 
-      <FormButtons disabled={fileInputRef.current?.value === "" || files.length === 0} loading={isPending}/>
+      <FormButtons disabled={files.length === 0} loading={isPending}/>
     </form>
   )
 }
