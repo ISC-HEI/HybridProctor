@@ -45,10 +45,7 @@ export async function uploadFiles(files: File[]) {
 
   const missing = storage.examConfig.studentsFiles.filter(req => !uploadedNames.includes(req));
   if (missing.length > 0) {
-    return {
-      ok: false,
-      message: `Missing required files: "${missing.join('", ')}"`,
-    }
+    
   }
 
   logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
@@ -58,6 +55,6 @@ export async function uploadFiles(files: File[]) {
 
   return {
     ok: true,
-    message: "Files successfully sent.",
+    message: `Files successfully sent. ${missing.length > 0 ? `Missing required files: "${missing.join('", ')}"` : ''}`,
   };
 }
