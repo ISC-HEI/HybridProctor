@@ -33,6 +33,8 @@
     -webkit-box-orient: vertical;
     line-height: 1.2em;
     max-height: 2.4em;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   &:hover {

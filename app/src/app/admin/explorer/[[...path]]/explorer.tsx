@@ -49,12 +49,31 @@ export default function Explorer({ path }: ExplorerProps) {
   )()}, []);
 
   const handleSelect = (item: DirItem, evt: MouseEvent) => {
-    if (!evt.ctrlKey) {
+    if (!evt.ctrlKey && !evt.shiftKey) {
       setSelectedItems([item]);
+      return
     }
-    else {
+
+    if (evt.ctrlKey) {
+      if (selectedItems.includes(item)) {
+        setSelectedItems(selectedItems.filter(itm => itm !== item))
+        return
+      }
+
       setSelectedItems([...selectedItems, item]);
+      return
     }
+
+    const itemsSelection: DirItem[] = []
+
+    const lastSelectedIdx = selectedItems.length !== 0 ? items.indexOf(selectedItems[selectedItems.length - 1]) : 0;
+    const itmIdx = items.indexOf(item);
+
+    for (let i = Math.min(lastSelectedIdx, itmIdx); i <= Math.max(lastSelectedIdx, itmIdx); i++) {
+      itemsSelection.push(items[i])
+    }
+
+    setSelectedItems([...selectedItems, ...itemsSelection]);
   }
 
   const handleEnter = async (item: DirItem, evt: MouseEvent) => {
