@@ -11,13 +11,15 @@ import Loader from "../loader";
 
 export default function NameForm() {
   const [name, setName] = useState<string>("");
+  const [surname, setSurname] = useState<string>("");
+  const [fullname, setFullname] = useState<string>("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", name: "" });
+  const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", fullname: "" });
 
   useEffect(() => {
-    if (state.ok && state.name !== "") {
-      localStorage.setItem("name", state.name);
+    if (state.ok && state.fullname !== "") {
+      localStorage.setItem("name", state.fullname);
       dialogRef.current?.close();
       setLoading(false);
     }
@@ -25,9 +27,9 @@ export default function NameForm() {
 
   useEffect(() => {(
     async () => {
-      const name = localStorage.getItem("name");
+      const fulln = localStorage.getItem("name");
 
-      if (!name || !await isRegistered(name)) {
+      if (!fulln || !await isRegistered(fulln)) {
         dialogRef.current?.showModal();
       }
     }
@@ -37,7 +39,11 @@ export default function NameForm() {
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <h2>Please enter your full name</h2>
       <form className={style.form} id='form' action={formAction} onSubmit={() => setLoading(true)}>
-        <div className="input-group">
+        <div className={`input-group ${style.inputs}`}>
+          <label className={style.label}>
+            Surname
+            <Input type="text" name='surname' value={surname} required onChange={e => setSurname(e.target.value)}/>
+          </label>
           <label className={style.label}>
             Name
             <Input type="text" name='name' value={name} required onChange={e => setName(e.target.value)}/>
