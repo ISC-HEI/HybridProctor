@@ -23,7 +23,13 @@ class Network {
 
     this.studentsMutex = new Mutex();
     
-    setInterval(this.callback.bind(this), INTERVAL);
+    this.runner();
+  }
+
+  private runner() {
+    this.callback().finally(() => {
+        setTimeout(this.runner.bind(this), INTERVAL);
+    });
   }
 
   private async callback() {
@@ -59,14 +65,17 @@ class Network {
             const pingRes = await fetch(this.api + PING_ROUTE, {
               method: "POST",
               headers: pingHeaders,
-              body: JSON.stringify({ address: address, count: "1" })
+              body: JSON.stringify({ address: address, count: "1" }),
+              signal: AbortSignal.timeout(INTERVAL)
             });
             const data = await pingRes.json();
             if (data[0] && data[0].received === '1') {
               return address;
             }
           } catch (e) {
-            logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
+            if (!(e instanceof Error && e.name === "AbortError")) {
+              logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
+            }
           }
           return null;
         });
