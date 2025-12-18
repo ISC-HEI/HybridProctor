@@ -9,8 +9,9 @@
   transform: translateX(-50%);
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   padding: 0 7em;
 
   .infos {

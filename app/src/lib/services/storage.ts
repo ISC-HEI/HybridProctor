@@ -31,6 +31,7 @@ class Storage {
   examConfig!: Yamlconf;
   resources!: string[];
   version!: string;
+  locked: boolean = true;
 
   private sessions: Map<string, Session> = new Map<string, Session>();
   newPassword: string|undefined;

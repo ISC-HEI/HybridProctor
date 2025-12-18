@@ -19,9 +19,20 @@ export async function fetchVersion(): Promise<string> {
   return storage.version
 }
 
+export async function fetchLocked(): Promise<boolean> {
+  return storage.locked
+}
+
 export async function uploadFiles(files: File[]) {
   const ip = await getIp();
   const name = await getNameFromIp(ip);
+
+  if (storage.locked) {
+    return {
+      ok: false,
+      message: "The exam hasn't started yet, or has already ended.",
+    }
+  }
 
   if (!name) {
     return {

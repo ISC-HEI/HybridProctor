@@ -1,4 +1,5 @@
 
+import LockInfo from "../lockInfo";
 import style from "./index.module.scss";
 
 interface MonitorInfosProps {
@@ -10,6 +11,7 @@ export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
 
   return (
     <div className={style.container}>
+      <LockInfo />
       <div className={style.infos}>
         <div className={style.students}>
           <p>Connected students : <span className={style.number}>{connected}</span></p>
