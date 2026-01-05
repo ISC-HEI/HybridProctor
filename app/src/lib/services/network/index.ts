@@ -124,15 +124,14 @@ class Network {
         }
       }
       finally {
+        if (this.studentUpdates.size > 0) {
+          sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
+        }
+
+        this.studentUpdates.clear();
+
         unlock();
       }
-
-
-      if (this.studentUpdates.size > 0) {
-        sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
-      }
-
-      this.studentUpdates.clear();
     }
     catch (e) {
       logger.error(`Error fetching IPs : ${e}`);
