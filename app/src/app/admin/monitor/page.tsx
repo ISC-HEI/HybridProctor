@@ -28,7 +28,7 @@ export default function Monitor() {
 
     (async () => {
       const url = await fetchUrl();
-      eventSource = new EventSource(`${url}/api/sse`);
+      eventSource = new EventSource(`${url}/api/sse/admin`);
 
       eventSource.addEventListener("open", async (evt) => {
         console.log("Connected");

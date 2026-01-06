@@ -16,6 +16,7 @@ import { Session } from "../types/session";
 import dayjs from "dayjs";
 import { DirItem } from "../types/dirItem";
 import { v4 as uuidv4 } from "uuid";
+import network from "./network";
 
 const DEFAULT_ROOT_PATH = "/mount_point";
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
@@ -182,7 +183,7 @@ class Storage {
 
     if (!name) {
       logger.error(`IP ${ip} isn't registered!`, { issuer: ip });
-      return false;
+      return "";
     }
 
     const namePath = join(this.uploadLocation, name);
@@ -191,7 +192,7 @@ class Storage {
       await fs.mkdir(namePath);
     }
 
-    const regex = new RegExp(`^v[0-9]+$`, 'i');
+    const regex = /^v[0-9]+(?:_validated)?$/i;
 
     const entries = await fs.readdir(namePath, { withFileTypes: true });
 
@@ -201,9 +202,46 @@ class Storage {
 
     await fs.mkdir(versionFolder, { recursive: true });
 
-    for (const file of files) {
-      this.write(versionFolder, file);
+    await Promise.all(files.map((file) => this.write(versionFolder, file)));
+
+    const items = await fs.readdir(versionFolder, { withFileTypes: true });
+
+    items.sort((a, b) => a.name.localeCompare(b.name));
+
+    const digest = crypto.createHash("md5");
+
+    for (const item of items) {
+      if (item.isFile()) {
+        digest.update(item.name);
+        const itemPath = path.join(versionFolder, item.name);
+        const fileContent = await fs.readFile(itemPath);
+        digest.update(fileContent);
+      }
     }
+
+    const hash = digest.digest("hex");
+
+    const student = await network.getStudent(ip);
+
+    student.latestVersion.hash = hash;
+    student.latestVersion.path = versionFolder;
+    return hash;
+  }
+
+  public async validateAndEnd(ip: string) {
+    const name = await getNameFromIp(ip);
+
+    if (!name) {
+      return false;
+    }
+
+    const student = await network.getStudent(ip);
+
+    await fs.writeFile(path.join(student.latestVersion.path, "hash.md5"), student.latestVersion.hash);
+
+    const newPath = `${student.latestVersion.path}_validated`;
+
+    fs.rename(student.latestVersion.path, newPath);
 
     return true;
   }

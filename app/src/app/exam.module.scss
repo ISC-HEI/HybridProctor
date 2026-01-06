@@ -32,3 +32,19 @@
     cursor: default;
   }
 }
+
+.end_btn {
+  width: 100%;
+  font-size: 18px;
+  border-radius: 3px;
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  height: 4em;
+  background-color: vars.$pink;
+  color: white;
+
+  &:hover {
+    background-color: vars.$darkpink;
+  }
+}

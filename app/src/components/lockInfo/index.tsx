@@ -1,9 +1,8 @@
 'use client'
 
-import { XIcon } from "lucide-react";
 import style from "./index.module.scss";
 import { useEffect, useState } from "react"
-import { fetchLocked } from "@/app/page.server";
+import { fetchLocked } from "./index.server";
 import { lock } from "./index.server";
 
 export default function LockInfo() {

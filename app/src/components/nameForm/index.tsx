@@ -12,7 +12,6 @@ import Loader from "../loader";
 export default function NameForm() {
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
-  const [fullname, setFullname] = useState<string>("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", fullname: "" });

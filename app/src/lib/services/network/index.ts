@@ -140,7 +140,7 @@ class Network {
   }
 
   private addNewStudent(ip: string) {
-    const student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0 };
+    const student: Student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0, latestVersion: { hash: "", path: "" } };
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
   }

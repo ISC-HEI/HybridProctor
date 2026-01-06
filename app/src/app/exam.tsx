@@ -11,6 +11,8 @@ import style from './exam.module.scss';
 import { Yamlconf } from '@/lib/types/yamlconf';
 import { useNotifications } from '@/lib/utils/hooks/useNotifications';
 import Loader from '@/components/loader';
+import HashDialog from '@/components/hashDialog';
+import ValidateHash from '@/components/validateHash';
 
 interface ExamProps {
   conf: Yamlconf|undefined;
@@ -21,6 +23,9 @@ export default function Exam({ conf }: ExamProps) {
   const [files, setFiles] = useState<File[]>([]);
   const addNotification = useNotifications().addNotification;
   const [loading, setLoading] = useState<boolean>(false);
+  const [hash, setHash] = useState<string>("");
+  const [showHash, setShowHash] = useState<boolean>(false);
+  const [showValidate, setShowValidate] = useState<boolean>(false);
 
   const handleChooseFiles = () => {
     const newFiles: File[] = [];
@@ -44,10 +49,19 @@ export default function Exam({ conf }: ExamProps) {
     setLoading(false);
     
     addNotification({ success: state.ok, text: state.message, infinite: false }); 
-  } 
+
+    setHash(state.hash)
+    setShowHash(state.ok)
+  }
+
+  const handleShowValidate = () => {
+    setShowValidate(true);
+  }
 
   return (
     <>
+      <HashDialog hash={hash} show={showHash} onClose={() => setShowHash(false)} />
+      <ValidateHash show={showValidate} onClose={() => setShowValidate(false)} />
       <form className={style.form} onSubmit={handleSubmit}>
         {
           conf && conf.enable &&
@@ -63,6 +77,14 @@ export default function Exam({ conf }: ExamProps) {
           }
         </button>
       </form>
+      { conf && conf.enable &&
+        <button className={style.end_btn} disabled={!conf} onClick={handleShowValidate}>
+          { loading
+            ? <Loader light />
+            : "Validate and finish"
+          }
+        </button>
+      }
     </>
   )
 }

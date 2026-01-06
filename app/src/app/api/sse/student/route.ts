@@ -4,26 +4,29 @@ export const preferredRegion = "auto";
 export const fetchCache = "force-no-store";
 
 
+import { getIp } from "@/lib/utils/network";
 import sseManager from "@services/sse";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const ip = await getIp();
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
         controller.enqueue(sseManager.encode("init", "Connecting..."));
 
-        sseManager.addClient(controller);
+        sseManager.addClient(ip, controller, false);
 
         req.signal.addEventListener("abort", () => {
-          sseManager.removeClient(controller);
+          sseManager.removeClient(ip);
           controller.close();
         })
 
       } catch (error) {
         console.error("Stream error:", error);
         controller.enqueue(sseManager.encode("error", "Stream interrupted"));
-        sseManager.removeClient(controller);
+        sseManager.removeClient(ip);
         controller.close();
       }
     },

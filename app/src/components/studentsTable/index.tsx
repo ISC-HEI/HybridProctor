@@ -15,7 +15,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>IP</th>
           <th>Name</th>
           <th>Since</th>
-          <th>Files</th>
+          <th>Finished</th>
           <th>Connected</th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
                 <td>{student.ip}</td>
                 <td>{student.name}</td>
                 <td>{dayjs(student.since).format("HH:mm:ss").replace(":", "h")}</td>
-                <td><span className={`${style.indicator} ${student.allFilesSent ? style.on : style.off}`}></span></td>
+                <td><span className={`${style.indicator} ${student.finished ? style.on : style.off}`}></span></td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
               </tr>
           )

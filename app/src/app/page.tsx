@@ -2,10 +2,10 @@
 
 import style from './page.module.scss';
 import BootstrapClient from '@/components/bootstrapClient';
-import { fetchConfig, fetchLocked, fetchResources, fetchVersion } from './page.server';
+import { fetchConfig, fetchResources, fetchUrl, fetchVersion } from './page.server';
 import Exam from './exam';
 import NameForm from '@/components/nameForm';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Yamlconf } from '@/lib/types/yamlconf';
 import LockScreen from '@/components/lockScreen';
 
@@ -14,28 +14,57 @@ export default function Page() {
   const [yamlconf, setYamlconf] = useState<Yamlconf>();
   const [version, setVersion] = useState<string>();
   const [locked, setLocked] = useState<boolean>(true);
+  const [finished, setFinished] = useState<boolean>(false);
+  const hasRun = useRef<boolean>(false);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
     (async () => {
       setFiles(await fetchResources());
       setYamlconf(await fetchConfig());
       setVersion(await fetchVersion());
-      setLocked(await fetchLocked());
-
-      interval = setInterval(async () => setLocked(await fetchLocked()), 5000);
     })()
+  }, []);
+
+  useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
+    let eventSource: EventSource;
+
+    (async () => {
+      const url = await fetchUrl();
+      eventSource = new EventSource(`${url}/api/sse/student`);
+
+      eventSource.addEventListener("open", async (evt) => {
+        console.log("Connected");
+      })
+
+      eventSource.addEventListener("std", (evt) => {
+        const data = JSON.parse(evt.data) as { message: { locked: boolean, finished?: boolean } };
+
+        setLocked(data.message.locked);
+
+        if (data.message.finished !== undefined)
+        setFinished(data.message.finished);
+      })
+
+      window.onbeforeunload = () => {
+        eventSource.close();
+      };
+    })();
 
     return () => {
-      clearInterval(interval)
-    }
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
+
 
   return (
     <>
       {
-        locked ? <LockScreen />
+        locked || finished ? <LockScreen finished={!locked && finished} />
           :
           <div>
             <NameForm />

@@ -113,9 +113,9 @@ class Logger {
 
     unlock();
 
-    sseManager.broadcast([record], "log");
-
     console.log(record.message);
+
+    sseManager.broadcast([record], "log");
   }
 
   public async info(message: string, opts?: LogRecordOpts) {

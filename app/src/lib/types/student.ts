@@ -5,8 +5,12 @@ export type Student = {
   name: string;
   connected: boolean;
   since: number
-  allFilesSent: boolean;
+  finished: boolean;
   attempts: number;
+  latestVersion: {
+    hash: string;
+    path: string;
+  }
 }
 
 export type StudentUpdate = {
@@ -14,5 +18,5 @@ export type StudentUpdate = {
   name?: string;
   connected?: boolean;
   since?: number;
-  allFilesSent?: boolean;
+  finished?: boolean;
 }
