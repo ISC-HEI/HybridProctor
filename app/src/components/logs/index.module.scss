@@ -1,8 +1,19 @@
 .logs {
-  display: flex;
-  flex-direction: column;
-  padding: 2em 2em 4em 2em;
-  max-height: 100%;
+  height: 100%;
+  width: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
+  padding: 0 2em;
+  contain: strict;
+}
+
+.logsContainer {
+  width: 100%;
+  position: relative;
+
+  .transform {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }

@@ -62,7 +62,7 @@ $line-size: $record-height - $type-size;
     }
   }
 
-  &:last-child .type::before {
+  &.last .type::before {
     display: none;
   }
   &.new {
