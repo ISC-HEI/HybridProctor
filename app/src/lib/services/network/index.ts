@@ -51,7 +51,7 @@ class Network {
 
       const pingResults: (string | null)[] = [];
       const chunkSize = 2;
-      const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+      //const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
       for (let i = 0; i < addressesToPing.length; i += chunkSize) {
         const chunk = addressesToPing.slice(i, i + chunkSize);
@@ -72,8 +72,9 @@ class Network {
             if (data[0] && data[0].received === '1') {
               return address;
             }
+
           } catch (e) {
-            if (!(e instanceof Error && e.name === "AbortError")) {
+            if (!(e instanceof Error && (e.name === "AbortError" || e.name === "TimeoutError"))) {
               logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
             }
           }
@@ -82,9 +83,9 @@ class Network {
         
         pingResults.push(...await Promise.all(pingPromises));
 
-        if (i + chunkSize < addressesToPing.length) {
-          await delay(1000);
-        }
+        //if (i + chunkSize < addressesToPing.length) {
+        //  await delay(1000);
+        //}
       }
       
       const connectedIps = new Set(pingResults.filter((ip): ip is string => ip !== null));
@@ -139,7 +140,7 @@ class Network {
   }
 
   private addNewStudent(ip: string) {
-    const student = { ip, name: "", connected: true, allFilesSent: false, since: Date.now(), attempts: 0 };
+    const student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0 };
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
   }
