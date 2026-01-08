@@ -19,14 +19,14 @@ export async function GET(req: NextRequest) {
         sseManager.addClient(ip, controller, true);
 
         req.signal.addEventListener("abort", () => {
-          sseManager.removeClient(ip);
+          sseManager.removeClient(ip, true);
           controller.close();
         })
 
       } catch (error) {
         console.error("Stream error:", error);
         controller.enqueue(sseManager.encode("error", "Stream interrupted"));
-        sseManager.removeClient(ip);
+        sseManager.removeClient(ip, true);
         controller.close();
       }
     },
