@@ -40,7 +40,7 @@ If you already have a working router but need to upgrade only the container imag
 1. Open the **Container** window to stop and delete the current container.
 1. Open a terminal and enter:
     ```bash
-    /container/add remote-image=enderastronaute/hybridproctor-arm-dev:latest interface=veth1 root-dir=usb1/HybridProctorDevContainer start-on-boot=yes mounts=mount,uploads
+    /container/add remote-image=enderastronaute/hybridproctor-arm-dev:latest interface=veth1 root-dir=usb1/HybridProctorDevContainer start-on-boot=yes logging=yes mounts=mount,uploads
     ```
 1. The container should appear in the **Container** window: Start it!
     ![](../../img/container_config.jpg){: .center width="600px"}
