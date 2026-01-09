@@ -6,10 +6,16 @@ export const fetchCache = "force-no-store";
 
 import { getIp } from "@/lib/utils/network";
 import sseManager from "@services/sse";
+import storage from "@services/storage";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   const ip = await getIp();
+  const sessionId = req.cookies.get("sid");
+
+  if (!sessionId || !sessionId.value || !await storage.verifySession(sessionId.value, ip)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   const stream = new ReadableStream({
     async start(controller) {

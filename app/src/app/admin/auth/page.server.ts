@@ -23,7 +23,7 @@ export async function verify(formData: FormData) {
     cookiesStore.set("sid", id, {
       maxAge: 7_200_000,
       httpOnly: true,
-      path: '/admin'
+      path: '/'
     })
 
     logger.info(`IP ${ip} logged in as admin.`, { issuer: ip, action: "logged in" });

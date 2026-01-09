@@ -94,7 +94,8 @@ class Storage {
   }
 
   private async write(location: string, file: File) {
-    const fullLocation = path.join(location, file.name);
+    const sanitizedFileName = path.basename(file.name);
+    const fullLocation = path.join(location, sanitizedFileName);
     const nodeStream = createWriteStream(fullLocation);
     const webStream = file.stream();
 
@@ -250,8 +251,16 @@ class Storage {
     const currentPath = relativePath?.toString() || "";
     const absolutePath = join(this.rootLocation, currentPath);
 
+    const resolvedPath = path.resolve(absolutePath);
+    const resolvedRoot = path.resolve(this.rootLocation);
+
+    if (!resolvedPath.startsWith(resolvedRoot)) {
+      logger.warn(`Path traversal attempt detected: '${currentPath}'`, { issuer: "system", action: "read" });
+      return false;
+    }
+
     try {
-      const items = await readdir(absolutePath, { withFileTypes: true });
+      const items = await readdir(resolvedPath, { withFileTypes: true });
 
       const dirItems: DirItem[] = items.map(entry => (
         {
@@ -265,7 +274,7 @@ class Storage {
       return dirItems
 
     } catch (e) {
-      logger.error(`Error reading directory: ${absolutePath}`)
+      logger.error(`Error reading directory: ${resolvedPath}`)
       console.log(e);
       return false
     }
@@ -304,12 +313,22 @@ class Storage {
 
       archive.pipe(output);
 
+      const resolvedRoot = path.resolve(this.rootLocation);
+
       for (const item of items) {
         const itemPath = path.join(this.rootLocation, item.path.toString(), item.name);
+        const resolvedPath = path.resolve(itemPath);
+
+        if (!resolvedPath.startsWith(resolvedRoot)) {
+          logger.warn(`Path traversal attempt detected in zip creation: '${item.path}/${item.name}'`, { issuer: "system", action: "zip" });
+          reject(new Error("Path traversal attempt"));
+          return;
+        }
+
         if (item.type === "directory") {
-          archive.directory(itemPath, item.name);
+          archive.directory(resolvedPath, item.name);
         } else {
-          archive.file(itemPath, { name: item.name });
+          archive.file(resolvedPath, { name: item.name });
         }
       }
 

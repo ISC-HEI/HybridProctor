@@ -9,7 +9,13 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const tempPath = path.join(os.tmpdir(), id);
+  const sanitizedId = path.basename(id);
+
+  if (sanitizedId !== id) {
+    return new NextResponse("Invalid file ID", { status: 400 });
+  }
+  
+  const tempPath = path.join(os.tmpdir(), sanitizedId);
 
   try {
     if (!fs.existsSync(tempPath)) {
