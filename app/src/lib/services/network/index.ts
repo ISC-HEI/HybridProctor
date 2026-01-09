@@ -49,44 +49,33 @@ class Network {
         .map((conn: { [x: string]: string; }) => conn["address"])
         .filter((address: string) => address && !address.match(IP_REGEX));
 
-      const pingResults: (string | null)[] = [];
-      const chunkSize = 2;
-      //const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+      const pingPromises = addressesToPing.map(async (address: string) => {
+        const pingHeaders = new Headers();
+        pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
+        pingHeaders.set("Content-Type", "application/json");
+        pingHeaders.set("Accept", "application/json");
 
-      for (let i = 0; i < addressesToPing.length; i += chunkSize) {
-        const chunk = addressesToPing.slice(i, i + chunkSize);
-        const pingPromises = chunk.map(async (address: string) => {
-          const pingHeaders = new Headers();
-          pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
-          pingHeaders.set("Content-Type", "application/json");
-          pingHeaders.set("Accept", "application/json");
-
-          try {
-            const pingRes = await fetch(this.api + PING_ROUTE, {
-              method: "POST",
-              headers: pingHeaders,
-              body: JSON.stringify({ address: address, count: "1" }),
-              signal: AbortSignal.timeout(INTERVAL)
-            });
-            const data = await pingRes.json();
-            if (data[0] && data[0].received === '1') {
-              return address;
-            }
-
-          } catch (e) {
-            if (!(e instanceof Error && (e.name === "AbortError" || e.name === "TimeoutError"))) {
-              logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
-            }
+        try {
+          const pingRes = await fetch(this.api + PING_ROUTE, {
+            method: "POST",
+            headers: pingHeaders,
+            body: JSON.stringify({ address: address, count: "1" }),
+            signal: AbortSignal.timeout(INTERVAL)
+          });
+          const data = await pingRes.json();
+          if (data[0] && data[0].received === '1') {
+            return address;
           }
-          return null;
-        });
-        
-        pingResults.push(...await Promise.all(pingPromises));
 
-        //if (i + chunkSize < addressesToPing.length) {
-        //  await delay(1000);
-        //}
-      }
+        } catch (e) {
+          if (!(e instanceof Error && (e.name === "AbortError" || e.name === "TimeoutError"))) {
+            logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
+          }
+        }
+        return null;
+      });
+      
+      const pingResults = await Promise.all(pingPromises);
       
       const connectedIps = new Set(pingResults.filter((ip): ip is string => ip !== null));
 
