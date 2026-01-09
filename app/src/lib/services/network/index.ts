@@ -100,7 +100,7 @@ class Network {
           }
 
           if (student && connected !== student.connected) {
-            if (connected === false && student.attempts < 1) {
+            if (connected === false && student.attempts < 2) {
               student.attempts++;
             }
             else {
