@@ -51,6 +51,15 @@
         background-color: lightgray;
         box-shadow: none;
       }
+
+      &.clickable.on:hover {
+        cursor: pointer;
+        background-color: vars.$blue;
+      }
+
+      &.clickable.off:hover {
+        background-color: vars.$gray4;
+      }
     }
   }
 }
