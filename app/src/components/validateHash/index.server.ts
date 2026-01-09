@@ -1,5 +1,6 @@
 'use server'
 
+import logger from "@/lib/services/logger";
 import network from "@/lib/services/network";
 import sseManager from "@/lib/services/sse";
 import storage from "@/lib/services/storage"
@@ -28,6 +29,7 @@ export async function validateHash(hash: string) {
   await network.addUpdate(ip, { ip, finished: true });
 
   sseManager.send(ip, { locked: storage.locked, finished: true }, "std", false);
+  logger.info(`Student ${student.name} finished`, { action: "Finished", issuer: student.name })
 
   return {
     ok: true,
