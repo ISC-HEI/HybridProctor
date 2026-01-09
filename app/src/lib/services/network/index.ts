@@ -3,128 +3,82 @@ import sseManager from "../sse";
 import Mutex from "@/lib/utils/mutex";
 import logger from "../logger";
 
-const INTERVAL = 2000;
-const IPS_ROUTE = "/ip/dhcp-server/lease/print";
-const PING_ROUTE = "/ping"
-const IP_REGEX = /(10\.32\.9\..{1,3})|(172\.17\.0\..{1,3})|(.{1,3}\..{1,3}\..{1,3}\.[01])/g
+const CHECK_INTERVAL = 2000; 
+const HEARTBEAT_TIMEOUT = 10000; 
 
 class Network {
-  private api: string;
   private studentsMutex;
   private students: Map<string, Student> = new Map<string, Student>();
   private studentUpdates: Map<string, StudentUpdate> = new Map<string, StudentUpdate>();
+  private heartbeats: Map<string, number> = new Map<string, number>();
 
   constructor() {
-    if (!process.env.IP || !process.env.MIKROTIK_USER) {
-      throw new Error(".env is not configured correctly!!!");
-    }
-
-    this.api = `http://${process.env.IP}/rest`;
-
     this.studentsMutex = new Mutex();
-    
     this.runner();
   }
 
   private runner() {
     this.callback().finally(() => {
-        setTimeout(this.runner.bind(this), INTERVAL);
+      setTimeout(this.runner.bind(this), CHECK_INTERVAL);
     });
   }
 
   private async callback() {
-    const headers = new Headers();
-
-    headers.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
-
+    const unlock = await this.studentsMutex.lock();
     try {
-      const res = await fetch(this.api + IPS_ROUTE, {
-        method: "POST",
-        headers: headers,
-      });
+      for (const [ip, student] of this.students) {
+        const lastHeartbeat = this.heartbeats.get(ip) || 0;
+        const isConnected = (Date.now() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
 
-      const connections = await res.json();
+        if (student.connected !== isConnected) {
+          if (isConnected === false && student.attempts < 1) {
+            student.attempts++;
+          } else {
+            student.attempts = 0;
+            const since = Date.now();
+            this.update(ip, { ip, connected: isConnected, since });
 
-      const addressesToPing = connections
-        .map((conn: { [x: string]: string; }) => conn["address"])
-        .filter((address: string) => address && !address.match(IP_REGEX));
-
-      const pingPromises = addressesToPing.map(async (address: string) => {
-        const pingHeaders = new Headers();
-        pingHeaders.set("Authorization", `Basic ${Buffer.from(`${process.env.MIKROTIK_USER}:${process.env.MIKROTIK_PASSWORD}`, "utf8").toString("base64")}`);
-        pingHeaders.set("Content-Type", "application/json");
-        pingHeaders.set("Accept", "application/json");
-
-        try {
-          const pingRes = await fetch(this.api + PING_ROUTE, {
-            method: "POST",
-            headers: pingHeaders,
-            body: JSON.stringify({ address: address, count: "1" }),
-            signal: AbortSignal.timeout(INTERVAL)
-          });
-          const data = await pingRes.json();
-          if (data[0] && data[0].received === '1') {
-            return address;
-          }
-
-        } catch (e) {
-          if (!(e instanceof Error && (e.name === "AbortError" || e.name === "TimeoutError"))) {
-            logger.error(`Error sending ping command to router for IP ${address} : ${e}`);
-          }
-        }
-        return null;
-      });
-      
-      const pingResults = await Promise.all(pingPromises);
-      
-      const connectedIps = new Set(pingResults.filter((ip): ip is string => ip !== null));
-
-      const unlock = await this.studentsMutex.lock();
-      try {
-        for (const [ip, student] of this.students) {
-          let connected = true;
-
-          if (!connectedIps.has(ip)) {
-            connected = false;
-          }
-
-          if (student && connected !== student.connected) {
-            if (connected === false && student.attempts < 2) {
-              student.attempts++;
-            }
-            else {
-              student.attempts = 0;
-
-              const since = Date.now();
-
-              this.update(ip, { ip, connected, since });
-
-              logger.warn(
-                `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${connected ? "reconnected" : "disconnected"}.`,
-                { issuer: student.name ? student.name : student.ip, action: connected ? "reconnected" : "disconnected" }
-              );
-            }
-          }
-        }
-
-        for (const studentIp of connectedIps) {
-          if (!this.students.has(studentIp)) {
-            this.addNewStudent(studentIp);
+            logger.warn(
+              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${isConnected ? "reconnected" : "disconnected"}.`,
+              { issuer: student.name ? student.name : student.ip, action: isConnected ? "reconnected" : "disconnected" }
+            );
           }
         }
       }
-      finally {
-        if (this.studentUpdates.size > 0) {
-          sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
-        }
 
-        this.studentUpdates.clear();
-
-        unlock();
+    } finally {
+      if (this.studentUpdates.size > 0) {
+        sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
       }
+      this.studentUpdates.clear();
+      unlock();
     }
-    catch (e) {
-      logger.error(`Error fetching IPs : ${e}`);
+  }
+
+  public async recordHeartbeat(ip: string) {
+    const unlock = await this.studentsMutex.lock();
+    try {
+      this.heartbeats.set(ip, Date.now());
+
+      if (!this.students.has(ip)) {
+        const student: Student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0, latestVersion: { hash: "", path: "" } };
+        this.students.set(ip, student);
+        this.studentUpdates.set(ip, student);
+
+      } else {
+        const student = this.students.get(ip)!;
+        if (!student.connected) {
+            student.attempts = 0;
+            const since = Date.now();
+            this.update(ip, { ip, connected: true, since });
+             logger.warn(
+              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} reconnected.`,
+              { issuer: student.name ? student.name : student.ip, action: "reconnected" }
+            );
+        }
+      }
+    } finally {
+      unlock();
     }
   }
 
