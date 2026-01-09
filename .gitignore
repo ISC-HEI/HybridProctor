@@ -1,3 +1,47 @@
 site/
 *.old/
 *.old
+
+
+# dependencies
+app/node_modules
+app/.pnp
+app/.pnp.*
+app/.yarn/*
+!app/.yarn/patches
+!app/.yarn/plugins
+!app/.yarn/releases
+!app/.yarn/versions
+
+# testing
+/app/coverage
+
+# next.js
+/app/.next/
+/app/out/
+
+# production
+/app/build
+
+# misc
+.app/DS_Store
+*app/.pem
+
+# debug
+napp/pm-debug.log*
+yapp/arn-debug.log*
+yapp/arn-error.log*
+.app/pnpm-debug.log*
+
+
+# vercel
+.app/vercel
+
+# typescript
+app/*.tsbuildinfo
+app/next-env.d.ts
+
+app/logs/
+app/uploads/
+app/resources/db/*
+app/resources/.password
