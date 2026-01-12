@@ -14,7 +14,7 @@ To use this system you need to have your exam statement in a single html file. P
 1. Plug the USB key in the router and power up the later (don't forget to plug in the antenna!).
 1. Connect to it via wifi (**password: {{wifi_password}}**).
 1. Go to [http://10.0.0.1/admin/configure]() and copy the displayed password somewhere safe (if a new password was generated).
-1. Follow the instructions. First, upload the statement. Then, optionally set the list of files the students have to submit (can be skipped by unchecking "enable"). And finally, the resources to be downloaded by the students.
+1. Follow the instructions. First, upload the statement. Then, optionally set the list of files the students have to submit (can be skipped by unchecking the corresponding checkbox). And finally, the resources to be downloaded by the students.
 1. Alternatively, you can connect to router via sftp to adapt the config for your exam. You will need the private ssh key provided by [Steve Devènes](mailto:steve.devenes@hevs.ch) to connect.
 
     You can connect either via a terminal or by using a ssh client like FileZilla:
