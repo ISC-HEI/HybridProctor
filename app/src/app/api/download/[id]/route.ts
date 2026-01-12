@@ -41,7 +41,7 @@ export async function GET(
         passThrough.end();
     });
 
-    const res = new NextResponse(passThrough as any, {
+    const res = new NextResponse(passThrough as unknown as BodyInit, {
         headers: {
             "Content-Type": "application/zip",
             "Content-Length": stat.size.toString(),

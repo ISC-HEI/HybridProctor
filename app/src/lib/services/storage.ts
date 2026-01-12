@@ -99,7 +99,7 @@ class Storage {
     const nodeStream = createWriteStream(fullLocation);
     const webStream = file.stream();
 
-    // @ts-ignore
+    // @ts-expect-error type
     await pipeline(Readable.fromWeb(webStream), nodeStream);
 
     logger.debug(`Created file "${fullLocation}".`);
@@ -154,8 +154,8 @@ class Storage {
   public async writeExam(file: File) {
     const nodeStream = createWriteStream(this.examLocation);
     const webStream = file.stream();
-    
-    // @ts-ignore
+     
+    // @ts-expect-error type
     await pipeline(Readable.fromWeb(webStream), nodeStream);
 
     logger.debug(`Exam created at "${this.examLocation}".`);

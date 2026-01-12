@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import LockInfo from "../lockInfo";
 import style from "./index.module.scss";
 
@@ -18,7 +19,7 @@ export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
           <p>Total students : <span className={style.number}>{total}</span></p>
         </div>
 
-        <a href="/admin/explorer" className={style.link}>File Explorer</a>
+        <Link href="/admin/explorer" className={style.link}>File Explorer</Link>
       </div>
     </div>
   )

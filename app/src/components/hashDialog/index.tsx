@@ -31,7 +31,7 @@ export default function HashDialog({ hash, show, onClose }: HashDialogProps) {
       <div className={style.content}>
         <h2 className={style.title}>This is the hash of your files.</h2>
         <p>You will need it at the end of the exam to validate which version of your files you want to be used.</p>
-        <p>Please save it if it's your final version.</p>
+        <p>Please save it if it&apos;s your final version.</p>
 
         <p>Hash : <span className={style.hash}>{hash}</span></p>
 

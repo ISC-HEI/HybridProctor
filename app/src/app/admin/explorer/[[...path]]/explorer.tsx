@@ -46,7 +46,7 @@ export default function Explorer({ path }: ExplorerProps) {
       setTotal(total);
       setUsed(used);
     }
-  )()}, []);
+  )()}, [path, addNotification]);
 
   const handleSelect = (item: DirItem, evt: MouseEvent) => {
     if (!evt.ctrlKey && !evt.shiftKey) {

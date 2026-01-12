@@ -1,6 +1,7 @@
 
 import { ChevronRightIcon } from "lucide-react";
 import style from "./index.module.scss";
+import Link from "next/link";
 
 interface PathIndicatorProps {
   path: string|undefined
@@ -13,9 +14,9 @@ export default function PathIndicator({ path }: PathIndicatorProps) {
   return (
     <ol className={style.path}>
       <li className={style.dir}>
-        <a href="/admin/explorer">
+        <Link href="/admin/explorer">
           <p>root</p>
-        </a>
+        </Link>
         { path !== undefined
           && <ChevronRightIcon className={style.chevron} />
         }
