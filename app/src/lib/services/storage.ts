@@ -1,6 +1,6 @@
 
 import fs, { readdir, statfs } from "fs/promises";
-import { existsSync, PathLike, createWriteStream } from "fs";
+import { existsSync, PathLike, createWriteStream, createReadStream } from "fs";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import path, { join } from "path";
@@ -215,8 +215,10 @@ class Storage {
       if (item.isFile()) {
         digest.update(item.name);
         const itemPath = path.join(versionFolder, item.name);
-        const fileContent = await fs.readFile(itemPath);
-        digest.update(fileContent);
+        const stream = createReadStream(itemPath);
+        for await (const chunk of stream) {
+            digest.update(chunk);
+        }
       }
     }
 

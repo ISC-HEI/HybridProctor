@@ -20,6 +20,7 @@ interface LogRecordOpts {
 }
 
 export type LogType = "all"|"errors"|"warnings"|"infos"|"debug";
+
 export type LogRecord = {
   uuid: string;
   type: LogType;
@@ -27,7 +28,6 @@ export type LogRecord = {
   issuer?: string;
   action?: string;
   message: string;
-  raw: string;
 }
 
 class Logger {
@@ -87,8 +87,6 @@ class Logger {
 
   private buildRecord(type: LogType, message: string, opts?: LogRecordOpts): LogRecord {
     const timestamp = dayjs();
-    const formatedTime = this.getFormatedTime(timestamp);
-    const raw = `[${ type[0].toUpperCase() }] ${formatedTime} | ${message}`;
     const uuid = uuidv4();
 
     return {
@@ -98,13 +96,14 @@ class Logger {
       message,
       issuer: opts?.issuer,
       action: opts?.action,
-      raw,
     }
   }
 
   private async writeRecord(record: LogRecord) {
+    const formatedTime = this.getFormatedTime(dayjs(record.timestamp));
+    const raw = `[${ record.type[0].toUpperCase() }] ${formatedTime} | ${record.message}`;
     const unlock = await this.logsMutex.lock();
-    await fs.appendFile(this.logFilePath, record.raw + '\n', "utf8");
+    await fs.appendFile(this.logFilePath, raw + '\n', "utf8");
     this.logs.push(record);
     
     if (this.logs.length > 500) {
