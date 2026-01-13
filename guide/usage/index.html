@@ -514,9 +514,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#during-the-exam" class="md-nav__link">
+  <a href="#during-the-exam-and-after" class="md-nav__link">
     <span class="md-ellipsis">
-      During the exam
+      During the exam and after
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#password" class="md-nav__link">
+    <span class="md-ellipsis">
+      Password
     </span>
   </a>
   
@@ -624,9 +633,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#during-the-exam" class="md-nav__link">
+  <a href="#during-the-exam-and-after" class="md-nav__link">
     <span class="md-ellipsis">
-      During the exam
+      During the exam and after
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#password" class="md-nav__link">
+    <span class="md-ellipsis">
+      Password
     </span>
   </a>
   
@@ -662,8 +680,10 @@
 <ol>
 <li>Plug the USB key in the router and power up the later (don't forget to plug in the antenna!).</li>
 <li>Connect to it via wifi (<strong>password: toto1234</strong>).</li>
+<li>Go to <a href="">http://10.0.0.1/admin/configure</a> and copy the displayed password somewhere safe (if a new password was generated).</li>
+<li>Follow the instructions. First, upload the statement. Then, optionally set the list of files the students have to submit (can be skipped by unchecking the corresponding checkbox). And finally, the resources to be downloaded by the students.</li>
 <li>
-<p>Connect to router via sftp to adapt the config for your exam. You will need the private ssh key provided by <a href="mailto:steve.devenes@hevs.ch">Steve Devènes</a> to connect.</p>
+<p>Alternatively, you can connect to router via sftp to adapt the config for your exam. You will need the private ssh key provided by <a href="mailto:steve.devenes@hevs.ch">Steve Devènes</a> to connect.</p>
 <p>You can connect either via a terminal or by using a ssh client like FileZilla:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Terminal</label><label for="__tabbed_1_2">FileZilla</label></div>
 <div class="tabbed-content">
@@ -679,31 +699,42 @@
 </div>
 <p>Once connected, here's what you can change:</p>
 <ul>
-<li>The <em>statement of your exam</em>, replace <strong>/mount_point/html/exam.html</strong>.</li>
-<li>The <em>ressources</em> to be downloaded by the students, put them in <strong>/mount_point/html/resources</strong>. Delete the content of the directory if you don't have any.</li>
-<li>Optionally: The <em>list of files the students have to submit</em>. You can list these files in  <strong>/mount_point/html/config.yml</strong>, or disable the option.</li>
+<li>The <em>statement of your exam</em>, replace <strong>/app/public/exam.html</strong>.</li>
+<li>The <em>ressources</em> to be downloaded by the students, put them in <strong>/app/public/resources</strong>. Delete the content of the directory if you don't have any.</li>
+<li>Optionally: The <em>list of files the students have to submit</em>. You can list these files in  <strong>/app/public/config.yml</strong>, or disable the option.</li>
 </ul>
-<p>Please, don't delete or modify any other files in <strong>/mount_point/html/</strong>.</p>
 </li>
 <li>
-<p>Go to <a href="">10.0.0.1</a> and check if your exam/resources are really there and if everything is working (try downloading ressources and uploading files).</p>
+<p>Go to <a href="">http://10.0.0.1</a> and check if your exam/resources are really there and if everything is working (try downloading ressources and uploading files).</p>
 </li>
 </ol>
-<h2 id="during-the-exam">During the exam</h2>
+<h2 id="during-the-exam-and-after">During the exam and after</h2>
 <ol>
 <li>Provide the wifi password to the students and ask them to connect.</li>
 <li>Students can then do the exam and upload their files.</li>
+<li>You can monitor the exam on <a href="">http://10.0.0.1/admin/monitor</a>. Here you can see logs in real time and who's connected since when.</li>
 <li>
-<p>Once finished, you can retrieve the submitted files via sftp, they are located in <strong>/home/admin/uploads</strong>. </p>
+<p>Once finished, you can retrieve the submitted files using the integrated file explorer at <a href="">http://10.0.0.1/admin/explorer</a> or via sftp (or power off the router and mount the usb key onto your computer), they are located in <strong>/mount_point/uploads</strong> (or <strong>mount/uploads</strong> if done using the USB key).</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>HybridProctor now has a handshake, the student needs to give the latest files hash to end his exam. This means that only the vXXX_validated labeled folder files can be evaluated. This folder also contains the hash, which means that in case of an appeal you can check if the hash compares to the one of the appeal. </p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Make sure the students files are really uploaded and accessible through sftp before they leave!</p>
+<p>Make sure the students files are really uploaded and accessible through the file explorer or sftp before they leave!</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
-<p>The current version of the system doesn't provide a way to check if students still have an internet access, and also if they are still connected to the router. This is planned in future version. For now you will have to keep an eye on the students during the exam.</p>
+<p>The current version of the system doesn't provide a way to check if students still have an internet access. For now you will have to keep an eye on the students during the exam.</p>
 </div>
 </li>
+</ol>
+<h2 id="password">Password</h2>
+<p>It is really simple to reset the password.</p>
+<ol>
+<li>Power off the router and mount the USB key onto your computer and remove the <strong>mount/.password</strong> file.</li>
+<li>Plug the USB key back in the router and power it on.</li>
+<li>Go to <a href="">http://10.0.0.1</a> and copy the displayed password somewhere safe.</li>
 </ol>
 
 

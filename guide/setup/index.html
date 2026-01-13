@@ -707,7 +707,7 @@
 <li>Make sure to give an internet access to the router via a ethernet cable.</li>
 <li>Open the <strong>Container</strong> window to stop and delete the current container.</li>
 <li>Open a terminal and enter:
-    <div class="highlight"><pre><span></span><code>add<span class="w"> </span>remote-image<span class="o">=</span>stevedevenes/hybridproctor-arm:latest<span class="w"> </span><span class="nv">interface</span><span class="o">=</span>veth1<span class="w"> </span>root-dir<span class="o">=</span>usb1/hybridProctorContainer<span class="w"> </span>start-on-boot<span class="o">=</span>yes<span class="w"> </span><span class="nv">mounts</span><span class="o">=</span>mount,uploads
+    <div class="highlight"><pre><span></span><code>/container/add<span class="w"> </span>remote-image<span class="o">=</span>enderastronaute/hybridproctor-arm-dev:latest<span class="w"> </span><span class="nv">interface</span><span class="o">=</span>veth1<span class="w"> </span>root-dir<span class="o">=</span>usb1/HybridProctorDevContainer<span class="w"> </span>start-on-boot<span class="o">=</span>yes<span class="w"> </span><span class="nv">logging</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">mounts</span><span class="o">=</span>mount,uploads
 </code></pre></div></li>
 <li>The container should appear in the <strong>Container</strong> window: Start it!
     <a class="glightbox" href="../../img/container_config.jpg" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" class="center" src="../../img/container_config.jpg" width="600px"></a></li>
