@@ -60,7 +60,7 @@ export default function Page() {
         eventSource.close();
       }
     };
-  });
+  }, []);
 
   useEffect(() => {
     const sendHeartbeat = async () => {
