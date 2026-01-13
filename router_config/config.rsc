@@ -17,7 +17,7 @@ add name=bridge-wifi
 add name=dockers
 /interface wifi
 set [ find default-name=wifi1 ] channel.band=2ghz-ax .frequency=2300-7300 \
-    .skip-dfs-channels=10min-cac .width=20/40mhz configuration.antenna-gain=4 \
+    .skip-dfs-channels=10min-cac .width=20mhz configuration.antenna-gain=4 \
     .country=Switzerland .distance=0 .mode=ap .ssid=("ISC_Exam" . $lastDec ) datapath.bridge=\
     bridge-wifi .client-isolation=yes disabled=no \
     security.authentication-types=wpa2-psk,wpa3-psk .ft=yes .ft-over-ds=yes
