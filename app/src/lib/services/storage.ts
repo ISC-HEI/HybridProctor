@@ -187,10 +187,10 @@ class Storage {
       return "";
     }
 
-    const namePath = join(this.uploadLocation, name);
+    const namePath = join(this.uploadLocation, dayjs().format(`DD_MM_YYYY`), name);
 
     if (!existsSync(namePath)) {
-      await fs.mkdir(namePath);
+      await fs.mkdir(namePath, { recursive: true });
     }
 
     const regex = /^v[0-9]+(?:_validated)?$/i;

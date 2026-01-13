@@ -27,7 +27,7 @@ export default function Item({ item, selected, onClick, onDoubleClick }: ItemPro
     <article className={`${style.item} ${ selected ? style.selected : '' }`} onClick={handleClick} onDoubleClick={handleDoubleClick}>
       <div className={style.iconContainer}>
         { item.type === "directory"
-          ? <FolderIcon className={`${style.icon} ${style.directory}`} />
+          ? <FolderIcon className={`${style.icon} ${style.directory} ${item.name.endsWith("_validated") ? style.validated : ''}`} />
           : <FileIcon className={style.icon} />
         }
       </div>
