@@ -27,6 +27,14 @@ export async function uploadFiles(files: File[]) {
   const ip = await getIp();
   const name = await getNameFromIp(ip);
 
+  if (files.length < 1) {
+    return {
+      ok: false,
+      message: "Please upload at least one file.",
+      hash: ""
+    }
+  }
+
   if (storage.locked) {
     return {
       ok: false,

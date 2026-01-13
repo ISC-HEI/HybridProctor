@@ -70,7 +70,7 @@ export default function Exam({ conf }: ExamProps) {
               <input name='files' id='files' type="file" multiple onChange={handleChooseFiles} ref={fileInputRef} />
             </div>
         }
-        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf} type='submit'>
+        <button className={`submit-btn ${style.submit_btn} btn-primary`} disabled={!conf || ( conf.enable && files.length < 1 ) } type='submit'>
           { loading
             ? <Loader light />
             : conf && conf.enable ? "Upload" : "Finish"

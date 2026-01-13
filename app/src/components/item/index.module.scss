@@ -18,6 +18,10 @@
 
       &.directory {
         color: vars.$blue;
+
+        &.validated {
+          color: vars.$green;
+        }
       }
     }
   }
