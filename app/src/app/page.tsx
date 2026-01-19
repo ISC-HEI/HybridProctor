@@ -9,6 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Yamlconf } from '@/lib/types/yamlconf';
 import LockScreen from '@/components/lockScreen';
 
+const HEARTBEAT_INTERVAL = 5000;
+
 export default function Page() {
   const [files, setFiles] = useState<string[]>([]);
   const [yamlconf, setYamlconf] = useState<Yamlconf>();
@@ -57,6 +59,28 @@ export default function Page() {
       if (eventSource) {
         eventSource.close();
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const sendHeartbeat = async () => {
+      try {
+        await fetch('/api/heartbeat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } catch (error) {
+        console.error('Failed to send heartbeat:', error);
+      }
+    };
+
+    sendHeartbeat();
+    const intervalId = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
     };
   }, []);
 
