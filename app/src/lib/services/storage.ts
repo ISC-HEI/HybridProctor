@@ -17,11 +17,14 @@ import dayjs from "dayjs";
 import { DirItem } from "../types/dirItem";
 import { v4 as uuidv4 } from "uuid";
 import network from "./network";
+import { getTime, unixTime } from "../utils/time";
 
 const DEFAULT_ROOT_PATH = "/mount_point";
 const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
 const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
+
+const AVERAGE_LATENCY = 165;
 
 class Storage {
   rootLocation: string;
@@ -33,6 +36,7 @@ class Storage {
   resources!: string[];
   version!: string;
   locked: boolean = true;
+  timeOffset: number = -1;
 
   private sessions: Map<string, Session> = new Map<string, Session>();
   newPassword: string|undefined;
@@ -124,7 +128,7 @@ class Storage {
 
     const session = this.sessions.get(id) as Session;
 
-    if (session.until <= Date.now()) {
+    if (session.until <= await unixTime()) {
       this.sessions.delete(id);
 
       return false;
@@ -139,13 +143,24 @@ class Storage {
     return true;
   }
 
-  public createSession(ip: string) {
+  public setOffset(timestamp: string) {
+    const offset = dayjs().diff(dayjs(timestamp)) - AVERAGE_LATENCY;
+
+    if (this.timeOffset <= 0 && offset >= 10000) {
+      this.timeOffset = offset;
+    }
+    else if (this.timeOffset <= 0) {
+      this.timeOffset = 0;
+    }
+  }
+
+  public async createSession(ip: string) {
     const id = crypto.randomUUID();
 
     this.sessions.set(id, {
       id,
       ip,
-      until: dayjs().add(2, "hours").valueOf(),
+      until: (await getTime()).add(2, "hours").valueOf(),
     });
 
     return id;
@@ -187,7 +202,7 @@ class Storage {
       return "";
     }
 
-    const namePath = join(this.uploadLocation, dayjs().format(`DD_MM_YYYY`), name);
+    const namePath = join(this.uploadLocation, (await getTime()).format(`DD_MM_YYYY`), name);
 
     if (!existsSync(namePath)) {
       await fs.mkdir(namePath, { recursive: true });

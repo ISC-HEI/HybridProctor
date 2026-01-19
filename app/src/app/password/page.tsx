@@ -9,10 +9,7 @@ export default function Password() {
 
   useEffect(() => {
     (async () => {
-      const pwd = await fetchNewPassword()
-      console.log(pwd);
       setPassword(await fetchNewPassword());
-
     })();
   }, []);
 

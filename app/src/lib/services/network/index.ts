@@ -2,6 +2,7 @@ import { Student, StudentUpdate } from "@/lib/types/student";
 import sseManager from "../sse";
 import Mutex from "@/lib/utils/mutex";
 import logger from "../logger";
+import { getTime, unixTime } from "@/lib/utils/time";
 
 const CHECK_INTERVAL = 2000; 
 const HEARTBEAT_TIMEOUT = 10000; 
@@ -28,14 +29,14 @@ class Network {
     try {
       for (const [ip, student] of this.students) {
         const lastHeartbeat = this.heartbeats.get(ip) || 0;
-        const isConnected = (Date.now() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
+        const isConnected = (await unixTime() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
 
         if (student.connected !== isConnected) {
           if (isConnected === false && student.attempts < 1) {
             student.attempts++;
           } else {
             student.attempts = 0;
-            const since = Date.now();
+            const since = await unixTime();
             this.update(ip, { ip, connected: isConnected, since });
 
             logger.warn(
@@ -58,10 +59,10 @@ class Network {
   public async recordHeartbeat(ip: string) {
     const unlock = await this.studentsMutex.lock();
     try {
-      this.heartbeats.set(ip, Date.now());
+      this.heartbeats.set(ip, (await getTime()).unix());
 
       if (!this.students.has(ip)) {
-        const student: Student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0, latestVersion: { hash: "", path: "" } };
+        const student: Student = { ip, name: "", connected: true, finished: false, since: await unixTime(), attempts: 0, latestVersion: { hash: "", path: "" } };
         this.students.set(ip, student);
         this.studentUpdates.set(ip, student);
 
@@ -82,8 +83,8 @@ class Network {
     }
   }
 
-  private addNewStudent(ip: string) {
-    const student: Student = { ip, name: "", connected: true, finished: false, since: Date.now(), attempts: 0, latestVersion: { hash: "", path: "" } };
+  private async addNewStudent(ip: string) {
+    const student: Student = { ip, name: "", connected: true, finished: false, since: await unixTime(), attempts: 0, latestVersion: { hash: "", path: "" } };
     this.students.set(ip, student);
     this.studentUpdates.set(ip, student);
   }
@@ -103,7 +104,7 @@ class Network {
     const unlock = await this.studentsMutex.lock();
 
     if (!this.students.has(ip)) {
-      this.addNewStudent(ip);
+      await this.addNewStudent(ip);
     }
 
     const student = this.students.get(ip)!;

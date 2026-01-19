@@ -6,8 +6,7 @@ import { getIp } from "@/lib/utils/network";
 import { cookies } from "next/headers";
 import { permanentRedirect } from "next/navigation";
 
-export async function verify(formData: FormData) {
-  const password = formData.get("password") as string;
+export async function verify(password: string, timestamp: string) {
   const ip = await getIp();
 
   if (await storage.verifyPassword(password)) {
@@ -18,7 +17,9 @@ export async function verify(formData: FormData) {
       return permanentRedirect("/")
     }
 
-    const id = storage.createSession(ip);
+    storage.setOffset(timestamp);
+
+    const id = await storage.createSession(ip);
 
     cookiesStore.set("sid", id, {
       maxAge: 7_200_000,

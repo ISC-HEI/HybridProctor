@@ -8,6 +8,7 @@ import firstline from "firstline";
 import sseManager from "@services/sse";
 import Mutex from "../utils/mutex";
 import { v4 as uuidv4 } from "uuid";
+import { getTime } from "../utils/time";
 
 dayjs.locale("fr-ch");
 
@@ -85,8 +86,8 @@ class Logger {
     return timestamp.format(`ddd DD-MM-YYYY HH:mm:ss${this.logLevel === "debug" ? ":SSS" : ""} +01:00 (CET)`);
   }
 
-  private buildRecord(type: LogType, message: string, opts?: LogRecordOpts): LogRecord {
-    const timestamp = dayjs();
+  private async buildRecord(type: LogType, message: string, opts?: LogRecordOpts): Promise<LogRecord> {
+    const timestamp = await getTime();
     const uuid = uuidv4();
 
     return {
@@ -118,24 +119,24 @@ class Logger {
   }
 
   public async info(message: string, opts?: LogRecordOpts) {
-    const record = this.buildRecord("infos", message, opts);
+    const record = await this.buildRecord("infos", message, opts);
     await this.writeRecord(record);
   }
 
   public async warn(message: string, opts?: LogRecordOpts) {
-    const record = this.buildRecord("warnings", message, opts);
+    const record = await this.buildRecord("warnings", message, opts);
     await this.writeRecord(record);
   }
 
   public async error(message: string, opts?: LogRecordOpts) {
-    const record = this.buildRecord("errors", message, opts);
+    const record = await this.buildRecord("errors", message, opts);
     await this.writeRecord(record);
   }
 
   public async debug(message: string, opts?: LogRecordOpts) {
     if (this.logLevel !== "debug") return;
 
-    const record = this.buildRecord("debug", message, opts);
+    const record = await this.buildRecord("debug", message, opts);
     await this.writeRecord(record);
   }
 
