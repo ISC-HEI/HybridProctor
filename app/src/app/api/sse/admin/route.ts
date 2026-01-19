@@ -4,6 +4,7 @@ export const preferredRegion = "auto";
 export const fetchCache = "force-no-store";
 
 
+import logger from "@/lib/services/logger";
 import { getIp } from "@/lib/utils/network";
 import sseManager from "@services/sse";
 import storage from "@services/storage";
@@ -30,7 +31,8 @@ export async function GET(req: NextRequest) {
         })
 
       } catch (error) {
-        console.error("Stream error:", error);
+        logger.error("Stream error")
+        console.error(error);
         controller.enqueue(sseManager.encode("error", "Stream interrupted"));
         sseManager.removeClient(ip, true);
         controller.close();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import network from "@/lib/services/network";
 import { getIp } from "@/lib/utils/network";
+import logger from "@/lib/services/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export async function POST(req: NextRequest) {
     return new NextResponse(null, { status: 204 }); // No Content
   } catch (error) {
     // Log the error but don't fail, as this is a background task.
-    console.error("Heartbeat error:", error);
+    logger.error("Heartbeat error")
+    console.error(error);
     return new NextResponse(null, { status: 204 });
   }
 }

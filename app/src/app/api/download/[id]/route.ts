@@ -3,6 +3,7 @@ import path from "path";
 import os from "os";
 import fs from "fs";
 import { PassThrough } from "stream";
+import logger from "@/lib/services/logger";
 
 export async function GET(
   req: NextRequest,
@@ -31,14 +32,16 @@ export async function GET(
     dataStream.on("end", () => {
       fs.unlink(tempPath, (err) => {
         if (err) {
-          console.error(`Failed to delete temp file ${tempPath}`, err);
+          logger.error(`Failed to delete temp file ${tempPath}`);
+          console.error(err);
         }
       });
     });
 
     dataStream.on("error", (err) => {
-        console.error(`Error reading temp file ${tempPath}`, err);
-        passThrough.end();
+      logger.error(`Error reading temp file ${tempPath}`);
+      console.error(err);
+      passThrough.end();
     });
 
     const res = new NextResponse(passThrough as unknown as BodyInit, {
@@ -52,6 +55,7 @@ export async function GET(
     return res;
 
   } catch (error) {
+    logger.error("An error occured creating temp file.");
     console.error(error);
     return new NextResponse("An error occurred", { status: 500 });
   }
