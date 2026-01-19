@@ -31,9 +31,9 @@ A configuration script of a working system has been exported and is available in
     ```
 3. You can also run and adapt the commands listed in config.rsc manually in the router terminal if something is not working.
 
-## Upgrading the container image
+## Adding or upgrading the container image
 
-If you already have a working router but need to upgrade only the container image you can do the following:
+You can add or upgrade the container image like this :
 
 1. Login via WinBox.
 1. Make sure to give an internet access to the router via a ethernet cable.

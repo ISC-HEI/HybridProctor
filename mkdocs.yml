@@ -162,6 +162,7 @@ nav:
    
   - Guides:
     - guide/index.md
+    - Dev Guide: guide/dev/index.md
     - Usage Guide: guide/usage/index.md
     - Setup Guide: guide/setup/index.md
 

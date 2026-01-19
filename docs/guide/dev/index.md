@@ -67,5 +67,7 @@ sudo make imageDev
 sudo make publishDev
 ```
 
+You can now follow the [setup guide](../setup/index.md).
+
     !!! info
         `make build` can be replaced by npm run build inside the app subdirectory.
