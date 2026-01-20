@@ -17,6 +17,9 @@ export default function Page() {
   const [version, setVersion] = useState<string>();
   const [locked, setLocked] = useState<boolean>(true);
   const [finished, setFinished] = useState<boolean>(false);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const hasRun = useRef<boolean>(false);
 
   useEffect(() => {
@@ -24,40 +27,75 @@ export default function Page() {
       setFiles(await fetchResources());
       setYamlconf(await fetchConfig());
       setVersion(await fetchVersion());
-    })()
+    })();
   }, []);
 
   useEffect(() => {
     if (hasRun.current) return;
     hasRun.current = true;
 
-    let eventSource: EventSource;
+    const connectToSse = async () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
 
-    (async () => {
-      const url = await fetchUrl();
-      eventSource = new EventSource(`${url}/api/sse/student`);
+      try {
+        const url = await fetchUrl();
+        const es = new EventSource(`${url}/api/sse/student`);
+        eventSourceRef.current = es;
 
-      eventSource.addEventListener("open", async (evt) => {
-        console.log("Connected");
-      })
+        window.onbeforeunload = () => {
+          es.close()
+          eventSourceRef.current = null;
+        }
 
-      eventSource.addEventListener("std", (evt) => {
-        const data = JSON.parse(evt.data) as { message: { locked: boolean, finished?: boolean } };
+        es.onopen = () => {
+          console.log("SSE connection established.");
+          if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+            reconnectTimeoutRef.current = null;
+          }
+        };
 
-        setLocked(data.message.locked);
+        es.addEventListener("init", (evt) => {
+          console.log("SSE connection initialized:", evt.data);
+        });
 
-        if (data.message.finished !== undefined)
-        setFinished(data.message.finished);
-      })
+        es.addEventListener("std", (evt) => {
+          const data = JSON.parse(evt.data) as { message: { locked: boolean, finished?: boolean } };
+          setLocked(data.message.locked);
+          if (data.message.finished !== undefined) {
+            setFinished(data.message.finished);
+          }
+        });
 
-      window.onbeforeunload = () => {
-        eventSource.close();
-      };
-    })();
+        es.addEventListener("error", (evt: MessageEvent) => {
+          console.error("SSE error:", evt.data);
+        });
+
+        es.onerror = (err: Event & { message?: string }) => {
+          console.error("EventSource failed:", err.message || err);
+          es.close();
+          if (!reconnectTimeoutRef.current) {
+            reconnectTimeoutRef.current = setTimeout(connectToSse, 2000);
+          }
+        };
+      } catch (error) {
+        console.error("Failed to fetch SSE URL and connect:", error);
+        if (!reconnectTimeoutRef.current) {
+          reconnectTimeoutRef.current = setTimeout(connectToSse, 2000);
+        }
+      }
+    };
+
+    connectToSse();
 
     return () => {
-      if (eventSource) {
-        eventSource.close();
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
       }
     };
   }, []);

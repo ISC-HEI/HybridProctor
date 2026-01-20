@@ -31,9 +31,6 @@ class Network {
         const lastHeartbeat = this.heartbeats.get(ip) || 0;
         const isConnected = (await unixTime() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
 
-        console.log(lastHeartbeat, await unixTime());
-        console.log((await unixTime() - lastHeartbeat), HEARTBEAT_TIMEOUT)
-
         if (student.connected !== isConnected) {
           if (isConnected === false && student.attempts < 1) {
             student.attempts++;

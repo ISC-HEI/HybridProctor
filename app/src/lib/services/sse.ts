@@ -2,83 +2,111 @@
 import logger from "./logger";
 import network from "./network";
 
-export type SSEEvent = "log"|"state"|"error"|"std"|"init";
+export type SSEEvent = "log" | "state" | "error" | "std" | "init";
 
 type Client = {
   ip: string;
   controller: ReadableStreamDefaultController;
+  admin: boolean;
+  signal: AbortSignal;
+  intervalId?: NodeJS.Timeout;
 };
 
 class SSEManager {
   admins: Map<string, Client>;
   students: Map<string, Client>;
   encoder: TextEncoder;
-  
+
   constructor() {
     this.admins = new Map<string, Client>();
     this.students = new Map<string, Client>();
     this.encoder = new TextEncoder();
   }
 
-  public async addClient(ip: string, controller: ReadableStreamDefaultController, admin: boolean) {
-    if (admin) {
-      this.admins.set(ip, { ip, controller });
-    }
-    else {
-      this.students.set(ip, { ip, controller });
-    }
-
-    if (admin) {
-      controller.enqueue(this.encode("log", `${JSON.stringify({ message: logger.getLogs().slice(-20) })}`));
-      controller.enqueue(this.encode("state", `${JSON.stringify({ message: await network.getStudents() })}`));
-
+  private safeEnqueue(client: Client, event: SSEEvent, data: string) {
+    if (client.signal.aborted) {
+      this.removeClient(client.ip, client.admin);
       return;
     }
 
-    const student = await network.getStudent(ip);
-    const storage = (await import("./storage")).default;
+    try {
+      client.controller.enqueue(this.encode(event, data));
+    } catch (e) {
+      logger.error(`Enqueue failed for ${client.ip}: ${(e as Error).message}`);
+      this.removeClient(client.ip, client.admin);
+    }
+  }
+  
+  private safeEnqueueRaw(client: Client, message: string) {
+    if (client.signal.aborted) {
+      this.removeClient(client.ip, client.admin);
+      return;
+    }
 
-    controller.enqueue(this.encode("std", `${JSON.stringify({ message: { locked: storage.locked, finished: student.finished } })}`))
+    try {
+      client.controller.enqueue(this.encoder.encode(message));
+    } catch (e) {
+      logger.error(`Raw enqueue failed for ${client.ip}: ${(e as Error).message}`);
+      this.removeClient(client.ip, client.admin);
+    }
+  }
+
+  public async addClient(ip: string, controller: ReadableStreamDefaultController, signal: AbortSignal, admin: boolean) {
+    const client: Client = { ip, controller, admin, signal }; 
+
+    const intervalId = setInterval(() => {
+      this.safeEnqueueRaw(client, ": heartbeat\n\n");
+    }, 15000);
+
+    client.intervalId = intervalId;
+
+    if (admin) {
+      this.admins.set(ip, client);
+    } else {
+      this.students.set(ip, client);
+    }
+
+    this.safeEnqueue(client, "init", "Connecting...");
+
+    if (admin) {
+      this.safeEnqueue(client, "log", `${JSON.stringify({ message: logger.getLogs().slice(-20) })}`);
+      this.safeEnqueue(client, "state", `${JSON.stringify({ message: await network.getStudents() })}`);
+    } else {
+      const student = await network.getStudent(ip);
+      const storage = (await import("./storage")).default;
+
+      this.safeEnqueue(client, "std", `${JSON.stringify({ message: { locked: storage.locked, finished: student.finished } })}`);
+    }
   }
 
   public removeClient(ip: string, admin: boolean) {
-    if (admin) {
-      this.admins.delete(ip);
-    }
-    else {
-      this.students.delete(ip);
+    const client = admin ? this.admins.get(ip) : this.students.get(ip);
+    if (client) {
+      clearInterval(client.intervalId);
+      if (admin) {
+        this.admins.delete(ip);
+      } else {
+        this.students.delete(ip);
+      }
     }
   }
 
   public broadcast(message: object, event: SSEEvent, admin: boolean = true) {
-    const data = this.encode(event, `${JSON.stringify({ message: message })}`);
+    const data = `${JSON.stringify({ message: message })}`;
 
-    if (admin) {
-      for (const ip of this.admins.keys()) {
-        const client = this.admins.get(ip);
-        
-        client?.controller.enqueue(data);
-      }
-      return;
-    }
-
-    for (const ip of this.students.keys()) {
-      const client = this.students.get(ip);
-
-      client?.controller.enqueue(data);
+    const clients = admin ? this.admins : this.students;
+    for (const client of clients.values()) {
+      this.safeEnqueue(client, event, data);
     }
   }
 
   public send(ip: string, message: object, event: SSEEvent, admin: boolean) {
-    const data = this.encode(event, `${JSON.stringify({ message: message })}`);
-
+    const data = `${JSON.stringify({ message: message })}`;
     const client = admin ? this.admins.get(ip) : this.students.get(ip);
 
-    if (!client) {
-      return;
+    if (client) {
+      this.safeEnqueue(client, event, data);
     }
-
-    client.controller.enqueue(data);
   }
 
   public encode(event: SSEEvent, data: string) {

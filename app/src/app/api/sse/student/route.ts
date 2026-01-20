@@ -14,18 +14,17 @@ export async function GET(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        controller.enqueue(sseManager.encode("init", "Connecting..."));
+        sseManager.addClient(ip, controller, req.signal, false);
 
-        sseManager.addClient(ip, controller, false);
-
-        req.signal.addEventListener("abort", () => {
+        req.signal.onabort = () => {
           sseManager.removeClient(ip, false);
           controller.close();
-        })
-
+        };
       } catch (error) {
         console.error("Stream error:", error);
-        controller.enqueue(sseManager.encode("error", "Stream interrupted"));
+        try {
+          controller.enqueue(sseManager.encode("error", JSON.stringify({ message: "Stream interrupted" })));
+        } catch {}
         sseManager.removeClient(ip, false);
         controller.close();
       }
