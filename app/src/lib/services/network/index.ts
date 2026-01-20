@@ -2,10 +2,10 @@ import { Student, StudentUpdate } from "@/lib/types/student";
 import sseManager from "../sse";
 import Mutex from "@/lib/utils/mutex";
 import logger from "../logger";
-import { getTime, unixTime } from "@/lib/utils/time";
+import { unixTime } from "@/lib/utils/time";
 
 const CHECK_INTERVAL = 2000; 
-const HEARTBEAT_TIMEOUT = 10000; 
+const HEARTBEAT_TIMEOUT = 10; 
 
 class Network {
   private studentsMutex;
@@ -31,6 +31,9 @@ class Network {
         const lastHeartbeat = this.heartbeats.get(ip) || 0;
         const isConnected = (await unixTime() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
 
+        console.log(lastHeartbeat, await unixTime());
+        console.log((await unixTime() - lastHeartbeat), HEARTBEAT_TIMEOUT)
+
         if (student.connected !== isConnected) {
           if (isConnected === false && student.attempts < 1) {
             student.attempts++;
@@ -50,8 +53,9 @@ class Network {
     } finally {
       if (this.studentUpdates.size > 0) {
         sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
+        this.studentUpdates.clear();
       }
-      this.studentUpdates.clear();
+
       unlock();
     }
   }
@@ -59,7 +63,7 @@ class Network {
   public async recordHeartbeat(ip: string) {
     const unlock = await this.studentsMutex.lock();
     try {
-      this.heartbeats.set(ip, (await getTime()).unix());
+      this.heartbeats.set(ip, await unixTime());
 
       if (!this.students.has(ip)) {
         const student: Student = { ip, name: "", connected: true, finished: false, since: await unixTime(), attempts: 0, latestVersion: { hash: "", path: "" } };
@@ -70,7 +74,7 @@ class Network {
         const student = this.students.get(ip)!;
         if (!student.connected) {
             student.attempts = 0;
-            const since = Date.now();
+            const since = await unixTime();
             this.update(ip, { ip, connected: true, since });
              logger.warn(
               `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} reconnected.`,
