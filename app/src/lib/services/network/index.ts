@@ -27,67 +27,48 @@ class Network {
   private async callback() {
     const unlock = await this.studentsMutex.lock();
     try {
-      for (const [ip, student] of this.students) {
-        const lastHeartbeat = this.heartbeats.get(ip) || 0;
-        const isConnected = (await unixTime() - lastHeartbeat) < HEARTBEAT_TIMEOUT;
+      const now = await unixTime();
+      const allIps = new Set([...this.students.keys(), ...this.heartbeats.keys()]);
 
+      for (const ip of allIps) {
+        const student = this.students.get(ip);
+        const lastHeartbeat = this.heartbeats.get(ip) || 0;
+        const isConnected = (now - lastHeartbeat) < HEARTBEAT_TIMEOUT;
+
+        if (!student) {
+          if (isConnected) {
+            const newStudent: Student = { ip, name: "", connected: true, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+            this.students.set(ip, newStudent);
+            this.update(ip, newStudent);
+            logger.warn(`New student connected: ${ip}`, { issuer: ip, action: "connected" });
+          }
+          continue;
+        }
+        
         if (student.connected !== isConnected) {
           if (isConnected === false && student.attempts < 1) {
             student.attempts++;
           } else {
             student.attempts = 0;
-            const since = await unixTime();
-            this.update(ip, { ip, connected: isConnected, since });
-
+            this.update(ip, { ip, connected: isConnected, since: now });
             logger.warn(
-              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} ${isConnected ? "reconnected" : "disconnected"}.`,
-              { issuer: student.name ? student.name : student.ip, action: isConnected ? "reconnected" : "disconnected" }
+              `Student ${student.name ? student.name : `${ip} (Unknown name)`} ${isConnected ? "reconnected" : "disconnected"}.`,
+              { issuer: student.name ? student.name : ip, action: isConnected ? "reconnected" : "disconnected" }
             );
           }
         }
       }
-
     } finally {
       if (this.studentUpdates.size > 0) {
         sseManager.broadcast(Array.from(this.studentUpdates.values()), "state");
         this.studentUpdates.clear();
       }
-
       unlock();
     }
   }
 
   public async recordHeartbeat(ip: string) {
-    const unlock = await this.studentsMutex.lock();
-    try {
-      this.heartbeats.set(ip, await unixTime());
-
-      if (!this.students.has(ip)) {
-        const student: Student = { ip, name: "", connected: true, finished: false, since: await unixTime(), attempts: 0, latestVersion: { hash: "", path: "" } };
-        this.students.set(ip, student);
-        this.studentUpdates.set(ip, student);
-
-      } else {
-        const student = this.students.get(ip)!;
-        if (!student.connected) {
-            student.attempts = 0;
-            const since = await unixTime();
-            this.update(ip, { ip, connected: true, since });
-             logger.warn(
-              `Student ${student.name ? student.name : `${student.ip} (Unknown name)`} reconnected.`,
-              { issuer: student.name ? student.name : student.ip, action: "reconnected" }
-            );
-        }
-      }
-    } finally {
-      unlock();
-    }
-  }
-
-  private async addNewStudent(ip: string) {
-    const student: Student = { ip, name: "", connected: true, finished: false, since: await unixTime(), attempts: 0, latestVersion: { hash: "", path: "" } };
-    this.students.set(ip, student);
-    this.studentUpdates.set(ip, student);
+    this.heartbeats.set(ip, await unixTime());
   }
 
   private update(ip: string, update: StudentUpdate) {
@@ -103,16 +84,16 @@ class Network {
 
   public async getStudent(ip: string): Promise<Student> {
     const unlock = await this.studentsMutex.lock();
-
-    if (!this.students.has(ip)) {
-      await this.addNewStudent(ip);
+    try {
+      if (!this.students.has(ip)) {
+        const now = await unixTime();
+        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+        this.students.set(ip, newStudent);
+      }
+      return this.students.get(ip)!;
+    } finally {
+      unlock();
     }
-
-    const student = this.students.get(ip)!;
-
-    unlock();
-
-    return student;
   }
 
   public async getStudents(): Promise<Student[]> {
@@ -126,13 +107,17 @@ class Network {
   }
 
   public async addUpdate(ip: string, update: StudentUpdate) {
-    this.getStudent(ip);
-
     const unlock = await this.studentsMutex.lock();
-
-    this.update(ip, update);
-
-    unlock();
+    try {
+      if (!this.students.has(ip)) {
+        const now = await unixTime();
+        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+        this.students.set(ip, newStudent);
+      }
+      this.update(ip, update);
+    } finally {
+      unlock();
+    }
   }
 }
 
