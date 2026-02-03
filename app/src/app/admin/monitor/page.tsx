@@ -55,7 +55,8 @@ export default function Monitor() {
         };
 
         es.addEventListener("init", (evt) => {
-          console.log("SSE connection initialized:", evt.data);
+          const data = JSON.parse(evt.data) as { message: Student[] };
+          setStudents(new Map(data.message.map(student => [student.ip, student])));
         });
 
         es.addEventListener("log", (evt) => {
