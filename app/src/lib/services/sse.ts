@@ -66,15 +66,14 @@ class SSEManager {
       this.students.set(ip, client);
     }
 
-    this.safeEnqueue(client, "init", "Connecting...");
-
     if (admin) {
       this.safeEnqueue(client, "log", `${JSON.stringify({ message: logger.getLogs().slice(-20) })}`);
-      this.safeEnqueue(client, "state", `${JSON.stringify({ message: await network.getStudents() })}`);
+      this.safeEnqueue(client, "init", `${JSON.stringify({ message: await network.getStudents() })}`);
     } else {
       const student = await network.getStudent(ip);
       const storage = (await import("./storage")).default;
 
+      this.safeEnqueue(client, "init", "Connecting...");
       this.safeEnqueue(client, "std", `${JSON.stringify({ message: { locked: storage.locked, finished: student.finished } })}`);
     }
   }

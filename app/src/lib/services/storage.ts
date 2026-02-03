@@ -145,6 +145,7 @@ class Storage {
 
   public setOffset(timestamp: string) {
     const offset = dayjs().diff(dayjs(timestamp)) - AVERAGE_LATENCY;
+    logger.info(`Time offset set to ${offset + AVERAGE_LATENCY}`)
 
     if (this.timeOffset <= 0 && offset >= 10000) {
       this.timeOffset = offset;

@@ -5,7 +5,7 @@ import logger from "../logger";
 import { unixTime } from "@/lib/utils/time";
 
 const CHECK_INTERVAL = 2000; 
-const HEARTBEAT_TIMEOUT = 10; 
+const HEARTBEAT_TIMEOUT = 15; 
 
 class Network {
   private studentsMutex;
@@ -46,7 +46,7 @@ class Network {
         }
         
         if (student.connected !== isConnected) {
-          if (isConnected === false && student.attempts < 1) {
+          if (isConnected === false && student.attempts < 3) {
             student.attempts++;
           } else {
             student.attempts = 0;
