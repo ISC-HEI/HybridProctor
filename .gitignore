@@ -2,6 +2,9 @@ site/
 *.old/
 *.old
 
+# cache
+.buildx-cache
+
 
 # dependencies
 app/node_modules

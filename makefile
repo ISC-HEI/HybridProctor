@@ -4,6 +4,8 @@ DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
 VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/package.json)
 
+CACHE_DIR := ./.buildx-cache
+
 CURRENT_DIR := $(shell pwd)
 
 version:
@@ -20,8 +22,22 @@ imageProd: ## Build docker image for Mikrotik armV7
 	@echo ">>> Docker image created ($(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev: 
-	@docker buildx build --platform=linux/arm/v7 --output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) .
+	@mkdir -p $(CACHE_DIR)/armv7
+	@docker buildx build \
+		--platform=linux/arm/v7 \
+		--cache-from=type=local,src=$(CACHE_DIR)/armv7 \
+		--cache-to=type=local,dest=$(CACHE_DIR)/armv7,mode=max \
+		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) .
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
+
+imageDev64:
+	@mkdir -p $(CACHE_DIR)/arm64
+	@docker buildx build \
+		--platform=linux/arm64 \
+		--cache-from=type=local,src=$(CACHE_DIR)/arm64 \
+		--cache-to=type=local,dest=$(CACHE_DIR)/arm64,mode=max \
+		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64 -f dockerfile-arm64 .
+	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 build:
 	@cd app && npm i && npm run build
@@ -37,6 +53,10 @@ publishDev:
 	@docker tag $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:latest
 	@docker image push $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:latest
 
+publishDev64:
+	@docker image push $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64
+	@docker tag $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64 $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:arm64-latest
+	@docker image push $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:arm64-latest
 
 container: ## Start image as container
 	@docker container rm -f $(IMAGE_NAME)
