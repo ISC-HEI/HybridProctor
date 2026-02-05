@@ -4,7 +4,9 @@ import { existsSync } from "fs";
 import fs from 'fs/promises';
 import path from 'path';
 
-const DB_DIR = "resources/db";
+import { v4 as uuidv4 } from "uuid";
+
+const DB_DIR = `/tmp/hybridproctor_${uuidv4()}`;
 const DB_FILE = path.join(DB_DIR, "students.db");
 
 if (!existsSync(DB_FILE)) {
