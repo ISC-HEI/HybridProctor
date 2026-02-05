@@ -1,13 +1,13 @@
 'use server'
 
 import network from "@/lib/services/network";
-import db from "@services/db";
-import { getIpFromName, nameInDb } from '@services/db/helpers';
 import logger from "@services/logger";
 import { getIp } from "@utils/network";
 
 export async function isRegistered(name: string) {
-  return await nameInDb(name) && await getIp() === await getIpFromName(name);
+  const student = await network.getStudentByName(name);
+
+  return student && await getIp() === student.ip;
 }
 
 export async function registerStudent(ps: { ok: boolean, message: string, fullname: string }, formData: FormData) {
@@ -17,12 +17,10 @@ export async function registerStudent(ps: { ok: boolean, message: string, fullna
 
   const ip = await getIp();
 
-  const exists = await nameInDb(fullname);
+  const student = await network.getStudentByName(fullname);
 
-  if (exists) {
-    const originalOwner = db.prepare("SELECT ip FROM students WHERE name = ?;").get(fullname) as {ip: string};
-    
-    if (ip === originalOwner.ip) {
+  if (student) {
+    if (ip === student.ip) {
       return {
         ok: true,
         message: "Student registered successfully",
@@ -33,17 +31,10 @@ export async function registerStudent(ps: { ok: boolean, message: string, fullna
 
     const message = "Name already taken by another student!";
 
-    logger.warn(message + ` ${ip} used name ${fullname} whose already in use by ${originalOwner.ip}!`, { issuer: ip, action: "Conflict" });
+    logger.warn(message + ` ${ip} used name ${fullname} whose already in use by ${student.ip}!`, { issuer: ip, action: "Conflict" });
 
     return { ok: false, message, fullname }
   }
-
-  const stmt = db.prepare(`
-                          INSERT INTO students (name, ip)
-                          VALUES (?, ?);
-                          `);
-
-  stmt.run(fullname, ip);
 
   await network.addUpdate(ip, { ip, name: fullname });
 

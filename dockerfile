@@ -1,6 +1,6 @@
 FROM arm32v7/node:22-slim
 
-RUN apt-get update && apt-get install -y nginx openssh-server curl libatomic1 vim bash python3 make g++ findutils
+RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
 
 COPY proxy/nginx.conf /etc/nginx/nginx.conf
 COPY proxy/default.conf /etc/nginx/sites-available/default
@@ -10,8 +10,6 @@ WORKDIR /app
 
 COPY app/package*.json ./
 COPY app/node_modules ./node_modules
-
-RUN npm install --loglevel verbose better-sqlite3
 
 COPY app/.env.prod ./.env
 COPY app/next.config.ts ./
