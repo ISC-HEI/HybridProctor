@@ -1,6 +1,5 @@
 'use server'
 
-import { getNameFromIp } from '@services/db/helpers';
 import logger from '@services/logger';
 import { getIp, getUrl } from '@utils/network';
 import storage from '@services/storage';
@@ -25,7 +24,8 @@ export async function fetchUrl() {
 
 export async function uploadFiles(files: File[]) {
   const ip = await getIp();
-  const name = await getNameFromIp(ip);
+  const student = await network.getStudent(ip);
+  const name = student.name;
 
   if (files.length < 1) {
     return {
@@ -42,8 +42,6 @@ export async function uploadFiles(files: File[]) {
       hash: ""
     }
   }
-
-  const student = await network.getStudent(ip);
 
   if (student.finished) {
     return {

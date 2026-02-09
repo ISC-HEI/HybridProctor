@@ -31,7 +31,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
               <tr key={idx}>
                 <td>{student.ip}</td>
                 <td>{student.name}</td>
-                <td>{dayjs(student.since).format("HH:mm:ss").replace(":", "h")}</td>
+                <td>{dayjs(student.since * 1000).format("HH:mm:ss").replace(":", "h")}</td>
                 <td><span className={`${style.indicator} ${student.finished ? style.on : style.off} ${style.clickable}`} onClick={() => releaseStudent(student)}></span></td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
               </tr>

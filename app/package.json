@@ -13,7 +13,6 @@
     "@types/better-sqlite3": "^7.6.13",
     "archiver": "^7.0.1",
     "argon2": "^0.44.0",
-    "better-sqlite3": "^12.2.0",
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.18",
     "extract-zip": "^2.0.1",

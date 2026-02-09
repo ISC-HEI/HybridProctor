@@ -9,7 +9,6 @@ import archiver from "archiver";
 import { type Yamlconf } from "@lib/types/yamlconf";
 import logger from "./logger";
 import yaml from 'js-yaml';
-import { getNameFromIp } from "./db/helpers";
 import crypto from "crypto";
 import argon2 from "argon2";
 import { Session } from "../types/session";
@@ -196,7 +195,8 @@ class Storage {
   }
 
   public async writeStudentFiles(ip: string, files: File[]) {
-    const name = await getNameFromIp(ip);
+    const student = await network.getStudent(ip);
+    const name = student.name;
 
     if (!name) {
       logger.error(`IP ${ip} isn't registered!`, { issuer: ip });
@@ -240,21 +240,18 @@ class Storage {
 
     const hash = digest.digest("hex");
 
-    const student = await network.getStudent(ip);
-
     student.latestVersion.hash = hash;
     student.latestVersion.path = versionFolder;
     return hash;
   }
 
   public async validateAndEnd(ip: string) {
-    const name = await getNameFromIp(ip);
+    const student = await network.getStudent(ip);
+    const name = student.name;
 
     if (!name) {
       return false;
     }
-
-    const student = await network.getStudent(ip);
 
     await fs.writeFile(path.join(student.latestVersion.path, "hash.md5"), student.latestVersion.hash);
 

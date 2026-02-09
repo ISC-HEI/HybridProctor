@@ -96,6 +96,27 @@ class Network {
     }
   }
 
+  public async getStudentByName(name: string) {
+    const unlock = await this.studentsMutex.lock();
+
+    const students = this.students.values().filter(v => v.name === name).toArray();
+
+    unlock();
+
+    const length = students.length
+
+    if (length === 1) {
+      return students[0];
+    }
+    
+    if (length > 1) {
+      logger.error(`${length} students have the same name !`)
+      return students[length - 1];
+    }
+
+    return undefined;
+  }
+
   public async getStudents(): Promise<Student[]> {
     const unlock = await this.studentsMutex.lock();
 

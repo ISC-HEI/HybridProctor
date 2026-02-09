@@ -1,38 +1,35 @@
+
 FROM arm32v7/node:22-slim
 
-RUN apt-get update && apt-get install -y nginx openssh-server curl libatomic1 vim bash python3 make g++ findutils
+WORKDIR /app
+
+COPY app/ ./
+COPY app/.env.prod ./.env
+
+ENV NODE_ENV=production
+
+RUN npm i --dev --verbose
+
+RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
+
+ENV NEXT_TELEMETRY_DISABLE=1
 
 COPY proxy/nginx.conf /etc/nginx/nginx.conf
 COPY proxy/default.conf /etc/nginx/sites-available/default
 RUN nginx -t
 
-WORKDIR /app
-
-COPY app/package*.json ./
-COPY app/node_modules ./node_modules
-
-RUN npm install --loglevel verbose better-sqlite3
-
-COPY app/.env.prod ./.env
-COPY app/next.config.ts ./
-COPY app/.next ./.next
-COPY app/public ./public
-COPY app/*.sh /app/
+EXPOSE 22 80 2222
 
 RUN chmod +x /app/*.sh
 
-# Config de ressources
 ENV RESOURCE_FOLDER=/mount_point
 RUN mkdir -p "$RESOURCE_FOLDER"
 VOLUME $RESOURCE_FOLDER
 
-# Config ssh
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 COPY ssh/root_access_rsa.pub /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys
 
-# Ports exposés
-EXPOSE 22 80 2222
+ENV HOSTNAME=0.0.0.0
 
-# Commande de démarrage
 CMD ["/bin/sh", "-c", "/app/sftp.sh admin proctor2024 && /app/launch_services.sh"]
