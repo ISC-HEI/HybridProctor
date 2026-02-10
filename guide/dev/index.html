@@ -506,10 +506,9 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Project overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#client-side" class="md-nav__link">
     <span class="md-ellipsis">
       Client-Side
@@ -517,8 +516,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#server-side" class="md-nav__link">
     <span class="md-ellipsis">
       Server-Side
@@ -541,6 +540,43 @@
   <a href="#services" class="md-nav__link">
     <span class="md-ellipsis">
       Services
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sse" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network
     </span>
   </a>
   
@@ -567,6 +603,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#how-to-build" class="md-nav__link">
     <span class="md-ellipsis">
       How to build
@@ -577,6 +622,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dev environment
+    </span>
+  </a>
   
 </li>
       
@@ -691,10 +745,9 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Project overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#client-side" class="md-nav__link">
     <span class="md-ellipsis">
       Client-Side
@@ -702,8 +755,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#server-side" class="md-nav__link">
     <span class="md-ellipsis">
       Server-Side
@@ -726,6 +779,43 @@
   <a href="#services" class="md-nav__link">
     <span class="md-ellipsis">
       Services
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sse" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network
     </span>
   </a>
   
@@ -752,6 +842,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#how-to-build" class="md-nav__link">
     <span class="md-ellipsis">
       How to build
@@ -762,6 +861,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dev environment
+    </span>
+  </a>
   
 </li>
       
@@ -792,27 +900,42 @@
 <p>This guide will help you understand how to develop on HybridProctor.</p>
 <h2 id="project-overview">Project overview</h2>
 <p>Since HybridProctor uses NextJS we can separate the project in two parts.</p>
-<h3 id="client-side">Client-Side</h3>
+<h2 id="client-side">Client-Side</h2>
 <p>These files are usually have .tsx extension. They are rendered by the clients. <code>src/lib/utils/hooks</code> also contains client-side code, although with .ts extension.</p>
-<h3 id="server-side">Server-Side</h3>
+<h2 id="server-side">Server-Side</h2>
 <p>These files are ran by the server. They can be found in <code>src/api</code>, <code>src/lib/services</code> and all <code>*.server.ts</code> files.</p>
 <p><code>src/instrumentation.ts</code> and <code>src/middleware.ts</code> also are server-side.</p>
-<h4 id="server-actions">Server actions</h4>
+<h3 id="server-actions">Server actions</h3>
 <p>Server-side code cannot be ran directly in client-side files. You need server actions to do that.</p>
 <p>Server actions are written in <code>*.server.ts</code> files as async named exports.</p>
 <p><code>*.server.ts</code> files need to have <code>'use server'</code> at the top.</p>
-<h4 id="services">Services</h4>
-<p>The services are background-running singletons, this includes : Logging, Storage, SSE Management, Network Management.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>NextJS Server Actions work by creating an endpoint that clients can call.</p>
+</div>
+<h3 id="services">Services</h3>
+<p><code>src/lib/services/</code> are background-running singletons, this includes : Logging, Storage, SSE Management, Network Management.</p>
+<h4 id="logging">Logging</h4>
+<p><code>logger.ts</code> gives you a centralized way to log. It writes the logfiles and broadcasts the logs via SSE</p>
+<h4 id="sse">SSE</h4>
+<p><code>sse.ts</code> manages SSE clients, it handles disconnections and sending data.</p>
+<h4 id="storage">Storage</h4>
+<p><code>storage.ts</code> is an IO manager and it stores important data such as the password, time offset, etc...</p>
+<h4 id="network">Network</h4>
+<p><code>network.ts</code> manages students, it handles connections and disconnections via the heartbeat endpoint. It also periodically send updates via SSE.</p>
 <h2 id="build">Build</h2>
 <p>The image is hosted on DockerHub, since it is bound to an account, normally Steve's, 
 it is not possible to publish the image without his credentials.  </p>
 <p>To be able to test your latest changes you'll need to have an account on DockerHub, create a "repository" 
-and modify the makefile's "publishDev" rule to use your account and repository.</p>
+and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.</p>
+<h3 id="install-dependencies">Install dependencies</h3>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>i<span class="w"> </span>--include<span class="o">=</span>dev<span class="w"> </span>--verbose
+</code></pre></div>
 <h3 id="how-to-build">How to build</h3>
 <p>First, start docker if it is not already done :</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
 </code></pre></div>
-<p>This project uses C/C++ bindings libraries (such as better-sqlite) that need to be cross-compilated to ARMv7.  </p>
+<p>This project uses C/C++ bindings libraries (such as argon2) that need to be cross-compilated to ARM32v7 and/or ARM64v8.  </p>
 <p>This is done using a container that will be invoked whenever it is needed :</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--privileged<span class="w"> </span>multiarch/qemu-user-static<span class="w"> </span>--reset<span class="w"> </span>-p<span class="w"> </span>yes
 </code></pre></div>
@@ -823,10 +946,27 @@ correctly :  </p>
 sudo<span class="w"> </span>make<span class="w"> </span>imageDev
 sudo<span class="w"> </span>make<span class="w"> </span>publishDev
 </code></pre></div>
+<div class="admonition note inline end">
+<p class="admonition-title">ARM64v8 Rules</p>
+<p>Use <code>make imageDev64</code> and <code>make publishDev64</code> to build for ARM64.</p>
+</div>
 <p>You can now follow the <a href="../setup/index.html">setup guide</a>.</p>
-<pre><code>!!! info
-    `make build` can be replaced by npm run build inside the app subdirectory.
-</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><code>make build</code> can be replaced by npm run build inside the app subdirectory.</p>
+</div>
+<h2 id="dev-environment">Dev environment</h2>
+<p>NextJS includes a development environment that can be used to run the app locally and have hot-reload.</p>
+<p>The dev server can be started with :</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>dev
+</code></pre></div>
+<details class="bug" open="open">
+<summary>React strict mode</summary>
+<p>In development mode, react uses "strict mode", this means
+that the component is mounted two times to ensure data integrity and
+other things. This can lead to some bugs like two simultaneous SSE connections and 
+multiple identical keys.</p>
+</details>
 
 
 

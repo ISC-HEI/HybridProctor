@@ -569,6 +569,54 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#openwrt-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenWRT setup
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenWRT setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usb-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      USB key
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="USB key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatically-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatically mounting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#changing-the-wifi-ssid-password" class="md-nav__link">
     <span class="md-ellipsis">
       Changing the Wifi SSID / password
@@ -667,6 +715,54 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#openwrt-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenWRT setup
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenWRT setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usb-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      USB key
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="USB key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatically-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatically mounting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#changing-the-wifi-ssid-password" class="md-nav__link">
     <span class="md-ellipsis">
       Changing the Wifi SSID / password
@@ -732,11 +828,44 @@
 <li>Make sure to give an internet access to the router via a ethernet cable.</li>
 <li>Open the <strong>Container</strong> window to stop and delete the current container.</li>
 <li>Open a terminal and enter:
-    <div class="highlight"><pre><span></span><code>/container/add<span class="w"> </span>remote-image<span class="o">=</span>enderastronaute/hybridproctor-arm-dev:latest<span class="w"> </span><span class="nv">interface</span><span class="o">=</span>veth1<span class="w"> </span>root-dir<span class="o">=</span>usb1/HybridProctorDevContainer<span class="w"> </span>start-on-boot<span class="o">=</span>yes<span class="w"> </span><span class="nv">logging</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">mounts</span><span class="o">=</span>mount,uploads
+    <div class="highlight"><pre><span></span><code>/container/add<span class="w"> </span>remote-image<span class="o">=</span>enderastronaute/hybridproctor-arm-dev:latest<span class="w"> </span><span class="nv">interface</span><span class="o">=</span>veth1<span class="w"> </span>root-dir<span class="o">=</span>usb1/HybridProctorContainer<span class="w"> </span>start-on-boot<span class="o">=</span>yes<span class="w"> </span><span class="nv">logging</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">mounts</span><span class="o">=</span>mount,uploads
 </code></pre></div></li>
 <li>The container should appear in the <strong>Container</strong> window: Start it!
     <a class="glightbox" href="../../img/container_config.jpg" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" class="center" src="../../img/container_config.jpg" width="600px"></a></li>
 </ol>
+<h2 id="openwrt-setup">OpenWRT setup</h2>
+<p>HybridProctor can alternatively be installed on a machine running OpenWRT.  </p>
+<h3 id="packages">packages</h3>
+<p>It is strongly recommanded to use LuCi (the web GUI) to install packages.</p>
+<p>Here's a list of what you'll need to install :</p>
+<ul>
+<li>docker</li>
+<li>dockerd</li>
+<li>vim (optionnal but recommanded)</li>
+<li>lsblk</li>
+<li>blkid</li>
+</ul>
+<h3 id="usb-key">USB key</h3>
+<p>Since the docker image is quite big we recommand bind mounting the entire root of the container to a directory on the usb-key in addition to the required mount :</p>
+<ul>
+<li>usbkey/HybridProctorContainer:/ (highly recommanded)</li>
+<li>usbkey/mount:/mount_point (mandatory)</li>
+</ul>
+<h4 id="automatically-mounting">Automatically mounting</h4>
+<p>OpenWRT uses hotplug.d and not udev. They do quite the same thing except hotplug.d doesn't use rules but *ash scripts.</p>
+<p>You can use this command to get the UUID and device of the USB key :</p>
+<div class="highlight"><pre><span></span><code>lsblk<span class="w"> </span>-f
+</code></pre></div>
+<p>You can then create the <code>/etc/hotplug.d/block</code> directory if it doesn't exist and write a new file in it containing :</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ACTION</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"add"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+
+<span class="nv">UUID</span><span class="o">=</span><span class="k">$(</span>blkid<span class="w"> </span>-s<span class="w"> </span>UUID<span class="w"> </span>-o<span class="w"> </span>value<span class="w"> </span><span class="s2">"/dev/</span><span class="nv">$DEVNAME</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="k">)</span>
+
+<span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$UUID</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[WRITE THE DESIRED UUID]"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt
+mount<span class="w"> </span><span class="s2">"/dev/</span><span class="nv">$DEVNAME</span><span class="s2">"</span><span class="w"> </span>/mnt
+</code></pre></div>
 <h2 id="changing-the-wifi-ssid-password">Changing the Wifi SSID / password</h2>
 <p>To avoid having multiple wifi with the same name, please change the SSID of any new configured system.</p>
 <ol>
