@@ -40,11 +40,57 @@ You can add or upgrade the container image like this :
 1. Open the **Container** window to stop and delete the current container.
 1. Open a terminal and enter:
     ```bash
-    /container/add remote-image=enderastronaute/hybridproctor-arm-dev:latest interface=veth1 root-dir=usb1/HybridProctorDevContainer start-on-boot=yes logging=yes mounts=mount,uploads
+    /container/add remote-image=enderastronaute/hybridproctor-arm-dev:latest interface=veth1 root-dir=usb1/HybridProctorContainer start-on-boot=yes logging=yes mounts=mount,uploads
     ```
 1. The container should appear in the **Container** window: Start it!
     ![](../../img/container_config.jpg){: .center width="600px"}
 
+
+## OpenWRT setup
+
+HybridProctor can alternatively be installed on a machine running OpenWRT.  
+
+### packages
+
+It is strongly recommanded to use LuCi (the web GUI) to install packages.
+
+Here's a list of what you'll need to install :
+
+- docker
+- dockerd
+- vim (optionnal but recommanded)
+- lsblk
+- blkid
+
+### USB key
+
+Since the docker image is quite big we recommand bind mounting the entire root of the container to a directory on the usb-key in addition to the required mount :
+
+- usbkey/HybridProctorContainer:/ (highly recommanded)
+- usbkey/mount:/mount_point (mandatory)
+
+#### Automatically mounting
+
+OpenWRT uses hotplug.d and not udev. They do quite the same thing except hotplug.d doesn't use rules but *ash scripts.
+
+You can use this command to get the UUID and device of the USB key :
+
+```sh
+lsblk -f
+```
+
+You can then create the `/etc/hotplug.d/block` directory if it doesn't exist and write a new file in it containing :
+
+```sh
+[ "$ACTION" = "add" ] || exit 0
+
+UUID=$(blkid -s UUID -o value "/dev/$DEVNAME" 2>/dev/null)
+
+[ "$UUID" = "[WRITE THE DESIRED UUID]" ] || exit 0
+
+mkdir -p /mnt
+mount "/dev/$DEVNAME" /mnt
+```
 
 ## Changing the Wifi SSID / password
 To avoid having multiple wifi with the same name, please change the SSID of any new configured system.
