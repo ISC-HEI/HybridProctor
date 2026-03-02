@@ -3,10 +3,12 @@ import express from "express";
 import apiRouter from "./routes/api"
 import { runWithRequest } from "./lib/utils/requestContext";
 import path from "node:path";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.set("trust proxy", true);
 

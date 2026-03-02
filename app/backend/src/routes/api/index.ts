@@ -7,9 +7,11 @@ import { sseAdminHandler } from "./sse/admin";
 import { sseStudentHandler } from "./sse/student";
 import uploadRouter from "./upload";
 import fetchRouter from "./fetch";
+import { prepareDownloadPostHandler } from "./prepare";
 
 const router = Router();
 
+router.post("/preparedownload", prepareDownloadPostHandler);
 router.post("/heartbeat", heartbeatPostHandler);
 router.get("/download/:id", downloadGetHandler);
 router.get("/resources/:file", resourcesGetHandler);

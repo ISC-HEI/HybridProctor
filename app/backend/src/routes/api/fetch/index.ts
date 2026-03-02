@@ -16,4 +16,12 @@ router.get("/version", (req, res) => {
   return res.status(200).send(storage.version);
 });
 
+router.post("/items", async (req, res) => {
+  return res.status(200).json(await storage.readDir(req.body.path)); 
+});
+
+router.get("/disk", async (req, res) => {
+  return res.status(200).json(await storage.getDiskUsage());
+});
+
 export default router;
