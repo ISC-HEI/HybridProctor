@@ -6,6 +6,7 @@ import { resourcesGetHandler } from "./resources";
 import { sseAdminHandler } from "./sse/admin";
 import { sseStudentHandler } from "./sse/student";
 import uploadRouter from "./upload";
+import fetchRouter from "./fetch";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.get("/resources/:file", resourcesGetHandler);
 router.get("/sse/admin", sseAdminHandler);
 router.get("/sse/student", sseStudentHandler);
 
-router.use("/upload", uploadRouter)
+router.use("/upload", uploadRouter);
+router.use("/fetch", fetchRouter);
 
 export default router;
