@@ -19,8 +19,8 @@ app.use("/api", apiRouter);
 const staticDir = path.join(process.cwd(), "pages");
 app.use(express.static(staticDir));
 
-app.use((_req, res) => {
-  res.status(404).json({ error: "Not found" });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(staticDir, 'index.html'));
 });
 
 export default app;
