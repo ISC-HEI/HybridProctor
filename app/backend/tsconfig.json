@@ -3,11 +3,10 @@
     // Environment setup & latest features
     "lib": ["ESNext"],
     "target": "ESNext",
-    "module": "Preserve",
+    "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
-    "rootDir": "src",
     "outDir": "dist",
 
     // Bundler mode
@@ -22,16 +21,19 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
 
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
     "paths": {
-      "@/*": ["src/*"],
-      "@utils/*": ["src/lib/utils/*"],
-      "@services/*": ["src/lib/services/*"],
-      "@lib/*": ["src/lib/*"]
+      "@/*": ["./src/*"],
+      "@utils/*": ["./src/lib/utils/*"],
+      "@services/*": ["./src/lib/services/*"],
+      "@lib/*": ["./src/lib/*"]
     }
   }
 }

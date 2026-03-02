@@ -2,8 +2,8 @@
 import fs from "fs/promises";
 import { existsSync } from "fs";
 import { join } from "path";
-import dayjs, { Dayjs } from "dayjs";
-import "dayjs/locale/fr-ch";
+import dayjs, { type Dayjs } from "dayjs";
+import "dayjs/locale/fr-ch.js";
 import firstline from "firstline";
 import sseManager from "@/lib/services/sse";
 import Mutex from "../utils/mutex";

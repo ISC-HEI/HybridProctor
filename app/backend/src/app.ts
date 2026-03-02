@@ -19,7 +19,7 @@ app.use("/api", apiRouter);
 const staticDir = path.join(process.cwd(), "pages");
 app.use(express.static(staticDir));
 
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 

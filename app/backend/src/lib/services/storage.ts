@@ -1,8 +1,6 @@
 
 import fs, { readdir, statfs } from "fs/promises";
 import { existsSync,  type PathLike, createWriteStream, createReadStream } from "fs";
-import { Readable } from "stream";
-import { pipeline } from "stream/promises";
 import path, { join } from "path";
 import os from "os";
 import archiver from "archiver";
@@ -73,7 +71,17 @@ class Storage {
     this.resources = await fs.readdir("public/resources");
     logger.debug("Fetched resources.");
 
-    this.examConfig = yaml.load(await fs.readFile("public/config.yml", "utf8")) as Yamlconf;
+    if (!existsSync(this.local("public/config.yml"))) {
+      logger.debug("No config, falling back to default");
+      this.examConfig = {
+        enable: false,
+        label: "Default config",
+        studentsFiles: []
+      }
+
+    } else {
+      this.examConfig = yaml.load(await fs.readFile(this.local("public/config.yml"), "utf8")) as Yamlconf;
+    }
     logger.debug("Loaded config.")
 
     const data = await fs.readFile("package.json", "utf8");

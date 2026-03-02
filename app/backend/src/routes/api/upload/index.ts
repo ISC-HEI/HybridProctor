@@ -3,6 +3,7 @@ import { Router } from "express";
 import upload from "@/lib/utils/multer";
 import { examPostHandler } from "./exam";
 import { resourcesPostHandler } from "./resources";
+import { filesPostHandler } from "./files";
 
 const router = Router();
 
