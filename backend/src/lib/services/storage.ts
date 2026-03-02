@@ -49,7 +49,7 @@ class Storage {
     this.rootLocation = process.env.ROOT_PATH !== "default" ? process.env.ROOT_PATH : DEFAULT_ROOT_PATH;
     this.passwordLocation = process.env.PASSWORD_FILE !== "default" ? process.env.PASSWORD_FILE : DEFAULT_PASSWORD_FILE;
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
-    this.examLocation = path.join("public", process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
+    this.examLocation = path.join(this.local("public"), process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
   }
 
   public async init() {
@@ -96,15 +96,17 @@ class Storage {
     logger.info("New password generated.");
   }
 
-  private async write(location: string, file: File) {
-    const sanitizedFileName = path.basename(file.name);
+  private async write(location: string, file: Express.Multer.File) {
+    const sanitizedFileName = path.basename(file.filename);
     const fullLocation = path.join(location, sanitizedFileName);
-    const nodeStream = createWriteStream(fullLocation);
-    const webStream = file.stream();
-
-    await pipeline(Readable.fromWeb(webStream), nodeStream);
+    
+    await fs.rename(file.path, fullLocation);
 
     logger.debug(`Created file "${fullLocation}".`);
+  }
+
+  private local(p: string) {
+    return path.join(process.cwd(), p);
   }
 
   private async deleteContent(directory: string) {
@@ -165,12 +167,9 @@ class Storage {
     return id;
   }
 
-  public async writeExam(file: File) {
-    const nodeStream = createWriteStream(this.examLocation);
-    const webStream = file.stream();
+  public async writeExam(file: Express.Multer.File) {
+    fs.rename(file.path, this.examLocation);
      
-    await pipeline(Readable.fromWeb(webStream), nodeStream);
-
     logger.debug(`Exam created at "${this.examLocation}".`);
   }
 
@@ -182,17 +181,17 @@ class Storage {
     this.examConfig = conf;
   }
 
-  public async writeResources(files: File[]) {
+  public async writeResources(files: Express.Multer.File[]) {
     await this.deleteContent("public/resources");
 
     for (const file of files) {
-      await this.write("public/resources", file);
+      await this.write(this.local("public/resources"), file);
     }
 
-    this.resources = await fs.readdir("public/resources");
+    this.resources = await fs.readdir(this.local("public/resources"));
   }
 
-  public async writeStudentFiles(ip: string, files: File[]) {
+  public async writeStudentFiles(ip: string, files: Express.Multer.File[]) {
     const student = await network.getStudent(ip);
     const name = student.name;
 
