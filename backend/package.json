@@ -1,0 +1,37 @@
+{
+  "name": "hp_backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format esm --bundle --clean",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/express": "^5.0.6",
+    "@types/firstline": "^2.0.4",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^25.3.1",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "argon2": "^0.44.0",
+    "dayjs": "^1.11.19",
+    "express": "^5.2.1",
+    "firstline": "^2.0.2",
+    "js-yaml": "^4.1.1",
+    "uuid": "^13.0.0"
+  }
+}
