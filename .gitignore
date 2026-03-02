@@ -7,44 +7,44 @@ site/
 
 
 # dependencies
-app/node_modules
-app/.pnp
-app/.pnp.*
-app/.yarn/*
-!app/.yarn/patches
-!app/.yarn/plugins
-!app/.yarn/releases
-!app/.yarn/versions
+app/pages/node_modules
+app/pages/.pnp
+app/pages/.pnp.*
+app/pages/.yarn/*
+!app/pages/.yarn/patches
+!app/pages/.yarn/plugins
+!app/pages/.yarn/releases
+!app/pages/.yarn/versions
 
 # testing
-/app/coverage
+/app/pages/coverage
 
 # next.js
-/app/.next/
-/app/out/
+/app/pages/.next/
+/app/pages/out/
 
 # production
-/app/build
+/app/pages/build
 
 # misc
-.app/DS_Store
-*app/.pem
+.app/pages/DS_Store
+*app/pages/.pem
 
 # debug
 napp/pm-debug.log*
 yapp/arn-debug.log*
 yapp/arn-error.log*
-.app/pnpm-debug.log*
+.app/pages/pnpm-debug.log*
 
 
 # vercel
 .app/vercel
 
 # typescript
-app/*.tsbuildinfo
-app/next-env.d.ts
+app/pages/*.tsbuildinfo
+app/pages/next-env.d.ts
 
-app/logs/
-app/uploads/
-app/resources/db/*
-app/resources/.password
+app/pages/logs/
+app/pages/uploads/
+app/pages/resources/db/*
+app/pages/resources/.password

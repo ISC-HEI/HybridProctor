@@ -3,12 +3,14 @@ FROM arm32v7/node:22-slim
 
 WORKDIR /app
 
-COPY app/ ./
-COPY app/.env.prod ./.env
+COPY app/pages/out ./pages
+COPY app/backend/dist ./dist
+COPY app/backend/package.json backend/package-lock.json ./
+COPY app/backend/.env.prod ./.env
 
 ENV NODE_ENV=production
 
-RUN npm i --dev --verbose
+RUN npm ci --omit=dev --verbose
 
 RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
 
