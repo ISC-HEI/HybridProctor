@@ -1,11 +1,11 @@
+
 'use client'
 
 import { MouseEvent, useEffect, useState } from "react";
 import style from "./page.module.scss";
-import { fetchDisk, fetchItems, prepareDownload } from "./page.server";
 import { DirItem } from "@/lib/types/dirItem";
 import Item from "@/components/item";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import PathIndicator from "@/components/pathIndicator";
 import { DownloadIcon, SquareActivityIcon } from "lucide-react";
 import RadialProgress from "@/components/radialProgress";
@@ -13,22 +13,29 @@ import { useNotifications } from "@/lib/utils/hooks/useNotifications";
 import Loader from "@/components/loader";
 import Goto from "@/components/goto";
 
-interface ExplorerProps {
-  path: string|undefined
-}
-
-export default function Explorer({ path }: ExplorerProps) {
+export default function Explorer() {
   const [items, setItems] = useState<DirItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<DirItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [used, setUsed] = useState<number>(0);
   const [downloading, setDownloading] = useState<boolean>(false);
   const { addNotification } = useNotifications();
+
   const router = useRouter();
+  const pathname = usePathname();
+  const path = pathname.startsWith("/admin/explorer") ? pathname.substring("/admin/explorer".length) || '/' : '/';
 
   useEffect(() => {(
     async () => {
-      const data = await fetchItems(path);
+      const data = await (await fetch("/fetch/items", {
+        method: "POST",
+        body: JSON.stringify({
+          path
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })).json();
 
       if (!data) {
         addNotification({
@@ -41,7 +48,7 @@ export default function Explorer({ path }: ExplorerProps) {
         setItems(data);
       }
 
-      const { total, used } = await fetchDisk();
+      const { total, used } = await (await fetch("/fetch/disk")).json();
 
       setTotal(total);
       setUsed(used);
@@ -79,7 +86,8 @@ export default function Explorer({ path }: ExplorerProps) {
   const handleEnter = async (item: DirItem, evt: MouseEvent) => {
     if (item.type !== "directory") return; // open not implemented yet
 
-    router.push(`/admin/explorer/${item.path}/${item.name}`);
+    const newPath = [path.replace(/\/$/, ''), item.name].join('/');
+    router.push(`/admin/explorer${newPath}`);
   }
 
   const handleDownload = async () => {
@@ -90,7 +98,15 @@ export default function Explorer({ path }: ExplorerProps) {
     setDownloading(true);
 
     try {
-      const zipName = await prepareDownload(selectedItems);
+      const zipName = await (await fetch("/api/prepare", {
+        method: "POST",
+        body: JSON.stringify({
+          items
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })).text();
 
       const downloadUrl = `/api/download/${zipName}`;
       const a = document.createElement("a");

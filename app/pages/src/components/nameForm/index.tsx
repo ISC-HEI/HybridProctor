@@ -1,8 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { isRegistered, registerStudent } from "./index.server";
-import { useActionState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import style from './index.module.scss';
 import Input from "../input";
@@ -14,30 +12,55 @@ export default function NameForm() {
   const [surname, setSurname] = useState<string>("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [state, formAction] = useActionState(registerStudent, { ok: false, message: "", fullname: "" });
-
-  useEffect(() => {
-    if (state.ok && state.fullname !== "") {
-      localStorage.setItem("name", state.fullname);
-      dialogRef.current?.close();
-      setLoading(false);
-    }
-  }, [state]);
+  const [ok, setOk] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>("");
 
   useEffect(() => {(
     async () => {
       const fulln = localStorage.getItem("name");
+      
+      const data = await (await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify({ name: fulln }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })).json()
 
-      if (!fulln || !await isRegistered(fulln)) {
+      if (!fulln || !data.status) {
         dialogRef.current?.showModal();
       }
     }
   )()}, []);
 
+  const handleSubmit = async (evt: FormEvent) => {
+    evt.preventDefault();
+
+    setLoading(true);
+
+    const res = await fetch("/api/register", {
+      method: "PATCH",
+      body: JSON.stringify({
+        name,
+        surname
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await res.json();
+
+    setOk(data.ok);
+    setMessage(data.message);
+
+    setLoading(false);
+  }
+
   return (
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <h2>Please enter your full name</h2>
-      <form className={style.form} id='form' action={formAction} onSubmit={() => setLoading(true)}>
+      <form className={style.form} id='form' onSubmit={handleSubmit}>
         <div className={`input-group ${style.inputs}`}>
           <label className={style.label}>
             Surname
@@ -48,7 +71,7 @@ export default function NameForm() {
             <Input type="text" name='name' value={name} required onChange={e => setName(e.target.value)}/>
           </label>
         </div>
-        <p className={`status-${state.ok ? "success" : "error"}`}>{state.message}</p>
+        <p className={`status-${ok ? "success" : "error"}`}>{message}</p>
         <button className={`${style.btn} submit-btn btn-primary`} type='submit'>
           { loading
             ? <Loader />

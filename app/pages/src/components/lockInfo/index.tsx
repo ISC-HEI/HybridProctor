@@ -2,22 +2,22 @@
 
 import style from "./index.module.scss";
 import { useEffect, useState } from "react"
-import { fetchLocked } from "./index.server";
-import { lock } from "./index.server";
 
 export default function LockInfo() {
   const [locked, setLocked] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
-      setLocked(await fetchLocked());
+      setLocked((await (await fetch("/api/fetch/locked")).json()).locked);
     })()
   }, []);
 
   const handleLock = () => {
     setLocked(!locked);
 
-    lock()
+    fetch("/api/lock", {
+      method: "POST"
+    });
   }
 
   return (

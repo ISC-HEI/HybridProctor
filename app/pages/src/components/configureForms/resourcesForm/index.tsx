@@ -3,7 +3,7 @@
 import { ChangeEvent, DragEvent, FormEvent, MouseEvent, useRef, useState, useTransition } from 'react';
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-react';
-import { uploadResources } from './index.server';
+
 import FormButtons from '@components/formButtons';
 import { formatSize } from '@/lib/utils/file';
 import { useRouter } from 'next/navigation';
@@ -52,7 +52,20 @@ export default function ResourcesForm() {
     
     startTransition(async () => {
       try {
-        await uploadResources(files);
+        const formData = new FormData();
+        files.forEach(file => {
+          formData.append('resourcesFiles', file);
+        });
+
+        const response = await fetch('/api/upload/resources', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
         router.push("/admin/monitor");
       }
       catch (err) {

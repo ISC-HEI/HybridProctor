@@ -6,7 +6,6 @@ import { FormEvent, MouseEvent, useContext, useState, useTransition } from "reac
 import { XIcon } from "lucide-react";
 import Input from "@/components/input";
 import { StepContext } from "@/lib/utils/hooks/stepContext";
-import uploadConfig from "./index.server";
 
 const DEFAULT_LABEL = "Please upload the following files at the end: ";
 
@@ -26,8 +25,19 @@ export default function ConfigForm() {
     
     startTransition(async () => {
       try {
-        await uploadConfig({ enable, label: label !== "" ? label : DEFAULT_LABEL, studentsFiles: files });
-        
+        await fetch("/api/upload/config", {
+          method: "POST",
+          body: JSON.stringify({
+            config: {
+              enable,
+              label: label !== "" ? label : DEFAULT_LABEL,
+              studentsFiles: files
+            }
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }) 
         stepContext?.setStep(stepContext.step + 1);
       }
       catch (err) {

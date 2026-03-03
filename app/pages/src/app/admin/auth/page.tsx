@@ -2,7 +2,6 @@
 
 import Input from "@/components/input";
 import style from "./page.module.scss";
-import { verify } from "./page.server";
 import { LogInIcon } from "lucide-react";
 import { FormEvent, useState } from "react";
 import dayjs from "dayjs";
@@ -12,8 +11,17 @@ export default function Auth() {
 
   const handleVerify = (evt: FormEvent) => {
     evt.preventDefault();
-    
-    verify(password, dayjs().toISOString());
+
+    fetch("/api/auth/verify", {
+      method: "POST",
+      body: JSON.stringify({
+        password,
+        timestamp: dayjs().toISOString()
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
   }
 
   return (

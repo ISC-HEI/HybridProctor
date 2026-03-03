@@ -24,4 +24,12 @@ router.get("/disk", async (req, res) => {
   return res.status(200).json(await storage.getDiskUsage());
 });
 
+router.get("/newpassword", (req, res) => {
+  return res.status(200).send(storage.newPassword);
+});
+
+router.get("/locked", (req, res) => {
+  return res.status(200).json({ locked: storage.locked });
+});
+
 export default router;

@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     }
   },
   compress: false,
+  output: 'export'
 };
 
 export default nextConfig;

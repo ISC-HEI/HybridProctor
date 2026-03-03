@@ -3,7 +3,6 @@
 import { ChangeEvent, DragEvent, FormEvent, useContext, useRef, useState, useTransition } from 'react';
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-react';
-import { uploadExam } from './index.server';
 import FormButtons from '@components/formButtons';
 import { StepContext } from '@/lib/utils/hooks/stepContext';
 import { formatSize } from '@/lib/utils/file';
@@ -32,13 +31,25 @@ export default function ExamForm() {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (!fileInputRef.current?.files?.[0]) {
+    const file = fileInputRef.current?.files?.[0];
+
+    if (!file) {
       return alert("Upload failed, please retry.");
     }
     
     startTransition(async () => {
       try {
-        await uploadExam(fileInputRef.current!.files![0]);
+        const formData = new FormData();
+        formData.append('examFile', file);
+
+        const response = await fetch('/api/upload/exam', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
         
         stepContext?.setStep(stepContext.step + 1);
       }

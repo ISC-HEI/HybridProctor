@@ -2,7 +2,6 @@
 
 import style from './page.module.scss';
 import BootstrapClient from '@/components/bootstrapClient';
-import { fetchConfig, fetchResources, fetchUrl, fetchVersion } from './page.server';
 import Exam from './exam';
 import NameForm from '@/components/nameForm';
 import { useEffect, useRef, useState } from 'react';
@@ -24,9 +23,9 @@ export default function Page() {
 
   useEffect(() => {
     (async () => {
-      setFiles(await fetchResources());
-      setYamlconf(await fetchConfig());
-      setVersion(await fetchVersion());
+      setFiles(await (await fetch("/api/fetch/resources")).json());
+      setYamlconf(await (await fetch("/api/fetch/config")).json());
+      setVersion(await (await fetch("/api/fetch/version")).text());
     })();
   }, []);
 
@@ -40,7 +39,7 @@ export default function Page() {
       }
 
       try {
-        const url = await fetchUrl();
+        const url = await (await fetch("/api/fetch/url")).text();
         const es = new EventSource(`${url}/api/sse/student`);
         eventSourceRef.current = es;
 

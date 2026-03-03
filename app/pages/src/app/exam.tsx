@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '@style/bootstrap-4.6.2.min.css';
 import '@style/bootstrap-icons-1.11.3.min.css'
 
-import { uploadFiles } from './page.server';
 import { FormEvent, useRef, useState } from 'react';
 
 import style from './exam.module.scss';
@@ -43,15 +42,32 @@ export default function Exam({ conf }: ExamProps) {
     evt.preventDefault();
     
     setLoading(true);
-    
-    const state = await uploadFiles(files);
 
-    setLoading(false);
-    
-    addNotification({ success: state.ok, text: state.message, infinite: false }); 
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('files', file);
+    });
 
-    setHash(state.hash)
-    setShowHash(state.ok)
+    try {
+      const response = await fetch('/api/upload/files', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const state = await response.json();
+
+      addNotification({ success: state.ok, text: state.message, infinite: false });
+
+      if (state.ok) {
+        setHash(state.hash);
+        setShowHash(true);
+      }
+    } catch (error) {
+      console.error('File upload failed:', error);
+      addNotification({ success: false, text: 'File upload failed.', infinite: false });
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleShowValidate = () => {

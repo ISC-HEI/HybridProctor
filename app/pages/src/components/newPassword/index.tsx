@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import style from './index.module.scss';
-import { undefinePassword } from './index.server';
 
 interface NewPasswordProps {
   password: string;
@@ -12,7 +11,10 @@ export default function NewPassword({ password }: NewPasswordProps) {
   const router = useRouter();
 
   const next = async () => {
-    await undefinePassword();
+    await fetch("/api/auth/password", {
+      method: "PATCH"
+    });
+
     router.refresh();
   }
 

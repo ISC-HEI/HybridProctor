@@ -5,7 +5,6 @@ import style from './page.module.scss';
 import { useEffect, useRef, useState } from 'react';
 import { LogRecord, type LogType } from '@services/logger';
 import LogTypeChoice from '@/components/logTypeChoice';
-import { fetchUrl } from './page.server';
 import { Student, StudentUpdate } from '@/lib/types/student';
 import StudentsTable from '@/components/studentsTable';
 import Loader from '@/components/loader';
@@ -36,7 +35,7 @@ export default function Monitor() {
       }
 
       try {
-        const url = await fetchUrl();
+        const url = await (await fetch("/fetch/url")).text();
         const es = new EventSource(`${url}/api/sse/admin`);
         eventSourceRef.current = es;
 
