@@ -1,6 +1,6 @@
 'use client'
 
-import { type LogRecord, type LogType } from "@services/logger";
+import { type LogRecord, type LogType } from "@lib/types/logger";
 import style from './index.module.scss';
 import Log from "../log";
 import { motion } from "framer-motion";

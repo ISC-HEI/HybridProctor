@@ -1,4 +1,4 @@
-import { type LogType } from "@services/logger";
+import { type LogType } from "@lib/types/logger";
 import { ChangeEvent } from "react";
 
 import style from './index.module.scss'

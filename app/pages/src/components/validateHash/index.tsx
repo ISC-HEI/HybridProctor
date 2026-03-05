@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Input from "../input";
 import style from "./index.module.scss";
 import Loader from "../loader";
-import { validateHash } from "./index.server";
 import { useNotifications } from "@/lib/utils/hooks/useNotifications";
 
 interface ValidateHashProps {
@@ -32,7 +31,13 @@ export default function ValidateHash({ show, onClose }: ValidateHashProps) {
 
     setLoading(true);
 
-    const state = await validateHash(hash);
+    const state = await (await fetch("/api/hash", {
+      method: "POST",
+      body: JSON.stringify({ hash }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })).json();
 
     setLoading(false);
 

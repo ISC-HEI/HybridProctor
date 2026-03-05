@@ -5,8 +5,9 @@ WORKDIR /app
 
 COPY app/pages/out ./pages
 COPY app/backend/dist ./dist
-COPY app/backend/package.json backend/package-lock.json ./
+COPY app/backend/package.json app/backend/package-lock.json ./
 COPY app/backend/.env.prod ./.env
+COPY app/*.sh ./
 
 ENV NODE_ENV=production
 

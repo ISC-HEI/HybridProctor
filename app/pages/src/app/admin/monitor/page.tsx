@@ -3,7 +3,7 @@
 import Logs from '@/components/logs';
 import style from './page.module.scss';
 import { useEffect, useRef, useState } from 'react';
-import { LogRecord, type LogType } from '@services/logger';
+import { LogRecord, type LogType } from '@lib/types/logger';
 import LogTypeChoice from '@/components/logTypeChoice';
 import { Student, StudentUpdate } from '@/lib/types/student';
 import StudentsTable from '@/components/studentsTable';

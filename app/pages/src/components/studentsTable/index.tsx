@@ -2,7 +2,6 @@ import { Student } from "@/lib/types/student";
 
 import style from "./index.module.scss";
 import dayjs from "dayjs";
-import { changeFinishedStatus } from "./index.server";
 
 interface StudentsTableProps {
   students: Map<string, Student>;
@@ -10,7 +9,15 @@ interface StudentsTableProps {
 
 export default function StudentsTable({ students }: StudentsTableProps) {
   const releaseStudent = (student: Student) => {
-    changeFinishedStatus(student); 
+    fetch("/api/status", {
+      method: "POST",
+      body: JSON.stringify({
+        student
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }); 
   }
 
   return (

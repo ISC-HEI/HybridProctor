@@ -2,7 +2,7 @@
 USER_NAME = stevedevenes
 DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
-VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/package.json)
+VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/backend/package.json)
 
 CACHE_DIR := ./.buildx-cache
 
@@ -22,25 +22,20 @@ imageProd: ## Build docker image for Mikrotik armV7
 	@echo ">>> Docker image created ($(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev: 
-	@mkdir -p $(CACHE_DIR)/armv7
 	@docker buildx build \
 		--platform=linux/arm/v7 \
-		--cache-from=type=local,src=$(CACHE_DIR)/armv7 \
-		--cache-to=type=local,dest=$(CACHE_DIR)/armv7,mode=max \
 		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) .
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev64:
-	@mkdir -p $(CACHE_DIR)/arm64
 	@docker buildx build \
 		--platform=linux/arm64 \
-		--cache-from=type=local,src=$(CACHE_DIR)/arm64 \
-		--cache-to=type=local,dest=$(CACHE_DIR)/arm64,mode=max \
 		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64 -f dockerfile-arm64 .
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 build:
-	@cd app && npm i && npm run build
+	@cd app/pages && npm i && npm run build
+	@cd app/backend && npm i && npm run build
 	@echo ">>> Next builded."
 
 publish: ## Push the docker image on dockerhub
