@@ -12,14 +12,6 @@ export async function filesPostHandler(req: Request, res: Response) {
   const student = await network.getStudent(ip);
   const name = student.name;
 
-  if (files.length < 1) {
-    return res.status(400).json({
-      ok: false,
-      message: "Please upload at least one file.",
-      hash: ""
-    });
-  }
-
   if (storage.locked) {
     return res.status(400).json({
       ok: false,
@@ -52,6 +44,14 @@ export async function filesPostHandler(req: Request, res: Response) {
     return res.status(200).json({
       ok: true,
       message: "Exam ended successfully",
+      hash: ""
+    });
+  }
+
+  if (files.length < 1) {
+    return res.status(400).json({
+      ok: false,
+      message: "Please upload at least one file.",
       hash: ""
     });
   }

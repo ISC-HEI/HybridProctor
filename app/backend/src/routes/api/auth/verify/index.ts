@@ -12,8 +12,8 @@ export async function verifyPostHandler(req: Request, res: Response) {
   if (await storage.verifyPassword(password)) {
     const next = req.cookies.desired_url;
 
-    if (!next || !next.value) {
-      return res.redirect("/");
+    if (!next) {
+      return res.json({ redirect: "/" });
     }
 
     storage.setOffset(timestamp);
@@ -28,11 +28,11 @@ export async function verifyPostHandler(req: Request, res: Response) {
 
     logger.info(`IP ${ip} logged in as admin.`, { issuer: ip, action: "logged in" });
 
-    return res.redirect(next.value);
-  }
-  else {
+    return res.json({ redirect: next });
+
+  } else {
     logger.warn(`IP '${ip}' tried wrong password.`, { issuer: ip, action: "tried" });
 
-    return res.redirect("/");
+    return res.json({ redirect: '/' });
   }
 }

@@ -7,6 +7,7 @@ import { sseAdminHandler } from "./sse/admin";
 import { sseStudentHandler } from "./sse/student";
 import uploadRouter from "./upload";
 import fetchRouter from "./fetch";
+import authRouter from "./auth";
 import { prepareDownloadPostHandler } from "./prepare";
 import { statusPostHandler } from "./status";
 import { registerPatchHandler, registerPostHandler } from "./register";
@@ -29,5 +30,6 @@ router.post("/hash", hashPostHandler);
 
 router.use("/upload", uploadRouter);
 router.use("/fetch", fetchRouter);
+router.use("/auth", authRouter);
 
 export default router;

@@ -40,7 +40,7 @@ export default function ExamForm() {
     startTransition(async () => {
       try {
         const formData = new FormData();
-        formData.append('examFile', file);
+        formData.append('exam', file);
 
         const response = await fetch('/api/upload/exam', {
           method: 'POST',

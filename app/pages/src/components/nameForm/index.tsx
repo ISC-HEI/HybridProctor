@@ -25,7 +25,7 @@ export default function NameForm() {
         headers: {
           "Content-Type": "application/json"
         }
-      })).json()
+      })).json();
 
       if (!fulln || !data.status) {
         dialogRef.current?.showModal();
@@ -55,6 +55,10 @@ export default function NameForm() {
     setMessage(data.message);
 
     setLoading(false);
+
+    if (data.ok) {
+      dialogRef.current?.close();
+    }
   }
 
   return (

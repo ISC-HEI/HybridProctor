@@ -15,7 +15,7 @@ export default function NewPassword({ password }: NewPasswordProps) {
       method: "PATCH"
     });
 
-    router.refresh();
+    router.replace('/');
   }
 
   return (

@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/exam", upload.single("exam"), examPostHandler)
 router.post("/resources", upload.array("resources"), resourcesPostHandler)
-router.post("/files", upload.array("uploads"), filesPostHandler)
+router.post("/files", upload.array("files"), filesPostHandler)
 router.post("/config", configPostHandler)
 
 export default router;

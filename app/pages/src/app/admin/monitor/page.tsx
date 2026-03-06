@@ -35,8 +35,7 @@ export default function Monitor() {
       }
 
       try {
-        const url = await (await fetch("/fetch/url")).text();
-        const es = new EventSource(`${url}/api/sse/admin`);
+        const es = new EventSource("/api/sse/admin");
         eventSourceRef.current = es;
 
         window.onbeforeunload = () => {

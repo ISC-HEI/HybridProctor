@@ -6,22 +6,29 @@ import { LogInIcon } from "lucide-react";
 import { FormEvent, useState } from "react";
 import dayjs from "dayjs";
 
+import { useRouter } from "next/navigation";
+
 export default function Auth() {
   const [password, setPassword] = useState<string>("");
 
-  const handleVerify = (evt: FormEvent) => {
+  const router = useRouter();
+
+  const handleVerify = async (evt: FormEvent) => {
     evt.preventDefault();
 
-    fetch("/api/auth/verify", {
+    const { redirect } = await (await (fetch("/api/auth/verify", {
       method: "POST",
       body: JSON.stringify({
         password,
         timestamp: dayjs().toISOString()
       }),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        "Accept": "application/json"
       }
-    })
+    }))).json();
+
+    router.push(redirect);
   }
 
   return (

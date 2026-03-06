@@ -1,4 +1,3 @@
-
 import fs, { readdir, statfs } from "fs/promises";
 import { existsSync,  type PathLike, createWriteStream, createReadStream } from "fs";
 import path, { join } from "path";
@@ -26,6 +25,7 @@ const AVERAGE_LATENCY = 165;
 class Storage {
   rootLocation: string;
   examLocation: string;
+  resourcesLocation: string;
   uploadLocation: string;
   passwordLocation: string;
   initialized: boolean = false;
@@ -48,6 +48,7 @@ class Storage {
     this.passwordLocation = process.env.PASSWORD_FILE !== "default" ? process.env.PASSWORD_FILE : DEFAULT_PASSWORD_FILE;
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
     this.examLocation = path.join(this.local("public"), process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
+    this.resourcesLocation = this.local("public/resources");
   }
 
   public async init() {
@@ -67,6 +68,9 @@ class Storage {
       await fs.mkdir(this.uploadLocation, { recursive: true });
     }
 
+    if (!existsSync(this.resourcesLocation)) {
+      await fs.mkdir(this.resourcesLocation, { recursive: true });
+    }
 
     this.resources = await fs.readdir("public/resources");
     logger.debug("Fetched resources.");
@@ -108,7 +112,7 @@ class Storage {
     const sanitizedFileName = path.basename(file.filename);
     const fullLocation = path.join(location, sanitizedFileName);
     
-    await fs.rename(file.path, fullLocation);
+    await this.moveFile(file.path, fullLocation);
 
     logger.debug(`Created file "${fullLocation}".`);
   }
@@ -122,6 +126,16 @@ class Storage {
 
     for (const file of files) {
       await fs.rm(path.join(directory, file));
+    }
+  }
+
+  public async moveFile(source: string, destination: string) {
+    try {
+      await fs.copyFile(source, destination);
+      await fs.unlink(source);
+    } catch (error: any) {
+      logger.error(`Failed to move file from ${source} to ${destination}`);
+      console.error(error);
     }
   }
 
@@ -176,8 +190,8 @@ class Storage {
   }
 
   public async writeExam(file: Express.Multer.File) {
-    fs.rename(file.path, this.examLocation);
-     
+    await this.moveFile(file.path, this.examLocation);
+
     logger.debug(`Exam created at "${this.examLocation}".`);
   }
 
@@ -238,7 +252,7 @@ class Storage {
         const itemPath = path.join(versionFolder, item.name);
         const stream = createReadStream(itemPath);
         for await (const chunk of stream) {
-            digest.update(chunk);
+          digest.update(chunk);
         }
       }
     }
@@ -262,7 +276,7 @@ class Storage {
 
     const newPath = `${student.latestVersion.path}_validated`;
 
-    fs.rename(student.latestVersion.path, newPath);
+    await this.moveFile(student.latestVersion.path, newPath);
 
     return true;
   }

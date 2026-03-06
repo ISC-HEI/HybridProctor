@@ -39,8 +39,7 @@ export default function Page() {
       }
 
       try {
-        const url = await (await fetch("/api/fetch/url")).text();
-        const es = new EventSource(`${url}/api/sse/student`);
+        const es = new EventSource("/api/sse/student");
         eventSourceRef.current = es;
 
         window.onbeforeunload = () => {

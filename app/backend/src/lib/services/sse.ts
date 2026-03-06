@@ -1,4 +1,3 @@
-
 import logger from "./logger";
 import network from "./network";
 import { type Response } from "express";
@@ -23,9 +22,12 @@ class SSEManager {
     this.encoder = new TextEncoder();
   }
 
-  private safeWrite(client: Client, event: SSEEvent, data: string) {
+  private safeWrite(client: Client, event: SSEEvent, data: any) {
     try {
-      client.res.write(`event: ${event}\ndata: ${JSON.stringify({ message: data })}\n\n`);
+      client.res.write(`event: ${event}
+data: ${JSON.stringify({ message: data })}
+
+`);
     } catch (e) {
       logger.error(`Failed to send SSE to ${client.ip}.`);
       console.error(e);
@@ -38,7 +40,9 @@ class SSEManager {
 
     const intervalId = setInterval(() => {
       try {
-        res.write(`: heartbeat\n\n`);
+        res.write(`: heartbeat
+
+`);
       } catch {
         this.removeClient(ip, admin);
       }
@@ -53,14 +57,14 @@ class SSEManager {
     }
 
     if (admin) {
-      this.safeWrite(client, "log", JSON.stringify({ message: logger.getLogs().slice(-20) }));
-      this.safeWrite(client, "init", JSON.stringify({ message: await network.getStudents() }));
+      this.safeWrite(client, "log", logger.getLogs().slice(-20));
+      this.safeWrite(client, "init", await network.getStudents());
     } else {
       const student = await network.getStudent(ip);
       const storage = (await import("./storage")).default;
 
       this.safeWrite(client, "init", "Connecting...");
-      this.safeWrite(client, "std", JSON.stringify({ message: { locked: storage.locked, finished: student.finished } }));
+      this.safeWrite(client, "std", { locked: storage.locked, finished: student.finished });
     }
   }
 
@@ -81,20 +85,17 @@ class SSEManager {
   }
 
   public broadcast(message: object, event: SSEEvent, admin: boolean = true) {
-    const data = JSON.stringify({ message: message });
-
     const clients = admin ? this.admins : this.students;
     for (const client of clients.values()) {
-      this.safeWrite(client, event, data);
+      this.safeWrite(client, event, message);
     }
   }
 
   public send(ip: string, message: object, event: SSEEvent, admin: boolean) {
-    const data = JSON.stringify({ message: message });
     const client = admin ? this.admins.get(ip) : this.students.get(ip);
 
     if (client) {
-      this.safeWrite(client, event, data);
+      this.safeWrite(client, event, message);
     }
   }
 }
