@@ -27,7 +27,7 @@ export default function Explorer() {
 
   useEffect(() => {(
     async () => {
-      const data = await (await fetch("/fetch/items", {
+      const data = await (await fetch("/api/fetch/items", {
         method: "POST",
         body: JSON.stringify({
           path
@@ -48,7 +48,7 @@ export default function Explorer() {
         setItems(data);
       }
 
-      const { total, used } = await (await fetch("/fetch/disk")).json();
+      const { total, used } = await (await fetch("/api/fetch/disk")).json();
 
       setTotal(total);
       setUsed(used);

@@ -10,7 +10,6 @@ const NEW_PASSWORD = "/password";
 export default async function middleware(req: Request, res: Response, next: () => void) {
   const path = req.path;
 
-  // If the request is for an asset, skip the middleware.
   const isAsset = path.startsWith("/_next/") || path === "/favicon.ico";
   if (isAsset) {
     return next();
@@ -39,10 +38,12 @@ export default async function middleware(req: Request, res: Response, next: () =
       httpOnly: true
     });
 
-    return res.redirect(ADMIN_AUTH);;
+    return res.redirect(ADMIN_AUTH);
   }
 
-  if (path == "/admin") {
+  console.log(path)
+
+  if (path === "/admin") {
     return res.redirect("/admin/monitor");
   }
 

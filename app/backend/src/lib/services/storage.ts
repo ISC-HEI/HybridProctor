@@ -276,7 +276,7 @@ class Storage {
 
     const newPath = `${student.latestVersion.path}_validated`;
 
-    await this.moveFile(student.latestVersion.path, newPath);
+    await fs.rename(student.latestVersion.path, newPath);
 
     return true;
   }

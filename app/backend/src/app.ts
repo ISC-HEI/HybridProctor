@@ -23,10 +23,21 @@ app.use("/api", apiRouter);
 app.use(middleware);
 
 const staticDir = path.join(process.cwd(), "pages");
+const publicDir = path.join(process.cwd(), "public");
+
 app.use(express.static(staticDir));
+app.use(express.static(publicDir));
+
+app.get(/^\/admin\/explorer(\/.*)?$/, (req, res, next) => {
+  const explorerPagePath = path.join(staticDir, 'admin', 'explorer.html');
+  res.sendFile(explorerPagePath, (err) => {
+    if (err) {
+      next();
+    }
+  });
+});
 
 app.get(/.*/, (req, res, next) => {
-    console.log(`[Catch-all] Requested path: ${req.path}`);
     const requestedPath = req.path;
     const filePath = path.join(staticDir, requestedPath);
 

@@ -45,16 +45,12 @@ export default function ResourcesForm() {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
-    if (files.length === 0) {
-      return alert("Please upload at least one file.");
-    }
     
     startTransition(async () => {
       try {
         const formData = new FormData();
         files.forEach(file => {
-          formData.append('resourcesFiles', file);
+          formData.append('resources', file);
         });
 
         const response = await fetch('/api/upload/resources', {
@@ -143,7 +139,7 @@ export default function ResourcesForm() {
         </ul>
       </fieldset>
 
-      <FormButtons disabled={files.length === 0} loading={isPending}/>
+      <FormButtons loading={isPending}/>
     </form>
   )
 }

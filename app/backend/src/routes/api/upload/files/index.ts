@@ -10,6 +10,8 @@ export async function filesPostHandler(req: Request, res: Response) {
   const files = req.files as Express.Multer.File[];
 
   const student = await network.getStudent(ip);
+  console.log(ip);
+  console.log(student)
   const name = student.name;
 
   if (storage.locked) {
