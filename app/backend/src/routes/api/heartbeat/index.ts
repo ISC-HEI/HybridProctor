@@ -8,14 +8,14 @@ export async function heartbeatPostHandler(req: Request, res: Response) {
     const ip = await getIp();
 
     if (!ip) {
-      return res.sendStatus(204)
+      return res.sendStatus(204);
     }
 
-    await network.recordHeartbeat(ip)
+    await network.recordHeartbeat(ip);
 
-    return res.status(204)
+    return res.sendStatus(204);
   } catch (error) {
-    logger.error("Heartbeat error")
-    return res.sendStatus(204)
+    logger.error("Heartbeat error");
+    return res.sendStatus(204);
   }
 }

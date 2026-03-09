@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { type DirItem } from "../types/dirItem";
 import { v4 as uuidv4 } from "uuid";
 import network from "./network";
+import { appState } from "../state";
 import { getTime, unixTime } from "../utils/time";
 
 const DEFAULT_ROOT_PATH = "/mount_point";
@@ -32,8 +33,20 @@ class Storage {
   examConfig!: Yamlconf;
   resources!: string[];
   version!: string;
-  locked: boolean = true;
-  timeOffset: number = -1;
+
+  get locked(): boolean {
+    return appState.locked;
+  }
+  set locked(value: boolean) {
+    appState.locked = value;
+  }
+
+  get timeOffset(): number {
+    return appState.timeOffset;
+  }
+  set timeOffset(value: number) {
+    appState.timeOffset = value;
+  }
 
   private sessions: Map<string, Session> = new Map<string, Session>();
   newPassword: string|undefined;

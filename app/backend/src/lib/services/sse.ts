@@ -1,3 +1,4 @@
+import { appState } from "../state";
 import logger from "./logger";
 import network from "./network";
 import { type Response } from "express";
@@ -61,10 +62,9 @@ data: ${JSON.stringify({ message: data })}
       this.safeWrite(client, "init", await network.getStudents());
     } else {
       const student = await network.getStudent(ip);
-      const storage = (await import("./storage")).default;
 
       this.safeWrite(client, "init", "Connecting...");
-      this.safeWrite(client, "std", { locked: storage.locked, finished: student.finished });
+      this.safeWrite(client, "std", { locked: appState.locked, finished: student.finished });
     }
   }
 
