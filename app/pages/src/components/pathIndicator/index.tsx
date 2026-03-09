@@ -11,6 +11,10 @@ interface PathIndicatorProps {
 export default function PathIndicator({ path }: PathIndicatorProps) {
   const pathList = path !== undefined ? path.split('/') : [];
 
+  if (pathList[0] === '') {
+    pathList.shift();
+  }
+
   return (
     <ol className={style.path}>
       <li className={style.dir}>

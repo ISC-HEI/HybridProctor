@@ -17,9 +17,8 @@ router.get("/version", (req, res) => {
 });
 
 router.post("/items", async (req, res) => {
-  return res.status(200).json(await storage.readDir(req.body.path)); 
+  return res.status(200).json(await storage.readDir(decodeURIComponent(req.body.path)));
 });
-
 router.get("/disk", async (req, res) => {
   return res.status(200).json(await storage.getDiskUsage());
 });

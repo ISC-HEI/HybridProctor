@@ -23,7 +23,8 @@ export default function Explorer() {
 
   const router = useRouter();
   const pathname = usePathname();
-  const path = pathname.startsWith("/admin/explorer") ? pathname.substring("/admin/explorer".length) || '/' : '/';
+  const rawPath = pathname.startsWith("/admin/explorer") ? pathname.substring("/admin/explorer".length) : '';
+  const path = rawPath ? '/' + rawPath.split('/').filter(Boolean).join('/') : '';
 
   useEffect(() => {(
     async () => {
@@ -141,15 +142,15 @@ export default function Explorer() {
       <Goto href="/admin/monitor" Icon={SquareActivityIcon} />
       <main className={style.explorer}>
         <div className={style.manage}>
-          <PathIndicator path={path} />
+          <PathIndicator path={decodeURIComponent(path)} />
         </div>
-        <ol className={style.grid} onClick={() => setSelectedItems([])}>
-          {
-            items.length > 0
-              ? items.map(item => <Item key={item.id} item={item} selected={selectedItems.includes(item)} onClick={handleSelect} onDoubleClick={handleEnter} />)
-              : <Loader />
-          }
-        </ol>
+          {items.length > 0 ? (
+            <ol className={style.grid} onClick={() => setSelectedItems([])}>
+              {items.map(item => <Item key={item.id} item={item} selected={selectedItems.includes(item)} onClick={handleSelect} onDoubleClick={handleEnter}></Item>)}
+            </ol>
+          ) : (
+            <Loader />
+          )}
       </main>
       <aside className={style.storage}>
         <div className={style.progress}>

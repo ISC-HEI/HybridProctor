@@ -1,7 +1,7 @@
 'use client'
 
 import { NotificationsContext } from "@/lib/utils/hooks/notificationsContext";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Notification } from "@/lib/types/notification";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,40 +15,46 @@ const MAX_NOTIFICATIONS = 3;
 export default function NotificationProvider({ children }: ProvidersProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const shift = () => {
-    return notifications.filter((v, i) => i !== 0);
-  }
-
-  const addNotification = (notification: Notification) => {
+  const addNotification = useCallback((notification: Notification) => {
     const id = uuidv4();
+    setNotifications(prevNotifications => {
+      const newNotifications = [...prevNotifications];
+      if (newNotifications.length >= MAX_NOTIFICATIONS) {
+        newNotifications.shift();
+      }
+      return [...newNotifications, { ...notification, id }];
+    });
+  }, []);
 
-    if (notifications.length >= MAX_NOTIFICATIONS) {
-      setNotifications(prev => [...shift(), { ...notification, id }]);
-      return;
-    }
-
-    setNotifications(prev => [...prev, { ...notification, id }]);
-  };
-
-  const removeNotification = (id: string) => {
+  const removeNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
-  }
+  }, []);
 
   useEffect(() => {
-    notifications.forEach(notification => {
-      if (!notification.infinite) {
-        const timeoutId = setTimeout(() => {
+    const timeouts = notifications.map((notification) => {
+      if (!notification.infinite && notification.id) {
+        return setTimeout(() => {
           removeNotification(notification.id!);
-
         }, NOTIFICATION_COUNTDOWN);
-
-        return () => clearTimeout(timeoutId);
       }
+      return null;
     });
-  }, [notifications]);
+
+    return () => {
+      timeouts.forEach((timeoutId) => {
+        if (timeoutId) clearTimeout(timeoutId);
+      });
+    };
+  }, [notifications, removeNotification]);
+
+  const contextValue = useMemo(() => ({
+    notifications,
+    addNotification,
+    removeNotification
+  }), [notifications, addNotification, removeNotification]);
 
   return (
-    <NotificationsContext.Provider value={{ notifications, addNotification, removeNotification }}>
+    <NotificationsContext.Provider value={contextValue}>
       {children}
     </NotificationsContext.Provider>
   )
