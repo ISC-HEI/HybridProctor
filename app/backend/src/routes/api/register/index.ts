@@ -10,7 +10,7 @@ export async function registerPostHandler(req: Request, res: Response) {
   const student = await network.getStudentByName(name);
 
   if (!student || await getIp() !== student.ip) {
-    return res.status(400).json({ status: false });
+    return res.status(200).json({ status: false });
   }
 
   return res.status(200).json({ status: true });

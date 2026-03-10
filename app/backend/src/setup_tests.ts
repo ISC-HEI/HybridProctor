@@ -10,6 +10,7 @@ export function setupIsolatedTests() {
     delete (globalThis as any).sseManager;
 
     vi.resetModules();
+    vi.clearAllMocks();
   });
 }
 

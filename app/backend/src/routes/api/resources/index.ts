@@ -40,7 +40,7 @@ export async function resourcesGetHandler(req: Request, res: Response) {
 
     readStream.pipe(res);
 
-  } catch {
+  } catch (e) {
     return res.status(404).json({ error: 'File not found' });
   }
 }

@@ -6,7 +6,7 @@ import { type Request, type Response } from "express";
 export async function sseAdminHandler(req: Request, res: Response) {
   const ip = await getIp();
   const sessionId = req.cookies?.sid;
-
+  
   if (!sessionId || !(await storage.verifySession(sessionId, ip))) {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
