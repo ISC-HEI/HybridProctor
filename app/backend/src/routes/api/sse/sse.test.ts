@@ -1,24 +1,18 @@
-import { setupIsolatedTests } from "@/setup_tests";
+import { networkUtilsMock, setupIsolatedTests, sseManagerMock, storageMock } from "@/setup_tests";
 import request from "supertest";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
-vi.mock("@/lib/utils/network", () => ({
-  getIp: vi.fn().mockResolvedValue("127.0.0.1"),
-}));
 
-const mockSseManager = {
-  addClient: vi.fn(),
-  removeClient: vi.fn(),
-};
+vi.mock("@/lib/utils/network", () => {
+  return networkUtilsMock 
+});
+
 vi.mock("@services/sse", () => ({
-  default: mockSseManager,
+  default: sseManagerMock,
 }));
 
-const mockStorage = {
-  verifySession: vi.fn(),
-};
 vi.mock("@services/storage", () => ({
-  default: mockStorage,
+  default: storageMock,
 }));
 
 describe("/api/sse", () => {
@@ -27,7 +21,8 @@ describe("/api/sse", () => {
 
     it("should send an unauthorized error if session is invalid", async () => {
       const app = (await import("@/app")).default;
-      mockStorage.verifySession.mockResolvedValue(false);
+      storageMock.verifySession.mockResolvedValue(false);
+      networkUtilsMock.getIp.mockResolvedValue("127.0.0.1");
 
       const res = await request(app).get("/api/sse/admin").set("Cookie", "sid=123");
 

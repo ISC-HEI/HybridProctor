@@ -20,3 +20,53 @@ export async function setupStorage() {
 
   return storage;
 }
+
+export const loggerMock = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn()
+}
+
+export const storageMock = {
+  verifyPassword: vi.fn(),
+  setOffset: vi.fn(),
+  createSession: vi.fn(),
+  verifySession: vi.fn(),
+  writeConfig: vi.fn(),
+  writeExam: vi.fn(),
+  locked: true,
+  examConfig: {
+    enable: false,
+    label: "Default config",
+    studentsFiles: []
+  },
+  writeStudentFiles: vi.fn(),
+  writeResources: vi.fn(),
+};
+
+export const networkMock = {
+  getStudentByName: vi.fn(),
+  addUpdate: vi.fn(),
+  getStudent: vi.fn(),
+};
+
+export const fsMock = {
+  createReadStream: vi.fn(),
+  promises: {
+    stat: vi.fn(),
+  },
+  existsSync: vi.fn(),
+  statSync: vi.fn(),
+  unlink: vi.fn(),
+}
+
+export const sseManagerMock = {
+  addClient: vi.fn(),
+  removeClient: vi.fn(),
+  send: vi.fn(),
+};
+
+export const networkUtilsMock = {
+  getIp: vi.fn(),
+}

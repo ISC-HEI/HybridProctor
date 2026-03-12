@@ -1,14 +1,7 @@
 
-import { setupIsolatedTests, setupStorage } from "@/setup_tests";
+import { loggerMock, setupIsolatedTests, setupStorage } from "@/setup_tests";
 import { describe, it, expect, vi } from "vitest";
 import request from "supertest";
-
-const loggerMock = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn()
-}
 
 vi.mock("@/lib/services/logger", () => {
   return {

@@ -1,32 +1,15 @@
 
-import { setupIsolatedTests } from "@/setup_tests";
+import { loggerMock, storageMock, setupIsolatedTests } from "@/setup_tests";
 import { describe, it, expect, vi } from "vitest";
 import request from "supertest";
 import dayjs from "dayjs";
 
-const logs: string[] = [];
-const addLog = (message: string) => {
-  logs.push(message);
-};
-
-const loggerMock = {
-  logs,
-  info: addLog,
-  error: addLog,
-  warn: addLog,
-  debug: addLog,
-}
 vi.mock("@/lib/services/logger", () => {
   return {
     default: loggerMock 
   };
 });
 
-const storageMock = {
-  verifyPassword: vi.fn(),
-  setOffset: vi.fn(),
-  createSession: vi.fn(),
-};
 vi.mock("@/lib/services/storage", () => ({
   default: storageMock,
 }));

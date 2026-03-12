@@ -1,22 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import { Readable } from "stream";
-import { setupIsolatedTests } from "@/setup_tests";
+import { fsMock, loggerMock, setupIsolatedTests } from "@/setup_tests";
 
-const mockFs = {
-  createReadStream: vi.fn(),
-  promises: {
-    stat: vi.fn(),
-  },
-  existsSync: vi.fn()
-};
-
-// Mock the 'fs' module to control its behavior in tests.
 vi.mock("fs", () => ({
-  createReadStream: mockFs.createReadStream,
-  promises: mockFs.promises,
-  default: mockFs,
-  existsSync: mockFs.existsSync
+  createReadStream: fsMock.createReadStream,
+  promises: fsMock.promises,
+  default: fsMock,
+  existsSync: fsMock.existsSync
 }));
 
 vi.mock("mime-types", () => ({
@@ -26,12 +17,7 @@ vi.mock("mime-types", () => ({
 }));
 
 vi.mock("@/lib/services/logger", () => ({
-  default: {
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-  },
+  default: loggerMock
 }));
 
 // We need to import the mocked modules *after* the vi.mock calls
@@ -50,7 +36,7 @@ describe("GET /api/resources/:file", () => {
 
   it("should return 404 if fs.promises.stat throws an error", async () => {
     const app = (await import("@/app")).default;
-    mockFs.promises.stat.mockRejectedValue(new Error("File not found"));
+    fsMock.promises.stat.mockRejectedValue(new Error("File not found"));
 
     const res = await request(app).get("/api/resources/non-existent-file.jpg");
 
@@ -63,13 +49,13 @@ describe("GET /api/resources/:file", () => {
     const fileContent = "mock-image-content";
     const fileName = "test-image.png";
 
-    mockFs.promises.stat.mockResolvedValue({ size: fileContent.length } as any);
+    fsMock.promises.stat.mockResolvedValue({ size: fileContent.length } as any);
     vi.mocked(mime.default.lookup).mockReturnValue("text/plain");
 
     const mockReadStream = new Readable();
     mockReadStream.push(fileContent);
     mockReadStream.push(null); // End of stream
-    mockFs.createReadStream.mockReturnValue(mockReadStream as any);
+    fsMock.createReadStream.mockReturnValue(mockReadStream as any);
 
     const res = await request(app).get(`/api/resources/${fileName}`);
 
@@ -79,7 +65,7 @@ describe("GET /api/resources/:file", () => {
     expect(res.headers["content-disposition"]).toBe(`attachment; filename=${fileName}`);
     expect(res.text).toBe(fileContent);
 
-    expect(mockFs.promises.stat).toHaveBeenCalledWith(
+    expect(fsMock.promises.stat).toHaveBeenCalledWith(
       expect.stringMatching(/public[\\\/]resources[\\\/]test-image\.png$/)
     );
   });
@@ -89,7 +75,7 @@ describe("GET /api/resources/:file", () => {
     const fileName = "bad-stream.txt";
     const streamError = new Error("Something went wrong during read");
 
-    mockFs.promises.stat.mockResolvedValue({ size: 123 } as any);
+    fsMock.promises.stat.mockResolvedValue({ size: 123 } as any);
     vi.mocked(mime.default.lookup).mockReturnValue("text/plain");
 
     const mockReadStream = new Readable({
@@ -97,7 +83,7 @@ describe("GET /api/resources/:file", () => {
         this.emit("error", streamError);
       },
     });
-    mockFs.createReadStream.mockReturnValue(mockReadStream as any);
+    fsMock.createReadStream.mockReturnValue(mockReadStream as any);
 
     const res = await request(app).get(`/api/resources/${fileName}`);
 

@@ -1,22 +1,13 @@
 
-import { setupIsolatedTests } from "@/setup_tests";
+import { loggerMock, networkMock, setupIsolatedTests } from "@/setup_tests";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 
-const loggerMock = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn(),
-};
 vi.mock("@/lib/services/logger", () => ({
   default: loggerMock,
 }));
 
-const networkMock = {
-  getStudentByName: vi.fn(),
-  addUpdate: vi.fn(), // Also mock addUpdate used in the PATCH handler
-};
+
 vi.mock("@/lib/services/network", () => ({
   default: networkMock,
 }));

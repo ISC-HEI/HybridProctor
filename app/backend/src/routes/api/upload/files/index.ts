@@ -10,12 +10,10 @@ export async function filesPostHandler(req: Request, res: Response) {
   const files = req.files as Express.Multer.File[];
 
   const student = await network.getStudent(ip);
-  console.log(ip);
-  console.log(student)
   const name = student.name;
 
   if (storage.locked) {
-    return res.status(400).json({
+    return res.status(423).json({
       ok: false,
       message: "The exam hasn't started yet, or has already ended.",
       hash: ""
@@ -23,7 +21,7 @@ export async function filesPostHandler(req: Request, res: Response) {
   }
 
   if (student.finished) {
-    return res.status(400).json({
+    return res.status(423).json({
       ok: false,
       message: "You already validated your latest version.",
       hash: ""
@@ -31,7 +29,7 @@ export async function filesPostHandler(req: Request, res: Response) {
   }
 
   if (!name) {
-    return res.status(400).json({
+    return res.status(401).json({
       ok: false,
       message: "Please refresh and enter your name.",
       hash: ""
@@ -50,7 +48,7 @@ export async function filesPostHandler(req: Request, res: Response) {
     });
   }
 
-  if (files.length < 1) {
+  if (!files || files.length < 1) {
     return res.status(400).json({
       ok: false,
       message: "Please upload at least one file.",
