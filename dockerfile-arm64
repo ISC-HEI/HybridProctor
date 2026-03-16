@@ -1,4 +1,3 @@
-
 FROM arm64v8/node:22-slim
 
 WORKDIR /app
@@ -10,13 +9,12 @@ COPY app/backend/.env.prod ./.env
 COPY app/*.sh ./
 
 ENV NODE_ENV=production
+RUN npm ci --omit=dev --verbose
 
 RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
 
-RUN curl -sf https://gobinaries.com/tj/node-prune | sh
-
-RUN npm ci --omit=dev --verbose
-RUN node-prune
+RUN curl -w %{http_code} -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm&version=v1.2.0" && chmod +x /usr/local/bin/node-prune
+RUN node-prune /app
 
 ENV NEXT_TELEMETRY_DISABLE=1
 
