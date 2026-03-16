@@ -53,7 +53,7 @@ jobs:
         working-directory: ${{ github.workspace }}/app/pages
         run: |
           npm install
-          npm run export
+          npm run build
 
       - name: Build and package
         run: |
