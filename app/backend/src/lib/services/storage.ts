@@ -7,7 +7,6 @@ import { type Yamlconf } from "@/lib/types/yamlconf";
 import logger from "./logger";
 import yaml from 'js-yaml';
 import crypto from "crypto";
-import argon2 from "argon2";
 import { type Session } from "../types/session";
 import dayjs from "dayjs";
 import { type DirItem } from "../types/dirItem";
@@ -112,9 +111,14 @@ class Storage {
     logger.debug("Initialized storage.");
   }
 
+  private createHash(data: string) {
+    const hashObject = crypto.createHash("sha256");
+    return hashObject.update(data).digest("base64");
+  }
+
   private async generatePassword() {
     this.newPassword = Buffer.from(crypto.randomBytes(20)).toString("base64").replace('=', '');
-    const hash = await argon2.hash(this.newPassword);
+    const hash = this.createHash(this.newPassword);
 
     await fs.writeFile(this.passwordLocation, hash);
 
@@ -152,8 +156,8 @@ class Storage {
     }
   }
 
-  public async verifyPassword(password: string) {
-    return await (argon2.verify(this.password, password));
+  public verifyPassword(password: string) {
+    return this.password === this.createHash(password);
   }
 
   public async verifySession(id: string, ip: string) {
