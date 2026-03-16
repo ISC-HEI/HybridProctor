@@ -48,10 +48,7 @@ jobs:
 
       - name: Build and package
         run: |
-          docker run --rm --platform ${{ matrix.platform }} \ 
-            -v ${{ github.workspace }}:/app \
-            ${{ matrix.image }} \
-            /bin/bash -c "
+          docker run --rm --platform ${{ matrix.platform }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash -c "
               set -e; 
               apt-get update && apt-get install -y zip; 
               
