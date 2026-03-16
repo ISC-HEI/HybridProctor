@@ -19,6 +19,6 @@ describe("POST /api/heartbeat", () => {
 
     expect(res.statusCode).toBe(204);
 
-    expect(networkMock.addUpdate).toHaveBeenCalled();
+    expect(networkMock.recordHeartbeat).toHaveBeenCalled();
   })
 })
