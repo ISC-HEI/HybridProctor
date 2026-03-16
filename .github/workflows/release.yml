@@ -49,14 +49,23 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Build frontend
+        working-directory: ${{ github.workspace }}/app/pages
+        run: |
+          npm install
+          npm run export
+
       - name: Build and package
         run: |
           docker run --rm --platform ${{ matrix.platform }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash -c "
-              set -e; 
-              apt-get update && apt-get install -y zip; 
-              
-              cd /app/app/pages; 
-              npm i && npm run export; 
+              set -e;
+              apt-get update && apt-get install -y zip curl;
+
+              NODE_PRUNE_ARCH="arm";
+              if [ "${{ matrix.arch }}" = "arm64v8" ]; then
+                NODE_PRUNE_ARCH="arm64";
+              fi;
+              curl -w '%{http_code}' -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=${NODE_PRUNE_ARCH}&version=v1.2.0" && chmod +x /usr/local/bin/node-prune;
               
               cd /app/app/backend; 
               npm i && npm run build; 
@@ -68,7 +77,8 @@ jobs:
               cp app/backend/package.json app/backend/package-lock.json release_package/; 
               
               cd release_package; 
-              npm ci --omit=dev; 
+              npm ci --omit=dev;
+              /usr/local/bin/node-prune;
               
               cd /app; 
               cp app/launch_services.sh app/sftp.sh release_package/; 
