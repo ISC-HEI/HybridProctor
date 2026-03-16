@@ -11,9 +11,12 @@ COPY app/*.sh ./
 
 ENV NODE_ENV=production
 
-RUN npm ci --omit=dev --verbose
-
 RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
+
+RUN curl -sf https://gobinaries.com/tj/node-prune | sh
+
+RUN npm ci --omit=dev --verbose
+RUN node-prune
 
 ENV NEXT_TELEMETRY_DISABLE=1
 

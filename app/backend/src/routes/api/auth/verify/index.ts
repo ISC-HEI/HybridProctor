@@ -9,7 +9,7 @@ export async function verifyPostHandler(req: Request, res: Response) {
   const password = req.body.password;
   const timestamp = req.body.timestamp;
 
-  if (await storage.verifyPassword(password)) {
+  if (storage.verifyPassword(password)) {
     const next = req.cookies.desired_url;
 
     if (!next) {

@@ -11,9 +11,10 @@
   },
   "scripts": {
     "build": "tsc --noEmit && tsdown",
-    "start": "dotenvx run -- node dist/index.mjs",
-    "dev": "dotenvx run -- tsx src/index.ts",
-    "test": "dotenvx run -- vitest"
+    "start": "node -r dotenv/config dist/index.mjs",
+    "dev": "tsx -r dotenv/config src/index.ts",
+    "test": "vitest",
+    "postinstall": "find node_modules/dayjs/locale -type f ! -name 'fr-ch.js' ! -name 'en.js' -delete && rm -rf node_modules/dayjs/plugin"
   },
   "devDependencies": {
     "@types/archiver": "^7.0.0",
@@ -33,11 +34,10 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.52.0",
     "archiver": "^7.0.1",
-    "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",
     "dayjs": "^1.11.19",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "firstline": "^2.0.2",
     "js-yaml": "^4.1.1",

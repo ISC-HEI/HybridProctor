@@ -39,7 +39,7 @@ export const storageMock = {
   examConfig: {
     enable: false,
     label: "Default config",
-    studentsFiles: []
+    studentsFiles: new Array<string>()
   },
   writeStudentFiles: vi.fn(),
   writeResources: vi.fn(),
@@ -49,6 +49,7 @@ export const networkMock = {
   getStudentByName: vi.fn(),
   addUpdate: vi.fn(),
   getStudent: vi.fn(),
+  recordHeartbeat: vi.fn(),
 };
 
 export const fsMock = {
