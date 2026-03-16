@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+
+  build-and-package:
+    needs: create-release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: armv7
+            platform: linux/arm/v7
+            image: arm32v7/node:22-slim
+          - arch: arm64v8
+            platform: linux/arm64
+            image: arm64v8/node:22-slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build and package
+        run: |
+          docker run --rm --platform ${{ matrix.platform }} 
+            -v ${{ github.workspace }}:/app 
+            ${{ matrix.image }} 
+            /bin/bash -c " 
+              set -e; 
+              apt-get update && apt-get install -y zip; 
+              
+              cd /app/app/pages; 
+              npm i && npm run export; 
+              
+              cd /app/app/backend; 
+              npm i && npm run build; 
+              
+              cd /app; 
+              mkdir -p release_package/pages; 
+              cp -a app/pages/out/. release_package/pages/; 
+              cp -r app/backend/dist release_package/; 
+              cp app/backend/package.json app/backend/package-lock.json release_package/; 
+              
+              cd release_package; 
+              npm ci --omit=dev; 
+              
+              cd /app; 
+              cp app/launch_services.sh app/sftp.sh release_package/; 
+              cp app/backend/.env.prod release_package/.env; 
+              mkdir -p release_package/proxy; 
+              cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
+              mkdir -p release_package/ssh; 
+              cp ssh/root_access_rsa.pub release_package/ssh/; 
+              
+              zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip release_package; 
+            "
+            
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip
+          asset_name: hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip
+          asset_content_type: application/zip
