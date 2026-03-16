@@ -87,10 +87,17 @@ jobs:
               cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
               mkdir -p release_package/ssh; 
               cp ssh/root_access_rsa.pub release_package/ssh/; 
+
+              echo "Writing zip file"
               
               zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip release_package; 
             "
-            
+            if [ ! -f ./hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip ]; then
+              echo "ERROR: Zip file not found after docker run!"
+              ls -la ./
+              exit 1
+            fi
+
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
