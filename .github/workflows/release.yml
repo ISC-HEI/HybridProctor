@@ -90,9 +90,7 @@ jobs:
 
               echo "Writing zip file"
 
-              rm -f /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip;
-              
-              zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip release_package; 
+              ls -la /app/release_package && zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip -C /app release_package; 
             "
             if [ ! -f ./hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip ]; then
               echo "ERROR: Zip file not found after docker run!"
