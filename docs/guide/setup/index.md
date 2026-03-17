@@ -58,16 +58,14 @@ Here's a list of what you'll need to install :
 
 - docker
 - dockerd
-- vim (optionnal but recommanded)
 - lsblk
 - blkid
 
 ### USB key
 
-Since the docker image is quite big we recommand bind mounting the entire root of the container to a directory on the usb-key in addition to the required mount :
+HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it :
 
-- usbkey/HybridProctorContainer:/ (highly recommanded)
-- usbkey/mount:/mount_point (mandatory)
+- `usbkey/mount:/mount_point` (mandatory) (i.e `/mnt/mount:/mount_point` if the USB key is mounted on `/mnt`)
 
 #### Automatically mounting
 

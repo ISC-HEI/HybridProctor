@@ -9,28 +9,17 @@ This guide will help you understand how to develop on HybridProctor.
 
 ## Project overview
 
-Since HybridProctor uses NextJS we can separate the project in two parts.
+HybridProctor is made using two different technologies, NextJS for the frontend and ExpressJS for the backend.
 
-## Client-Side
+## Frontend
 
-These files are usually have .tsx extension. They are rendered by the clients. `src/lib/utils/hooks` also contains client-side code, although with .ts extension.
+NextJS uses a directory-based routing system, this means that each subdirectory in `src/app` is a subpath. i.e `src/app/admin/monitor/page.tsx` will generate `/admin/monitor`.
 
-## Server-Side
+## backend
 
-These files are ran by the server. They can be found in `src/api`, `src/lib/services` and all `*.server.ts` files.
+The backend router is also pseudo-directory-based to match NextJS' router.
 
-`src/instrumentation.ts` and `src/middleware.ts` also are server-side.
-
-### Server actions
-
-Server-side code cannot be ran directly in client-side files. You need server actions to do that.
-
-Server actions are written in `*.server.ts` files as async named exports.
-
-`*.server.ts` files need to have `'use server'` at the top.
-
-!!! info
-    NextJS Server Actions work by creating an endpoint that clients can call.
+ExpressJS uses middlewares for parsing data. This means that if a mime-type isn't currently supported you just need to add the required module and add `app.use(the_parser)` in `src/app.ts`.
 
 ### Services
 
@@ -63,7 +52,7 @@ and modify the makefile's "publishDev" and "publishDev64" rules to use your acco
 ### Install dependencies
 
 ```sh
-npm i --include=dev --verbose
+npm i
 ```
 
 ### How to build
@@ -74,13 +63,16 @@ First, start docker if it is not already done :
 sudo systemctl start docker
 ```
 
-This project uses C/C++ bindings libraries (such as argon2) that need to be cross-compilated to ARM32v7 and/or ARM64v8.  
+This project may use C/C++ bindings libraries that need to be cross-compilated to ARM32v7 and/or ARM64v8.  
 
-This is done using a container that will be invoked whenever it is needed :
+This is done using a container that will install the required QEMU CPU architectures.
 
 ```sh
-sudo docker run --rm -it --privileged multiarch/qemu-user-static --reset -p yes
+docker run --privileged --rm tonistiigi/binfmt --install all
 ```
+
+!!! note
+    This command may need to be ran every reboot.
 
 Next, you'll need to follow a strict order of makefile rules to be able to publish your latest changes 
 correctly :  
@@ -95,23 +87,17 @@ sudo make publishDev
 !!! note inline end "ARM64v8 Rules"
     Use `make imageDev64` and `make publishDev64` to build for ARM64.
 
-You can now follow the [setup guide](../setup/index.md).
-
 !!! info
     `make build` can be replaced by npm run build inside the app subdirectory.
 
+You can now follow the [setup guide](../setup/index.md).
+
 ## Dev environment
 
-NextJS includes a development environment that can be used to run the app locally and have hot-reload.
+The backend includes a development environment that can be used to run the app locally without bundling it.
 
 The dev server can be started with :
 
 ```sh
 npm run dev
 ```
-
-???+ bug "React strict mode"
-    In development mode, react uses "strict mode", this means
-    that the component is mounted two times to ensure data integrity and
-    other things. This can lead to some bugs like two simultaneous SSE connections and 
-    multiple identical keys.
