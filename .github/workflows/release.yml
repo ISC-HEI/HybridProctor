@@ -56,16 +56,19 @@ jobs:
           npm run build
 
       - name: Build and package
-        run: |
-          docker run --rm --platform ${{ matrix.platform }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash -c "
-              set -ex;
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ matrix.image }}
+          options: -v ${{ github.workspace }}:/app -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.VERSION }}
+          run: |
+              set -eux;
               apt-get update && apt-get install -y zip curl;
 
               NODE_PRUNE_ARCH="arm";
-              if [ "${{ matrix.arch }}" = "arm64v8" ]; then
+              if [ "$ARCH" = "arm64v8" ]; then
                 NODE_PRUNE_ARCH="arm64";
               fi;
-              curl -w '%{http_code}' -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=${NODE_PRUNE_ARCH}&version=v1.2.0" && chmod +x /usr/local/bin/node-prune;
+              curl -w '%{http_code}' -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=$NODE_PRUNE_ARCH&version=v1.2.0" && chmod +x /usr/local/bin/node-prune;
               
               cd /app/app/backend; 
               npm i && npm run build; 
@@ -88,15 +91,7 @@ jobs:
               mkdir -p release_package/ssh; 
               cp ssh/root_access_rsa.pub release_package/ssh/; 
 
-              echo "Writing zip file"
-
-              ls -la /app/release_package && zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip -C /app release_package; 
-            "
-            if [ ! -f ./hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip ]; then
-              echo "ERROR: Zip file not found after docker run!"
-              ls -la ./
-              exit 1
-            fi
+              zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package; 
 
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
