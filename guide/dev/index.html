@@ -509,32 +509,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#client-side" class="md-nav__link">
+  <a href="#frontend" class="md-nav__link">
     <span class="md-ellipsis">
-      Client-Side
+      Frontend
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#server-side" class="md-nav__link">
+  <a href="#backend" class="md-nav__link">
     <span class="md-ellipsis">
-      Server-Side
+      backend
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Server-Side">
+    <nav class="md-nav" aria-label="backend">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#server-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Server actions
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#services" class="md-nav__link">
@@ -748,32 +739,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#client-side" class="md-nav__link">
+  <a href="#frontend" class="md-nav__link">
     <span class="md-ellipsis">
-      Client-Side
+      Frontend
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#server-side" class="md-nav__link">
+  <a href="#backend" class="md-nav__link">
     <span class="md-ellipsis">
-      Server-Side
+      backend
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Server-Side">
+    <nav class="md-nav" aria-label="backend">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#server-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Server actions
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#services" class="md-nav__link">
@@ -899,20 +881,12 @@
 <h1 id="dev-guide">Dev guide</h1>
 <p>This guide will help you understand how to develop on HybridProctor.</p>
 <h2 id="project-overview">Project overview</h2>
-<p>Since HybridProctor uses NextJS we can separate the project in two parts.</p>
-<h2 id="client-side">Client-Side</h2>
-<p>These files are usually have .tsx extension. They are rendered by the clients. <code>src/lib/utils/hooks</code> also contains client-side code, although with .ts extension.</p>
-<h2 id="server-side">Server-Side</h2>
-<p>These files are ran by the server. They can be found in <code>src/api</code>, <code>src/lib/services</code> and all <code>*.server.ts</code> files.</p>
-<p><code>src/instrumentation.ts</code> and <code>src/middleware.ts</code> also are server-side.</p>
-<h3 id="server-actions">Server actions</h3>
-<p>Server-side code cannot be ran directly in client-side files. You need server actions to do that.</p>
-<p>Server actions are written in <code>*.server.ts</code> files as async named exports.</p>
-<p><code>*.server.ts</code> files need to have <code>'use server'</code> at the top.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>NextJS Server Actions work by creating an endpoint that clients can call.</p>
-</div>
+<p>HybridProctor is made using two different technologies, NextJS for the frontend and ExpressJS for the backend.</p>
+<h2 id="frontend">Frontend</h2>
+<p>NextJS uses a directory-based routing system, this means that each subdirectory in <code>src/app</code> is a subpath. i.e <code>src/app/admin/monitor/page.tsx</code> will generate <code>/admin/monitor</code>.</p>
+<h2 id="backend">backend</h2>
+<p>The backend router is also pseudo-directory-based to match NextJS' router.</p>
+<p>ExpressJS uses middlewares for parsing data. This means that if a mime-type isn't currently supported you just need to add the required module and add <code>app.use(the_parser)</code> in <code>src/app.ts</code>.</p>
 <h3 id="services">Services</h3>
 <p><code>src/lib/services/</code> are background-running singletons, this includes : Logging, Storage, SSE Management, Network Management.</p>
 <h4 id="logging">Logging</h4>
@@ -929,16 +903,20 @@ it is not possible to publish the image without his credentials.  </p>
 <p>To be able to test your latest changes you'll need to have an account on DockerHub, create a "repository" 
 and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.</p>
 <h3 id="install-dependencies">Install dependencies</h3>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>i<span class="w"> </span>--include<span class="o">=</span>dev<span class="w"> </span>--verbose
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>i
 </code></pre></div>
 <h3 id="how-to-build">How to build</h3>
 <p>First, start docker if it is not already done :</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
 </code></pre></div>
-<p>This project uses C/C++ bindings libraries (such as argon2) that need to be cross-compilated to ARM32v7 and/or ARM64v8.  </p>
-<p>This is done using a container that will be invoked whenever it is needed :</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--privileged<span class="w"> </span>multiarch/qemu-user-static<span class="w"> </span>--reset<span class="w"> </span>-p<span class="w"> </span>yes
+<p>This project may use C/C++ bindings libraries that need to be cross-compilated to ARM32v7 and/or ARM64v8.  </p>
+<p>This is done using a container that will install the required QEMU CPU architectures.</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--privileged<span class="w"> </span>--rm<span class="w"> </span>tonistiigi/binfmt<span class="w"> </span>--install<span class="w"> </span>all
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command may need to be ran every reboot.</p>
+</div>
 <p>Next, you'll need to follow a strict order of makefile rules to be able to publish your latest changes 
 correctly :  </p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>build
@@ -950,23 +928,16 @@ sudo<span class="w"> </span>make<span class="w"> </span>publishDev
 <p class="admonition-title">ARM64v8 Rules</p>
 <p>Use <code>make imageDev64</code> and <code>make publishDev64</code> to build for ARM64.</p>
 </div>
-<p>You can now follow the <a href="../setup/index.html">setup guide</a>.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p><code>make build</code> can be replaced by npm run build inside the app subdirectory.</p>
 </div>
+<p>You can now follow the <a href="../setup/index.html">setup guide</a>.</p>
 <h2 id="dev-environment">Dev environment</h2>
-<p>NextJS includes a development environment that can be used to run the app locally and have hot-reload.</p>
+<p>The backend includes a development environment that can be used to run the app locally without bundling it.</p>
 <p>The dev server can be started with :</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
-<details class="bug" open="open">
-<summary>React strict mode</summary>
-<p>In development mode, react uses "strict mode", this means
-that the component is mounted two times to ensure data integrity and
-other things. This can lead to some bugs like two simultaneous SSE connections and 
-multiple identical keys.</p>
-</details>
 
 
 

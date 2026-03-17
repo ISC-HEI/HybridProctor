@@ -841,15 +841,13 @@
 <ul>
 <li>docker</li>
 <li>dockerd</li>
-<li>vim (optionnal but recommanded)</li>
 <li>lsblk</li>
 <li>blkid</li>
 </ul>
 <h3 id="usb-key">USB key</h3>
-<p>Since the docker image is quite big we recommand bind mounting the entire root of the container to a directory on the usb-key in addition to the required mount :</p>
+<p>HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it :</p>
 <ul>
-<li>usbkey/HybridProctorContainer:/ (highly recommanded)</li>
-<li>usbkey/mount:/mount_point (mandatory)</li>
+<li><code>usbkey/mount:/mount_point</code> (mandatory) (i.e <code>/mnt/mount:/mount_point</code> if the USB key is mounted on <code>/mnt</code>)</li>
 </ul>
 <h4 id="automatically-mounting">Automatically mounting</h4>
 <p>OpenWRT uses hotplug.d and not udev. They do quite the same thing except hotplug.d doesn't use rules but *ash scripts.</p>
