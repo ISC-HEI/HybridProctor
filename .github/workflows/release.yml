@@ -58,7 +58,7 @@ jobs:
       - name: Build and package
         run: |
           docker run --rm --platform ${{ matrix.platform }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash -c "
-              set -e;
+              set -ex;
               apt-get update && apt-get install -y zip curl;
 
               NODE_PRUNE_ARCH="arm";
@@ -89,6 +89,8 @@ jobs:
               cp ssh/root_access_rsa.pub release_package/ssh/; 
 
               echo "Writing zip file"
+
+              rm -f /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip;
               
               zip -r /app/hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip release_package; 
             "
