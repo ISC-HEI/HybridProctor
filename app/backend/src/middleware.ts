@@ -41,9 +41,7 @@ export default async function middleware(req: Request, res: Response, next: () =
     return res.redirect(ADMIN_AUTH);
   }
 
-  console.log(path)
-
-  if (path === "/admin") {
+  if (["/admin", "/admin/"].includes(path)) {
     return res.redirect("/admin/monitor");
   }
 

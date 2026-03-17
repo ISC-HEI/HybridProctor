@@ -126,7 +126,7 @@ class Storage {
   }
 
   private async write(location: string, file: Express.Multer.File) {
-    const sanitizedFileName = path.basename(file.filename);
+    const sanitizedFileName = path.basename(file.originalname);
     const fullLocation = path.join(location, sanitizedFileName);
     
     await this.moveFile(file.path, fullLocation);
@@ -222,12 +222,12 @@ class Storage {
 
   public async writeResources(files: Express.Multer.File[]) {
     await this.deleteContent("public/resources");
+    this.resources = [];
 
     for (const file of files) {
       await this.write(this.local("public/resources"), file);
+      this.resources.push(file.originalname);
     }
-
-    this.resources = await fs.readdir(this.local("public/resources"));
   }
 
   public async writeStudentFiles(ip: string, files: Express.Multer.File[]) {
