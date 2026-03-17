@@ -88,11 +88,10 @@ jobs:
           mkdir -p release_package/ssh; 
           cp ssh/root_access_rsa.pub release_package/ssh/; 
 
-          zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package; 
+          zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package;
           EOF
 
-          docker run --rm --platform ${{ matrix.platform }} -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.version }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash build.sh
-
+          docker run --rm --platform ${{ matrix.platform }} -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.VERSION }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash /app/build.sh
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
