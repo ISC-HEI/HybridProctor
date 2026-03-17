@@ -57,6 +57,7 @@ export default function NameForm() {
     setLoading(false);
 
     if (data.ok) {
+      localStorage.setItem("name", data.fullname);
       dialogRef.current?.close();
     }
   }
