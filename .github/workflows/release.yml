@@ -56,42 +56,42 @@ jobs:
           npm run build
 
       - name: Build and package
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ matrix.image }}
-          options: -v ${{ github.workspace }}:/app -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.VERSION }}
-          run: |
-              set -eux;
-              apt-get update && apt-get install -y zip curl;
+        run: |
+          cat > build.sh << 'EOF'
+          set -eux;
+          apt-get update && apt-get install -y zip curl;
 
-              NODE_PRUNE_ARCH="arm";
-              if [ "$ARCH" = "arm64v8" ]; then
-                NODE_PRUNE_ARCH="arm64";
-              fi;
-              curl -w '%{http_code}' -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=$NODE_PRUNE_ARCH&version=v1.2.0" && chmod +x /usr/local/bin/node-prune;
-              
-              cd /app/app/backend; 
-              npm i && npm run build; 
-              
-              cd /app; 
-              mkdir -p release_package/pages; 
-              cp -a app/pages/out/. release_package/pages/; 
-              cp -r app/backend/dist release_package/; 
-              cp app/backend/package.json app/backend/package-lock.json release_package/; 
-              
-              cd release_package; 
-              npm ci --omit=dev;
-              /usr/local/bin/node-prune;
-              
-              cd /app; 
-              cp app/launch_services.sh app/sftp.sh release_package/; 
-              cp app/backend/.env.prod release_package/.env; 
-              mkdir -p release_package/proxy; 
-              cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
-              mkdir -p release_package/ssh; 
-              cp ssh/root_access_rsa.pub release_package/ssh/; 
+          NODE_PRUNE_ARCH="arm";
+          if [ "$ARCH" = "arm64v8" ]; then
+          NODE_PRUNE_ARCH="arm64";
+          fi;
+          curl -w '%{http_code}' -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=$NODE_PRUNE_ARCH&version=v1.2.0" && chmod +x /usr/local/bin/node-prune;
 
-              zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package; 
+          cd /app/app/backend; 
+          npm i && npm run build; 
+
+          cd /app; 
+          mkdir -p release_package/pages; 
+          cp -a app/pages/out/. release_package/pages/; 
+          cp -r app/backend/dist release_package/; 
+          cp app/backend/package.json app/backend/package-lock.json release_package/; 
+
+          cd release_package; 
+          npm ci --omit=dev;
+          /usr/local/bin/node-prune;
+
+          cd /app; 
+          cp app/launch_services.sh app/sftp.sh release_package/; 
+          cp app/backend/.env.prod release_package/.env; 
+          mkdir -p release_package/proxy; 
+          cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
+          mkdir -p release_package/ssh; 
+          cp ssh/root_access_rsa.pub release_package/ssh/; 
+
+          zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package; 
+          EOF
+
+          docker run --rm --platform ${{ matrix.platform }} -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.version }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash build.sh
 
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
