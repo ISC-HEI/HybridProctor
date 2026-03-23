@@ -1,5 +1,8 @@
 FROM arm32v7/node:22-slim
 
+ARG VERSION
+RUN : "${VERSION:?VERSION is required}"
+
 WORKDIR /app
 
 COPY app/pages/out ./pages
@@ -10,6 +13,7 @@ COPY app/*.sh ./
 
 ENV NODE_ENV=production
 RUN npm ci --omit=dev --verbose
+RUN npm version --no-git-tag-version $VERSION
 
 RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
 

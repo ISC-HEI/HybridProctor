@@ -47,7 +47,10 @@ jobs:
         
       - name: Get version from tag
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          FULL_VERSION=$(git describe --tags --always --first-parent --dirty=.dev)
+          echo "FULL_VERSION=${FULL_VERSION}" >> $GITHUB_ENV
 
       - name: Build frontend
         working-directory: ${{ github.workspace }}/app/pages
@@ -79,6 +82,7 @@ jobs:
           cd release_package; 
           npm ci --omit=dev;
           /usr/local/bin/node-prune;
+          npm version --no-git-tag-version "$FULL_VERSION"
 
           cd /app; 
           cp app/launch_services.sh app/sftp.sh release_package/; 
@@ -91,7 +95,7 @@ jobs:
           zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package;
           EOF
 
-          docker run --rm --platform ${{ matrix.platform }} -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.VERSION }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash /app/build.sh
+          docker run --rm --platform ${{ matrix.platform }} -e ARCH=${{ matrix.arch }} -e VERSION=${{ env.VERSION }} -e FULL_VERSION=${{ env.FULL_VERSION }} -v ${{ github.workspace }}:/app ${{ matrix.image }} /bin/bash /app/build.sh
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:

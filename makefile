@@ -3,6 +3,7 @@ USER_NAME = stevedevenes
 DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
 VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/backend/package.json)
+FULL_VERSION := $(shell git describe --tags --always --first-parent --dirty=.dev)
 
 CACHE_DIR := ./.buildx-cache
 
@@ -24,12 +25,14 @@ imageProd: ## Build docker image for Mikrotik armV7
 imageDev: 
 	@docker buildx build \
 		--platform=linux/arm/v7 \
+		--build-arg VERSION=$(FULL_VERSION) \
 		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION) .
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev64:
 	@docker buildx build \
 		--platform=linux/arm64 \
+		--build-arg VERSION=$(FULL_VERSION) \
 		--output=type=docker -t $(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64 -f dockerfile-arm64 .
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)-arm64). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
