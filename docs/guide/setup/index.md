@@ -50,22 +50,50 @@ You can add or upgrade the container image like this :
 
 HybridProctor can alternatively be installed on a machine running OpenWRT.  
 
-### packages
+### Packages
 
 It is strongly recommanded to use LuCi (the web GUI) to install packages.
 
 Here's a list of what you'll need to install :
 
-- docker
-- dockerd
 - lsblk
 - blkid
+- node
+
+### Install
+
+In order to install HybridProctor for your CPU architecture, you will need to download the corresponding ZIP file from the latest GitHub release :
+
+
+For ARMv7 : 
+
+```sh
+wget "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv7.zip"
+unzip hybrid-proctor-armv7.zip
+```
+
+For ARM64v8 :
+
+```sh
+wget "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv64v8.zip"
+unzip hybrid-proctor-armv64v8.zip
+```
+
+### Starting the app
+
+You can start the app using this command inside its directory :
+
+```sh
+npm run start
+```
+
+#### Automating the app start
+
+TODO
 
 ### USB key
 
-HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it :
-
-- `usbkey/mount:/mount_point` (mandatory) (i.e `/mnt/mount:/mount_point` if the USB key is mounted on `/mnt`)
+HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it.
 
 #### Automatically mounting
 

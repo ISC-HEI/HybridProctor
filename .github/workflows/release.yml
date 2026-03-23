@@ -82,7 +82,7 @@ jobs:
 
           cd /app; 
           cp app/launch_services.sh app/sftp.sh release_package/; 
-          cp app/backend/.env.prod release_package/.env; 
+          cp app/backend/.env.native release_package/.env; 
           mkdir -p release_package/proxy; 
           cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
           mkdir -p release_package/ssh; 
@@ -99,5 +99,5 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip
-          asset_name: hybrid-proctor-${{ env.VERSION }}-${{ matrix.arch }}.zip
+          asset_name: hybrid-proctor-${{ matrix.arch }}.zip
           asset_content_type: application/zip

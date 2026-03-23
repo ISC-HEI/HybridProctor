@@ -5,49 +5,47 @@ tags:
 
 # Dev guide
 
-This guide will help you understand how to develop on HybridProctor.
+This guide is intended to assist developers.
 
-## Project overview
+## Project Overview
 
 HybridProctor is made using two different technologies, NextJS for the frontend and ExpressJS for the backend.
 
 ## Frontend
 
-NextJS uses a directory-based routing system, this means that each subdirectory in `src/app` is a subpath. i.e `src/app/admin/monitor/page.tsx` will generate `/admin/monitor`.
+NextJS uses a directory-based routing system. This means that each subdirectory in the `src/app` directory is a subpath, i.e `src/app/admin/monitor/page.tsx` will generate `/admin/monitor`.
 
-## backend
+## Backend
 
-The backend router is also pseudo-directory-based to match NextJS' router.
+The backend router is also pseudo-directory-based to match the NextJS router.
 
-ExpressJS uses middlewares for parsing data. This means that if a mime-type isn't currently supported you just need to add the required module and add `app.use(the_parser)` in `src/app.ts`.
+ExpressJS uses middlewares to parse data. If a mime-type isn't currently supported you just need to add the required module and add `app.use(the_parser)` in `src/app.ts`.
 
 ### Services
 
-`src/lib/services/` are background-running singletons, this includes : Logging, Storage, SSE Management, Network Management.
+The modules in `src/lib/services/` are background-running singletons. This includes : Logging, storage, SSE management, network management.
 
 #### Logging
 
-`logger.ts` gives you a centralized way to log. It writes the logfiles and broadcasts the logs via SSE
+The `logger.ts` file provides you a centralized way to log. It writes the logfiles and broadcasts the logs via SSE
 
 #### SSE
 
-`sse.ts` manages SSE clients, it handles disconnections and sending data.
+The `sse.ts` file manages SSE clients and handles disconnections and data transmission.
 
 #### Storage
 
-`storage.ts` is an IO manager and it stores important data such as the password, time offset, etc...
+The `storage.ts` file is an I/O manager that stores important data such as the password, time offset, etc...
 
 #### Network
 
-`network.ts` manages students, it handles connections and disconnections via the heartbeat endpoint. It also periodically send updates via SSE.
+The `network.ts` file manages students and handles connections and disconnections via the heartbeat endpoint. It also periodically sends updates via SSE.
 
 ## Build
 
-The image is hosted on DockerHub, since it is bound to an account, normally Steve's, 
-it is not possible to publish the image without his credentials.  
+The image is hosted on DockerHub. Since the image is bound to Steve's account, it is not possible to publish the image without his credentials.
 
-To be able to test your latest changes you'll need to have an account on DockerHub, create a "repository" 
-and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.
+To test your latest changes ,create a DockerHub account, a repository, and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.
 
 ### Install dependencies
 
@@ -55,7 +53,7 @@ and modify the makefile's "publishDev" and "publishDev64" rules to use your acco
 npm i
 ```
 
-### How to build
+### How to build for Docker
 
 First, start docker if it is not already done :
 
@@ -63,19 +61,18 @@ First, start docker if it is not already done :
 sudo systemctl start docker
 ```
 
-This project may use C/C++ bindings libraries that need to be cross-compilated to ARM32v7 and/or ARM64v8.  
+This project may use C/C++ bindings in some libraries. They need to be cross-compilated to ARM32v7 and/or ARM64v8.  
 
-This is done using a container that will install the required QEMU CPU architectures.
+This is done using a container that installs the required QEMU CPU architectures.
 
 ```sh
 docker run --privileged --rm tonistiigi/binfmt --install all
 ```
 
 !!! note
-    This command may need to be ran every reboot.
+    This command may need to be run every time you reboot.
 
-Next, you'll need to follow a strict order of makefile rules to be able to publish your latest changes 
-correctly :  
+Next, you'll need to follow a strict order of Makefile rules to be able to publish your latest changes correctly :  
 
 ```sh
 make build
@@ -89,6 +86,24 @@ sudo make publishDev
 
 !!! info
     `make build` can be replaced by npm run build inside the app subdirectory.
+
+### How to build for a native environment
+
+The entire pipeline is done via a GitHub workflow. You just need to add a new tag and push it.
+
+Start by merging to main, then add a tag starting with "v" and push it :
+
+```sh
+git tag -a vX.X.X -m "A beautiful message"
+git push --tags
+```
+
+!!! tip
+    You can add a tag to a specific commit/branch if you forgot to do so.  
+    This can be done by adding the checksum of the desired commit after the command.
+
+!!! failure
+    The workflow currently doesn't build/publish the Docker images. This needs to be done manually.
 
 You can now follow the [setup guide](../setup/index.md).
 
