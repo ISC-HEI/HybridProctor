@@ -502,7 +502,7 @@
         <li class="md-nav__item">
   <a href="#project-overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Project overview
+      Project Overview
     </span>
   </a>
   
@@ -520,11 +520,11 @@
         <li class="md-nav__item">
   <a href="#backend" class="md-nav__link">
     <span class="md-ellipsis">
-      backend
+      Backend
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="backend">
+    <nav class="md-nav" aria-label="Backend">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -603,9 +603,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#how-to-build" class="md-nav__link">
+  <a href="#how-to-build-for-docker" class="md-nav__link">
     <span class="md-ellipsis">
-      How to build
+      How to build for Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-build-for-a-native-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to build for a native environment
     </span>
   </a>
   
@@ -732,7 +741,7 @@
         <li class="md-nav__item">
   <a href="#project-overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Project overview
+      Project Overview
     </span>
   </a>
   
@@ -750,11 +759,11 @@
         <li class="md-nav__item">
   <a href="#backend" class="md-nav__link">
     <span class="md-ellipsis">
-      backend
+      Backend
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="backend">
+    <nav class="md-nav" aria-label="Backend">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -833,9 +842,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#how-to-build" class="md-nav__link">
+  <a href="#how-to-build-for-docker" class="md-nav__link">
     <span class="md-ellipsis">
-      How to build
+      How to build for Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-build-for-a-native-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to build for a native environment
     </span>
   </a>
   
@@ -879,46 +897,43 @@
 
 
 <h1 id="dev-guide">Dev guide</h1>
-<p>This guide will help you understand how to develop on HybridProctor.</p>
-<h2 id="project-overview">Project overview</h2>
+<p>This guide is intended to assist developers.</p>
+<h2 id="project-overview">Project Overview</h2>
 <p>HybridProctor is made using two different technologies, NextJS for the frontend and ExpressJS for the backend.</p>
 <h2 id="frontend">Frontend</h2>
-<p>NextJS uses a directory-based routing system, this means that each subdirectory in <code>src/app</code> is a subpath. i.e <code>src/app/admin/monitor/page.tsx</code> will generate <code>/admin/monitor</code>.</p>
-<h2 id="backend">backend</h2>
-<p>The backend router is also pseudo-directory-based to match NextJS' router.</p>
-<p>ExpressJS uses middlewares for parsing data. This means that if a mime-type isn't currently supported you just need to add the required module and add <code>app.use(the_parser)</code> in <code>src/app.ts</code>.</p>
+<p>NextJS uses a directory-based routing system. This means that each subdirectory in the <code>src/app</code> directory is a subpath, i.e <code>src/app/admin/monitor/page.tsx</code> will generate <code>/admin/monitor</code>.</p>
+<h2 id="backend">Backend</h2>
+<p>The backend router is also pseudo-directory-based to match the NextJS router.</p>
+<p>ExpressJS uses middlewares to parse data. If a mime-type isn't currently supported you just need to add the required module and add <code>app.use(the_parser)</code> in <code>src/app.ts</code>.</p>
 <h3 id="services">Services</h3>
-<p><code>src/lib/services/</code> are background-running singletons, this includes : Logging, Storage, SSE Management, Network Management.</p>
+<p>The modules in <code>src/lib/services/</code> are background-running singletons. This includes : Logging, storage, SSE management, network management.</p>
 <h4 id="logging">Logging</h4>
-<p><code>logger.ts</code> gives you a centralized way to log. It writes the logfiles and broadcasts the logs via SSE</p>
+<p>The <code>logger.ts</code> file provides you a centralized way to log. It writes the logfiles and broadcasts the logs via SSE</p>
 <h4 id="sse">SSE</h4>
-<p><code>sse.ts</code> manages SSE clients, it handles disconnections and sending data.</p>
+<p>The <code>sse.ts</code> file manages SSE clients and handles disconnections and data transmission.</p>
 <h4 id="storage">Storage</h4>
-<p><code>storage.ts</code> is an IO manager and it stores important data such as the password, time offset, etc...</p>
+<p>The <code>storage.ts</code> file is an I/O manager that stores important data such as the password, time offset, etc...</p>
 <h4 id="network">Network</h4>
-<p><code>network.ts</code> manages students, it handles connections and disconnections via the heartbeat endpoint. It also periodically send updates via SSE.</p>
+<p>The <code>network.ts</code> file manages students and handles connections and disconnections via the heartbeat endpoint. It also periodically sends updates via SSE.</p>
 <h2 id="build">Build</h2>
-<p>The image is hosted on DockerHub, since it is bound to an account, normally Steve's, 
-it is not possible to publish the image without his credentials.  </p>
-<p>To be able to test your latest changes you'll need to have an account on DockerHub, create a "repository" 
-and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.</p>
+<p>The image is hosted on DockerHub. Since the image is bound to Steve's account, it is not possible to publish the image without his credentials.</p>
+<p>To test your latest changes ,create a DockerHub account, a repository, and modify the makefile's "publishDev" and "publishDev64" rules to use your account and repository.</p>
 <h3 id="install-dependencies">Install dependencies</h3>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>i
 </code></pre></div>
-<h3 id="how-to-build">How to build</h3>
+<h3 id="how-to-build-for-docker">How to build for Docker</h3>
 <p>First, start docker if it is not already done :</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
 </code></pre></div>
-<p>This project may use C/C++ bindings libraries that need to be cross-compilated to ARM32v7 and/or ARM64v8.  </p>
-<p>This is done using a container that will install the required QEMU CPU architectures.</p>
+<p>This project may use C/C++ bindings in some libraries. They need to be cross-compilated to ARM32v7 and/or ARM64v8.  </p>
+<p>This is done using a container that installs the required QEMU CPU architectures.</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--privileged<span class="w"> </span>--rm<span class="w"> </span>tonistiigi/binfmt<span class="w"> </span>--install<span class="w"> </span>all
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This command may need to be ran every reboot.</p>
+<p>This command may need to be run every time you reboot.</p>
 </div>
-<p>Next, you'll need to follow a strict order of makefile rules to be able to publish your latest changes 
-correctly :  </p>
+<p>Next, you'll need to follow a strict order of Makefile rules to be able to publish your latest changes correctly :  </p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>build
 
 sudo<span class="w"> </span>make<span class="w"> </span>imageDev
@@ -931,6 +946,21 @@ sudo<span class="w"> </span>make<span class="w"> </span>publishDev
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p><code>make build</code> can be replaced by npm run build inside the app subdirectory.</p>
+</div>
+<h3 id="how-to-build-for-a-native-environment">How to build for a native environment</h3>
+<p>The entire pipeline is done via a GitHub workflow. You just need to add a new tag and push it.</p>
+<p>Start by merging to main, then add a tag starting with "v" and push it :</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>vX.X.X<span class="w"> </span>-m<span class="w"> </span><span class="s2">"A beautiful message"</span>
+git<span class="w"> </span>push<span class="w"> </span>--tags
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can add a tag to a specific commit/branch if you forgot to do so.<br>
+This can be done by adding the checksum of the desired commit after the command.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Failure</p>
+<p>The workflow currently doesn't build/publish the Docker images. This needs to be done manually.</p>
 </div>
 <p>You can now follow the <a href="../setup/index.html">setup guide</a>.</p>
 <h2 id="dev-environment">Dev environment</h2>

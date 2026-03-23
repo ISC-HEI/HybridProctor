@@ -581,9 +581,42 @@
           <li class="md-nav__item">
   <a href="#packages" class="md-nav__link">
     <span class="md-ellipsis">
-      packages
+      Packages
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Starting the app
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting the app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automating-the-app-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automating the app start
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -727,9 +760,42 @@
           <li class="md-nav__item">
   <a href="#packages" class="md-nav__link">
     <span class="md-ellipsis">
-      packages
+      Packages
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Starting the app
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting the app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automating-the-app-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automating the app start
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -835,20 +901,32 @@
 </ol>
 <h2 id="openwrt-setup">OpenWRT setup</h2>
 <p>HybridProctor can alternatively be installed on a machine running OpenWRT.  </p>
-<h3 id="packages">packages</h3>
+<h3 id="packages">Packages</h3>
 <p>It is strongly recommanded to use LuCi (the web GUI) to install packages.</p>
 <p>Here's a list of what you'll need to install :</p>
 <ul>
-<li>docker</li>
-<li>dockerd</li>
 <li>lsblk</li>
 <li>blkid</li>
+<li>node</li>
 </ul>
+<h3 id="install">Install</h3>
+<p>In order to install HybridProctor for your CPU architecture, you will need to download the corresponding ZIP file from the latest GitHub release :</p>
+<p>For ARMv7 : </p>
+<div class="highlight"><pre><span></span><code>wget<span class="w"> </span><span class="s2">"https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv7.zip"</span>
+unzip<span class="w"> </span>hybrid-proctor-armv7.zip
+</code></pre></div>
+<p>For ARM64v8 :</p>
+<div class="highlight"><pre><span></span><code>wget<span class="w"> </span><span class="s2">"https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv64v8.zip"</span>
+unzip<span class="w"> </span>hybrid-proctor-armv64v8.zip
+</code></pre></div>
+<h3 id="starting-the-app">Starting the app</h3>
+<p>You can start the app using this command inside its directory :</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>start
+</code></pre></div>
+<h4 id="automating-the-app-start">Automating the app start</h4>
+<p>TODO</p>
 <h3 id="usb-key">USB key</h3>
-<p>HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it :</p>
-<ul>
-<li><code>usbkey/mount:/mount_point</code> (mandatory) (i.e <code>/mnt/mount:/mount_point</code> if the USB key is mounted on <code>/mnt</code>)</li>
-</ul>
+<p>HybridProctor requires to have a USB-key as output. Uploads, logs and password will be stored in it.</p>
 <h4 id="automatically-mounting">Automatically mounting</h4>
 <p>OpenWRT uses hotplug.d and not udev. They do quite the same thing except hotplug.d doesn't use rules but *ash scripts.</p>
 <p>You can use this command to get the UUID and device of the USB key :</p>
