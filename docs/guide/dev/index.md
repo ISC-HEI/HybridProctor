@@ -89,13 +89,11 @@ sudo make publishDev
 
 ### How to build for a native environment
 
-The entire pipeline is done via a GitHub workflow. You just need to add a new tag and push it.
-
-Start by merging to main, then add a tag starting with "v" and push it :
+The entire pipeline is done via a GitHub workflow. You just need to add a new tag and push it :
 
 ```sh
-git tag -a vX.X.X -m "A beautiful message"
-git push --tags
+npm version vX.X.X
+git push && git push --tags
 ```
 
 !!! tip
