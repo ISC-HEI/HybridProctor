@@ -22,7 +22,7 @@ export default async function middleware(req: Request, res: Response, next: () =
   }
 
   if (!storage.newPassword && path === NEW_PASSWORD) {
-    const ip = await getIp();
+    const ip = getIp(req);
 
     logger.warn(`IP ${ip} tried to access password page.`, { issuer: ip, action: "tried" });
 
@@ -31,7 +31,7 @@ export default async function middleware(req: Request, res: Response, next: () =
 
   if (
     path.startsWith("/admin") && 
-    (!sessionId || !await storage.verifySession(sessionId, await getIp()))
+    (!sessionId || !await storage.verifySession(sessionId, getIp(req)))
     && path !== ADMIN_AUTH
   ) {
     res.cookie("desired_url", path, {

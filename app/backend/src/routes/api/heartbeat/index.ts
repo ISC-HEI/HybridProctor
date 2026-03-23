@@ -5,9 +5,9 @@ import { type Request, type Response } from "express";
 
 export async function heartbeatPostHandler(req: Request, res: Response) {
   try {
-    const ip = await getIp();
+    const ip = getIp(req);
 
-    if (!ip) {
+    if (!ip || ip === "unknown") {
       return res.sendStatus(204);
     }
 

@@ -6,11 +6,13 @@ import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
 
 export async function filesPostHandler(req: Request, res: Response) {
-  const ip = await getIp();
+  const ip = getIp(req);
   const files = req.files as Express.Multer.File[];
 
   const student = await network.getStudent(ip);
   const name = student.name;
+
+  logger.error(`ip: ${ip}, student: ${JSON.stringify(student)}`)
 
   if (storage.locked) {
     return res.status(423).json({
@@ -28,7 +30,7 @@ export async function filesPostHandler(req: Request, res: Response) {
     });
   }
 
-  if (!name) {
+  if (!name || name === '') {
     return res.status(401).json({
       ok: false,
       message: "Please refresh and enter your name.",

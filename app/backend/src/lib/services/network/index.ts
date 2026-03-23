@@ -3,7 +3,6 @@ import sseManager from "../sse";
 import Mutex from "@/lib/utils/mutex";
 import logger from "../logger";
 import { unixTime } from "@/lib/utils/time";
-import { bindToContext } from "@/lib/utils/requestContext";
 
 const CHECK_INTERVAL = 2000; 
 const HEARTBEAT_TIMEOUT = 15; 
@@ -21,7 +20,7 @@ class Network {
 
   private runner() {
     this.callback().finally(() => {
-      setTimeout(bindToContext(this.runner.bind(this)), CHECK_INTERVAL);
+      setTimeout(this.runner.bind(this), CHECK_INTERVAL);
     });
   }
 

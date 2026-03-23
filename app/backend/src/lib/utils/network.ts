@@ -1,9 +1,7 @@
-import { getReq } from "./requestContext";
+import { type Request } from "express";
 
-export async function getIp() {
-  const req = getReq();
-
-  if (!req) return "unknown"
+export function getIp(req: Request) {
+  if (!req) return "unknown";
 
   const ipHeader = req.headers["x-forwarded-for"] as string | undefined
   const realIp = req.headers["x-real-ip"] as string | undefined

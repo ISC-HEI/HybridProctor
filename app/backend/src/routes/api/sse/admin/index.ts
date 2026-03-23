@@ -4,7 +4,7 @@ import storage from "@services/storage";
 import { type Request, type Response } from "express";
 
 export async function sseAdminHandler(req: Request, res: Response) {
-  const ip = await getIp();
+  const ip = getIp(req);
   const sessionId = req.cookies?.sid;
   
   if (!sessionId || !(await storage.verifySession(sessionId, ip))) {

@@ -7,7 +7,7 @@ import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
 
 export async function hashPostHandler(req: Request, res: Response) {
-  const ip = await getIp();
+  const ip = getIp(req);
   
   const hash = req.body.hash;
 

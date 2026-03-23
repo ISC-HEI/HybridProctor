@@ -3,7 +3,7 @@ import sseManager from "@services/sse";
 import { type Request, type Response } from "express";
 
 export async function sseStudentHandler(req: Request, res: Response) {
-  const ip = await getIp();
+  const ip = getIp(req);
 
   res.writeHead(200, {
     "Content-Type": "text/event-stream",

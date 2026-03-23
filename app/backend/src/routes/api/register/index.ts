@@ -9,7 +9,7 @@ export async function registerPostHandler(req: Request, res: Response) {
   
   const student = await network.getStudentByName(name);
 
-  if (!student || await getIp() !== student.ip) {
+  if (!student || getIp(req) !== student.ip) {
     return res.status(200).json({ status: false });
   }
 
@@ -20,7 +20,7 @@ export async function registerPatchHandler(req: Request, res: Response) {
   const { surname, name } = req.body;
   const fullname = surname + ' ' + name;
   
-  const ip = await getIp();
+  const ip = getIp(req);
 
   const student = await network.getStudentByName(fullname);
 

@@ -1,7 +1,6 @@
 
 import express from "express";
 import apiRouter from "./routes/api"
-import { runWithRequest } from "./lib/utils/requestContext";
 import path from "node:path";
 import cookieParser from "cookie-parser";
 import middleware from "./middleware";
@@ -13,10 +12,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.set("trust proxy", true);
-
-app.use((req, res, next) => {
-  runWithRequest(req, () => next());
-});
 
 app.use("/api", apiRouter);
 
