@@ -22,7 +22,7 @@ describe("/api/sse", () => {
     it("should send an unauthorized error if session is invalid", async () => {
       const app = (await import("@/app")).default;
       storageMock.verifySession.mockResolvedValue(false);
-      networkUtilsMock.getIp.mockResolvedValue("127.0.0.1");
+      networkUtilsMock.getIp.mockReturnValue("127.0.0.1");
 
       const res = await request(app).get("/api/sse/admin").set("Cookie", "sid=123");
 

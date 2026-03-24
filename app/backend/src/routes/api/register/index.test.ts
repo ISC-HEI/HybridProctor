@@ -42,7 +42,7 @@ describe("/api/register", () => {
       const app = (await import("@/app")).default;
 
       networkMock.getStudentByName.mockResolvedValue({ ip: "127.0.0.1" });
-      networkUtilsMock.getIp.mockResolvedValue("192.168.88.12");
+      networkUtilsMock.getIp.mockReturnValue("192.168.88.12");
 
       const res = await request(app)
         .post("/api/register")
@@ -56,7 +56,7 @@ describe("/api/register", () => {
     const app = (await import("@/app")).default;
     
     networkMock.getStudentByName.mockResolvedValue({ ip: "127.0.0.1" });
-    networkUtilsMock.getIp.mockResolvedValue("127.0.0.1");
+    networkUtilsMock.getIp.mockReturnValue("127.0.0.1");
 
     const res = await request(app)
       .post("/api/register")

@@ -1,6 +1,7 @@
 
 import logger from "@/lib/services/logger";
 import network from "@/lib/services/network";
+import sseManager from "@/lib/services/sse";
 import storage from "@/lib/services/storage";
 import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
@@ -11,8 +12,6 @@ export async function filesPostHandler(req: Request, res: Response) {
 
   const student = await network.getStudent(ip);
   const name = student.name;
-
-  logger.error(`ip: ${ip}, student: ${JSON.stringify(student)}`)
 
   if (storage.locked) {
     return res.status(423).json({
@@ -42,6 +41,7 @@ export async function filesPostHandler(req: Request, res: Response) {
     logger.info(`${name} finished the exam.`, { issuer: name, action: "Finished" })
 
     await network.addUpdate(ip, { ip, finished: true });
+    sseManager.send(ip, { locked: storage.locked, finished: true }, "std", false);
 
     return res.status(200).json({
       ok: true,

@@ -21,7 +21,6 @@ export async function registerPatchHandler(req: Request, res: Response) {
   const fullname = surname + ' ' + name;
   
   const ip = getIp(req);
-
   const student = await network.getStudentByName(fullname);
 
   if (student) {
