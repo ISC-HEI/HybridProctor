@@ -99,7 +99,7 @@ class Network {
   public async getStudentByName(name: string) {
     const unlock = await this.studentsMutex.lock();
 
-    const students = this.students.values().filter(v => v.name === name).toArray();
+    const students = Array.from(this.students.values()).filter(v => v.name === name);
 
     unlock();
 

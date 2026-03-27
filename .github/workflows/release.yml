@@ -78,19 +78,17 @@ jobs:
           cp -a app/pages/out/. release_package/pages/; 
           cp -r app/backend/dist release_package/; 
           cp app/backend/package.json app/backend/package-lock.json release_package/; 
+          cp app/start.sh release_package
 
           cd release_package; 
           npm ci --omit=dev;
           /usr/local/bin/node-prune;
           npm version --no-git-tag-version "$FULL_VERSION"
 
-          cd /app; 
-          cp app/launch_services.sh app/sftp.sh release_package/; 
-          cp app/backend/.env.native release_package/.env; 
-          mkdir -p release_package/proxy; 
-          cp proxy/nginx.conf proxy/default.conf release_package/proxy/; 
-          mkdir -p release_package/ssh; 
-          cp ssh/root_access_rsa.pub release_package/ssh/; 
+          cd /app;
+          cp app/backend/.env.native release_package/.env;
+          mkdir -p release_package/proxy;
+          cp proxy/nginx.conf proxy/default.conf release_package/proxy/;
 
           zip -r /app/hybrid-proctor-$VERSION-$ARCH.zip release_package;
           EOF
