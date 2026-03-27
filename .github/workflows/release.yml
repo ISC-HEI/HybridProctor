@@ -83,7 +83,6 @@ jobs:
           cd release_package; 
           npm ci --omit=dev;
           /usr/local/bin/node-prune;
-          npm version --no-git-tag-version "$FULL_VERSION"
 
           cd /app;
           cp app/backend/.env.native release_package/.env;
