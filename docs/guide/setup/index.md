@@ -71,14 +71,14 @@ In order to install HybridProctor for your CPU architecture, you will need to do
 For ARMv7 : 
 
 ```sh
-wget -o hybrid-proctor.zip "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv7.zip"
+wget -O hybrid-proctor.zip "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv7.zip"
 unzip hybrid-proctor.zip
 ```
 
 For ARM64v8 :
 
 ```sh
-wget -o hybrid-proctor.zip "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv64v8.zip"
+wget -O hybrid-proctor.zip "https://github.com/ISC-HEI/HybridProctor/releases/latest/download/hybrid-proctor-armv64v8.zip"
 unzip hybrid-proctor.zip
 ```
 
