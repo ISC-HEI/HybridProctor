@@ -1,0 +1,86 @@
+@use "@style/_vars.scss";
+
+
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 4em;
+  background: vars.$primary_background_color;
+  border-radius: 25px;
+  border: 2pt solid vars.$gray4;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2em;
+    gap: 2em;
+
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      width: 100%;
+    }
+  }
+
+  .btns {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+
+    .close, .end {
+      width: 30%;
+      font-size: 18px;
+      border-radius: 3px;
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      height: 4em;
+      color: white;
+      border-radius: 10px;
+
+      &:disabled {
+        color: vars.$gray4;
+      }
+    }
+
+    .end {
+      background-color: vars.$pink;
+
+      &:not(:disabled):hover {
+        cursor: pointer;
+        background-color: vars.$darkpink;
+      }
+    }
+
+    .close {
+      color: vars.$blue;
+      border: 2pt solid vars.$blue;
+      background-color: transparent;
+
+      &:not(:disabled):hover {
+        cursor: pointer;
+        color: vars.$darkblue;
+        border: 2pt solid vars.$darkblue;
+      }
+    }
+  }
+
+  &::backdrop {
+    background-color: vars.$transparent_blue;
+    backdrop-filter: blur(25px);
+  }
+}

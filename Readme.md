@@ -16,7 +16,7 @@ Setup guides to use or config the system are available in the [online documentat
 
 ## Technical infos
 
-The whole webserver is packaged in a docker image and is currently published in [dockerhub](https://hub.docker.com/r/stevedevenes/hybridproctor-arm/tags). 
+The whole webserver is packaged in a docker image and is currently published in [dockerhub](https://hub.docker.com/r/enderastronaute/hybridproctor-arm-dev/tags). 
 
 There is some helpers rules in the [makefile](makefile) to:
 - Build the docker image, either for your current machine or for deploying in the router.

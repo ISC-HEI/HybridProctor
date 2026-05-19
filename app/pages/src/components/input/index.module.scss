@@ -1,0 +1,14 @@
+
+@use "@style/_vars.scss";
+
+.input {
+  height: 2em;
+  padding: 0 1em;
+  border-radius: 10px;
+  border: 1pt solid vars.$gray4;
+  background-color: vars.$secondary-background-color;
+}
+
+textarea.input {
+  padding: 1em;
+}

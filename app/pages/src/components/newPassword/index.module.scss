@@ -1,0 +1,34 @@
+
+@use "@style/_vars.scss";
+
+.newPassword {
+  padding: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2em;
+
+  .password {
+    color: vars.$pink;
+  }
+  
+  .next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    width: 5em;
+    height: 2em;
+    color: vars.$blue;
+
+    &:not(:disabled):hover {
+      cursor: pointer;
+      color: vars.$darkblue;
+    }
+
+    &:disabled {
+      color: vars.$gray4;
+    }
+  }
+}

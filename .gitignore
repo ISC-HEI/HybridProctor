@@ -1,1 +1,50 @@
 site/
+*.old/
+*.old
+
+# cache
+.buildx-cache
+
+
+# dependencies
+app/pages/node_modules
+app/pages/.pnp
+app/pages/.pnp.*
+app/pages/.yarn/*
+!app/pages/.yarn/patches
+!app/pages/.yarn/plugins
+!app/pages/.yarn/releases
+!app/pages/.yarn/versions
+
+# testing
+/app/pages/coverage
+
+# next.js
+/app/pages/.next/
+/app/pages/out/
+
+# production
+/app/pages/build
+
+# misc
+.app/pages/DS_Store
+*app/pages/.pem
+
+# debug
+napp/pm-debug.log*
+yapp/arn-debug.log*
+yapp/arn-error.log*
+.app/pages/pnpm-debug.log*
+
+
+# vercel
+.app/vercel
+
+# typescript
+app/pages/*.tsbuildinfo
+app/pages/next-env.d.ts
+
+app/pages/logs/
+app/pages/uploads/
+app/pages/resources/db/*
+app/pages/resources/.password

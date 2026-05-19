@@ -1,0 +1,85 @@
+@use "@style/_vars.scss";
+
+$record-height: 4em;
+$type-size: 3em;
+$line-size: $record-height - $type-size;
+
+.record {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2em;
+  align-items: center;
+  position: relative;
+  min-height: $record-height;
+
+  .type {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $type-size;
+    height: $type-size;
+    background-color: vars.$gray3;
+    border-radius: 50%;
+    color: vars.$blue;
+    flex-shrink: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: -$line-size;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      background-color: vars.$gray4;
+    }
+  }
+
+  &:not(.new) .type::before {
+    height: $line-size;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    color: vars.$secondary-text-color;
+    min-width: 0;
+    overflow-wrap: break-word;
+
+    strong {
+      color: vars.$primary-text-color;
+    }
+
+    .bullet {
+      display: inline-block;
+      height: 5px;
+      width: 5px;
+      border-radius: 50%;
+      background-color: vars.$gray4;
+      vertical-align: middle;
+    }
+  }
+
+  &.last .type::before {
+    display: none;
+  }
+  &.new {
+    .type::before {
+      height: 0;
+      animation: growLine 0.5s ease-out forwards;
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes growLine {
+from {
+  height: 0;
+}
+
+to {
+  height: $line-size;
+}
+}
