@@ -32,8 +32,8 @@ jobs:
       run: |
         set -eux
 
-        cd /app/app/backend
-        cp -a app/pages/out/. pages/
+        npm ci
+        cp -a ../pages/out/. pages/
 
     - name: Run unit tests
       working-directory: ./app/backend
