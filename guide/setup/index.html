@@ -988,8 +988,8 @@ stop_service<span class="o">()</span><span class="w"> </span><span class="o">{</
 
 <span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$UUID</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[WRITE THE DESIRED UUID]"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
 
-mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt
-mount<span class="w"> </span><span class="s2">"/dev/</span><span class="nv">$DEVNAME</span><span class="s2">"</span><span class="w"> </span>/mnt
+mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt/hybridproctor
+mount<span class="w"> </span><span class="s2">"/dev/</span><span class="nv">$DEVNAME</span><span class="s2">"</span><span class="w"> </span>/mnt/hybridproctor
 </code></pre></div>
 <h3 id="nginx">Nginx</h3>
 <p>Windows constantly checks if the current wifi connection has internet access and disconnects you if it's not the case. This means that we need to satisfy the check. This can be done with a simple reverse-proxy that responds to the Windows' requests.</p>
