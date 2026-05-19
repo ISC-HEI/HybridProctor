@@ -28,13 +28,13 @@ add comment=defconf name=WAN
 add comment=defconf name=LAN
 /ip pool
 add name=default-dhcp ranges=192.168.88.10-192.168.88.254
-add name=dhcp ranges=10.0.0.10-10.0.0.254
-add name=pool0 ranges=10.0.0.10-10.0.0.100
+add name=dhcp ranges=172.30.0.10-172.30.0.254
+add name=pool0 ranges=172.30.0.10-172.30.0.100
 add name=wifi-pool ranges=192.168.89.10-192.168.89.254
 /ip dhcp-server
 add address-pool=default-dhcp interface=bridge name=defconf
 add address-pool=pool0 disabled=yes interface=ether1 name=dhcp1 \
-    server-address=10.0.0.1
+    server-address=172.30.0.1
 add address-pool=wifi-pool interface=bridge-wifi lease-time=6h name=wifi-dhcp
 /port
 set 0 name=serial0
@@ -61,12 +61,12 @@ add interface=bridge-wifi list=LAN
 add address=192.168.88.1/24 comment=defconf interface=bridge network=\
     192.168.88.0
 add address=172.17.0.1/24 interface=dockers network=172.17.0.0
-add address=10.0.0.1/24 interface=bridge network=10.0.0.0
+add address=172.30.0.1/24 interface=bridge network=172.30.0.0
 add address=192.168.89.1/24 interface=bridge-wifi network=192.168.89.0
 /ip dhcp-client
 add comment=defconf interface=ether1
 /ip dhcp-server network
-add address=10.0.0.0/24 dns-none=yes domain=isc gateway=10.0.0.1
+add address=172.30.0.0/24 dns-none=yes domain=isc gateway=172.30.0.1
 add address=192.168.88.0/24 comment=defconf dns-server=192.168.88.1 gateway=\
     192.168.88.1
 add address=192.168.89.0/24 dns-server=192.168.89.1 gateway=192.168.89.1
@@ -74,7 +74,7 @@ add address=192.168.89.0/24 dns-server=192.168.89.1 gateway=192.168.89.1
 set allow-remote-requests=yes
 /ip dns static
 add address=192.168.88.1 comment=defconf name=router.lan type=A
-add address=10.0.0.1 comment=defconf name=router.lan type=A
+add address=172.30.0.1 comment=defconf name=router.lan type=A
 /ip firewall filter
 add action=accept chain=input comment=\
     "defconf: accept established,related,untracked" connection-state=\
@@ -112,13 +112,13 @@ add action=dst-nat chain=dstnat dst-port=2222 protocol=tcp to-addresses=\
 add action=dst-nat chain=dstnat dst-port=3000 protocol=tcp to-addresses=\
     172.17.0.2 to-ports=3000
 add action=dst-nat chain=dstnat comment="Redirect HTTPS to proxy" dst-port=\
-    443 protocol=tcp src-address=192.168.89.0/24 to-addresses=10.0.0.1 \
+    443 protocol=tcp src-address=192.168.89.0/24 to-addresses=172.30.0.1 \
     to-ports=443
 add action=dst-nat chain=dstnat comment="Redirect HTTP to proxy" dst-port=80 \
     protocol=tcp src-address=192.168.89.0/24 to-addresses=172.17.0.2 \
     to-ports=80
-add action=dst-nat chain=dstnat comment="Accept 10.0.0.1" dst-address=\
-    10.0.0.1 protocol=tcp src-address=192.168.88.0/24 to-addresses=172.17.0.2 \
+add action=dst-nat chain=dstnat comment="Accept 172.30.0.1" dst-address=\
+    172.30.0.1 protocol=tcp src-address=192.168.88.0/24 to-addresses=172.17.0.2 \
     to-ports=80
 add action=dst-nat chain=dstnat comment="all here" dst-address=192.168.90.1 \
     protocol=tcp to-addresses=192.168.88.1
