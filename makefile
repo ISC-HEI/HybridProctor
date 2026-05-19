@@ -72,7 +72,7 @@ connectSftp: ## Connect via sftp to container running locally
 	sftp -i ssh_key/root_access_rsa -P 2222 root@localhost
 
 connectSftpProd: ## Connect via sftp to container running in Mikrotik router
-	sftp -i ssh_key/root_access_rsa -P 2222 root@10.0.0.1
+	sftp -i ssh_key/root_access_rsa -P 2222 root@172.30.0.1
 
 docs: ## Generate project docs
 	mkdocs build
