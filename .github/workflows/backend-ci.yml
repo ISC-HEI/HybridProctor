@@ -44,5 +44,5 @@ jobs:
       run: |
         set -eux
 
-        npm run dev & wait-on http://localhost:3000
+        npm run dev & npx wait-on http://localhost:3000
         npm run e2e-test
