@@ -153,8 +153,8 @@ UUID=$(blkid -s UUID -o value "/dev/$DEVNAME" 2>/dev/null)
 
 [ "$UUID" = "[WRITE THE DESIRED UUID]" ] || exit 0
 
-mkdir -p /mnt
-mount "/dev/$DEVNAME" /mnt
+mkdir -p /mnt/hybridproctor
+mount "/dev/$DEVNAME" /mnt/hybridproctor
 ```
 
 ### Nginx
