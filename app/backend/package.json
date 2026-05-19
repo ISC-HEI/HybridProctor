@@ -14,8 +14,7 @@
     "start": "node -r dotenv/config dist/index.mjs",
     "dev": "tsx -r dotenv/config src/index.ts",
     "unit-test": "vitest",
-    "e2e-test": "cypress run",
-    "postinstall": "find node_modules/dayjs/locale -type f ! -name 'fr-ch.js' ! -name 'en.js' -delete && rm -rf node_modules/dayjs/plugin"
+    "e2e-test": "cypress run"
   },
   "devDependencies": {
     "@types/archiver": "^7.0.0",
