@@ -60,7 +60,7 @@ export default function ValidateHash({ show, onClose }: ValidateHashProps) {
 
         <label className={style.label}>
           Hash
-          <Input type="text" name='surname' value={hash} required/>
+          <Input type="text" name="hash" value={hash} required onInput={evt => hash.value = (evt.currentTarget as HTMLInputElement).value}/>
         </label>
 
         <div className={style.btns}>

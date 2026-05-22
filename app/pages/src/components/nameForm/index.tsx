@@ -69,11 +69,11 @@ export default function NameForm() {
         <div className={`input-group ${style.inputs}`}>
           <label className={style.label}>
             Surname
-            <Input type="text" name='surname' value={surname} required/>
+            <Input type="text" name='surname' value={surname} required onInput={evt => surname.value = (evt.currentTarget as HTMLInputElement).value} />
           </label>
           <label className={style.label}>
             Name
-            <Input type="text" name='name' value={name} required/>
+            <Input type="text" name='name' value={name} required onInput={evt => name.value = (evt.currentTarget as HTMLInputElement).value} />
           </label>
         </div>
         <p className={`status-${ok ? "success" : "error"}`}>{message}</p>
