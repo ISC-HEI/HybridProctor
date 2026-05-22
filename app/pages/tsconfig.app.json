@@ -10,7 +10,9 @@
       "react": ["./node_modules/preact/compat/"],
       "react-dom": ["./node_modules/preact/compat/"],
       "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"]
+      "@components/*": ["./src/components/*"],
+      "@types/*": ["./src/lib/types/*"],
+      "@srvtypes/*": ["../backend/src/lib/types/*"]
     },
 
     /* Bundler mode */
