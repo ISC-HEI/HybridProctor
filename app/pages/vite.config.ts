@@ -15,5 +15,14 @@ export default defineConfig({
       "@style": path.resolve(__dirname, "./src/styles"),
       "@utils": path.resolve(__dirname, "./src/lib/utils/"),
     }
+  },
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true 
+      }
+    }
   }
 })

@@ -33,19 +33,24 @@ export default function Exam({ conf }: ExamProps) {
 
   const handleSubmit = async (evt: Event) => {
     evt.preventDefault();
-    
+    evt.stopPropagation();
+
     loading.value = true;
-
-    const formData = new FormData();
-    files.value.forEach(file => {
-      formData.append('files', file);
-    });
-
+    
     try {
+      const formData = new FormData();
+      files.value.forEach(file => {
+        formData.append('files', file);
+      });
+
+      console.log(await (await fetch("/api/fetch/config")).json())
+
       const response = await fetch('/api/upload/files', {
         method: 'POST',
         body: formData,
       });
+
+      console.log("ouias")
 
       const state = await response.json();
 
