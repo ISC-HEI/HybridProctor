@@ -1,6 +1,6 @@
 import { ErrorBoundary, lazy, LocationProvider, Route, Router } from 'preact-iso'
 
-const Exam = lazy(() => import("./routes/exam.tsx"));
+const ExamPage = lazy(() => import("./routes/index.tsx"));
 const NotFound = lazy(() => import("./404.tsx"))
 
 export function App() {
@@ -9,7 +9,7 @@ export function App() {
       <LocationProvider>
         <ErrorBoundary>
           <Router>
-            <Route path='/' component={Exam}/>
+            <Route path='/' component={ExamPage}/>
 
             <Route default component={NotFound}/>
           </Router>

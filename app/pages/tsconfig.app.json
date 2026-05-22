@@ -12,7 +12,9 @@
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@types/*": ["./src/lib/types/*"],
-      "@srvtypes/*": ["../backend/src/lib/types/*"]
+      "@srvtypes/*": ["../backend/src/lib/types/*"],
+      "@style/*": ["./src/styles/*"],
+      "@utils/*": ["./src/lib/utils/*"]
     },
 
     /* Bundler mode */
