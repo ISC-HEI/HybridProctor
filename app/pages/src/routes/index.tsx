@@ -117,7 +117,7 @@ export default function ExamPage() {
   return (
     <>
       {
-        false ? <LockScreen finished={!locked.value && finished.value} />
+        false ? <LockScreen finished={locked.value || finished.value} />
           :
           <div>
             <NameForm />
