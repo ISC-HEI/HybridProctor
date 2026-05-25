@@ -1,7 +1,7 @@
 'use client'
 
 import Logs from '@/components/logs';
-import style from './page.module.scss';
+import style from './index.module.scss';
 import { useEffect, useRef} from 'preact/hooks';
 import { type LogRecord, type LogType } from '@srvtypes/logger';
 import LogTypeChoice from '@/components/logTypeChoice';

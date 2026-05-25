@@ -38,5 +38,7 @@
     padding: 2em 0;
     position: relative;
     border-right: 1pt solid vars.$gray4;
+    display: flex;          // ← ajoute ça
+    flex-direction: column; // ← ajoute ça
   }
 }

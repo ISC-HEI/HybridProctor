@@ -1,5 +1,6 @@
 
 @use "@style/_vars.scss";
+@use "@fontsource/poppins";
 
 * {
   box-sizing: border-box;
@@ -7,6 +8,7 @@
   margin: 0;
   list-style: none;
   border: none;
+  font-family: "Poppins", sans-serif;
 }
 
 h1, h2, h3, strong, label, li, input {

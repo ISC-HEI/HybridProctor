@@ -1,6 +1,6 @@
 
 import Input from "@/components/input";
-import style from "./page.module.scss";
+import style from "./index.module.scss";
 import { LogInIcon } from "lucide-preact";
 import dayjs from "dayjs";
 
