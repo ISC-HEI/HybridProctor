@@ -117,7 +117,7 @@ export default function ExamPage() {
   return (
     <>
       {
-        false ? <LockScreen finished={locked.value || finished.value} />
+        locked.value || finished.value ? <LockScreen finished={!locked.value && finished.value} />
           :
           <div>
             <NameForm />
@@ -146,10 +146,6 @@ export default function ExamPage() {
               </ul>
 
               <Exam conf={yamlconf.value} />
-
-              <div id="progressBarContainer">
-                <div id="progressBar" className="notransition"></div>
-              </div>
             </div>
 
             <footer className={style.footer} id="version">Version: {version}</footer>
