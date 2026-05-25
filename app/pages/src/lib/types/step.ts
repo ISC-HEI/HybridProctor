@@ -1,7 +1,7 @@
 
-import { type ComponentType, type SVGAttributes } from "preact";
+import type { LucideIcon } from "lucide-preact";
 
 export interface StepPair {
-  icon: ComponentType<SVGAttributes<SVGSVGElement>>;
+  icon: LucideIcon;
   label: string;
 }

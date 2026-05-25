@@ -3,7 +3,7 @@ import Input from "../input";
 import style from "./index.module.scss";
 import Loader from "../loader";
 import { Signal, useSignal, useSignalEffect } from "@preact/signals";
-import { addNotification } from "@/lib/utils/notificationsStore";
+import { addNotification } from "@/lib/utils/signals/notificationsStore";
 
 interface ValidateHashProps {
   show: Signal<boolean>;

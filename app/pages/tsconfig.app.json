@@ -11,10 +11,10 @@
       "react-dom": ["./node_modules/preact/compat/"],
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
-      "@types/*": ["./src/lib/types/*"],
       "@srvtypes/*": ["../backend/src/lib/types/*"],
       "@style/*": ["./src/styles/*"],
-      "@utils/*": ["./src/lib/utils/*"]
+      "@utils/*": ["./src/lib/utils/*"],
+      "@srvutils/*": ["../backend/src/lib/utils/*"]
     },
 
     /* Bundler mode */

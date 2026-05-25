@@ -3,7 +3,7 @@ import { useRef } from "preact/hooks";
 import HashDialog from "../hashDialog";
 import ValidateHash from "../validateHash";
 import Loader from "../loader";
-import { addNotification } from "@utils/notificationsStore";
+import { addNotification } from "@utils/signals/notificationsStore";
 
 import style from "./index.module.scss";
 import { useSignal } from "@preact/signals";

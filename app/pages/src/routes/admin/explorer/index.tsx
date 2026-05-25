@@ -10,7 +10,7 @@ import { DownloadIcon, SquareActivityIcon } from "lucide-preact";
 import RadialProgress from "@/components/radialProgress";
 import Loader from "@/components/loader";
 import Goto from "@/components/goto";
-import { addNotification } from "@/lib/utils/notificationsStore";
+import { addNotification } from "@/lib/utils/signals/notificationsStore";
 import { useSignal } from "@preact/signals";
 
 interface ExplorerProps {
