@@ -4,6 +4,7 @@ const ExamPage = lazy(() => import("./routes/index.tsx"));
 const PasswordPage = lazy(() => import("./routes/password"));
 const AuthPage = lazy(() => import("./routes/admin/auth"));
 const MonitorPage = lazy(() => import("./routes/admin/monitor"));
+const ExplorerPage = lazy(() => import("./routes/admin/explorer"));
 const NotFound = lazy(() => import("./404.tsx"));
 
 export function App() {
@@ -16,6 +17,7 @@ export function App() {
             <Route path="/password" component={PasswordPage} />
             <Route path="/admin/auth" component={AuthPage} />
             <Route path="/admin/monitor" component={MonitorPage} />
+            <Route path="/admin/explorer/:directory*" component={ExplorerPage}/>
 
             <Route default component={NotFound} />
           </Router>

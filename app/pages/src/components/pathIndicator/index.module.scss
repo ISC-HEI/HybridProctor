@@ -1,0 +1,24 @@
+
+@use "@style/_vars.scss";
+
+
+.path {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  height: 2em;
+  width: 100%;
+  overflow-x: auto;
+
+  .dir {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+
+    .chevron {
+      color: vars.$secondary-text-color;
+    }
+  }
+}
