@@ -1,5 +1,6 @@
 import type { Signal } from '@preact/signals';
 import style from './index.module.scss';
+import type { TargetedInputEvent } from 'preact';
 
 interface InputProps {
   required?: boolean;
@@ -9,7 +10,7 @@ interface InputProps {
   className?: string;
   name?: string;
   value?: Signal|undefined;
-  onInput?: ((evt: Event) => void)|(() => void);
+  onInput?: ((evt: TargetedInputEvent<HTMLInputElement|HTMLTextAreaElement>) => void)|(() => void);
 }
 
 export default function Input({ required, placeholder, type, area, className, name, value, onInput }: InputProps) {

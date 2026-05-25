@@ -5,11 +5,12 @@ import { LogInIcon } from "lucide-preact";
 import dayjs from "dayjs";
 
 import { useSignal } from "@preact/signals";
+import type { TargetedSubmitEvent } from "preact";
 
 export default function Auth() {
   const password = useSignal<string>("");
 
-  const handleVerify = async (evt: Event) => {
+  const handleVerify = async (evt: TargetedSubmitEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     const { redirect } = await (await (fetch("/api/auth/verify", {
@@ -33,7 +34,7 @@ export default function Auth() {
         <h2 className={style.title}>Login</h2>
         <label className={style.label}>
           Password
-          <Input type="password" name="password" value={password} onInput={evt => password.value = (evt.currentTarget as HTMLInputElement).value} />
+          <Input type="password" name="password" value={password} onInput={evt => password.value = evt.currentTarget.value} />
         </label>
         <button type="submit" className={style.btn}>Login <LogInIcon className={style.icon}/></button>
       </form>

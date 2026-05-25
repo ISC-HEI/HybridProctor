@@ -1,14 +1,15 @@
 import { type LogType } from "@srvtypes/logger";
 
 import style from './index.module.scss'
+import type { TargetedInputEvent } from "preact";
 
 interface LogTypeChoiceProps {
   onChoice: (value: LogType) => void;
 }
 
 export default function LogTypeChoice({ onChoice }: LogTypeChoiceProps) {
-  const handleTypeChange = (e: Event) => {
-    onChoice((e.currentTarget as HTMLInputElement).value as LogType);
+  const handleTypeChange = (e: TargetedInputEvent<HTMLInputElement>) => {
+    onChoice(e.currentTarget.value as LogType);
   }
 
   return (

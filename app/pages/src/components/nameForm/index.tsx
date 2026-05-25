@@ -33,7 +33,7 @@ export default function NameForm() {
     }
   )()}, []);
 
-  const handleSubmit = async (evt: Event) => {
+  const handleSubmit = async (evt: SubmitEvent) => {
     evt.preventDefault();
 
     loading.value = true;
@@ -69,11 +69,11 @@ export default function NameForm() {
         <div className={`input-group ${style.inputs}`}>
           <label className={style.label}>
             Surname
-            <Input type="text" name='surname' value={surname} required onInput={evt => surname.value = (evt.currentTarget as HTMLInputElement).value} />
+            <Input type="text" name='surname' value={surname} required onInput={evt => surname.value = evt.currentTarget.value} />
           </label>
           <label className={style.label}>
             Name
-            <Input type="text" name='name' value={name} required onInput={evt => name.value = (evt.currentTarget as HTMLInputElement).value} />
+            <Input type="text" name='name' value={name} required onInput={evt => name.value = evt.currentTarget.value} />
           </label>
         </div>
         <p className={`status-${ok ? "success" : "error"}`}>{message}</p>

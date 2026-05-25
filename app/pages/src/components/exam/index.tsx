@@ -31,7 +31,7 @@ export default function Exam({ conf }: ExamProps) {
     files.value = newFiles;
   }
 
-  const handleSubmit = async (evt: Event) => {
+  const handleSubmit = async (evt: SubmitEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
 
