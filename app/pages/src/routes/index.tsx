@@ -121,7 +121,7 @@ export default function ExamPage() {
           :
           <div>
             <NameForm />
-            <div className={`container ${style.main_content}`}>
+            <div className={style.main_content}>
               <iframe className={style.content_frame} src="/exam.html" width="100%"></iframe>
               <h1 className={style.h1}>Resources</h1>
               <ul className={style.file_list}>
@@ -140,7 +140,7 @@ export default function ExamPage() {
               <ul className={style.upload_file_list}>
                 {
                   yamlconf.value?.studentsFiles && yamlconf.value.studentsFiles.map((v, i) =>
-                    <li key={i}>{v}</li>
+                    <li key={i}>- {v}</li>
                   )
                 }
               </ul>

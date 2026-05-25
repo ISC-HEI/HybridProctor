@@ -26,6 +26,12 @@
   cursor: pointer;
   position: relative;
   height: 4em;
+  background-color: vars.$blue;
+  color: vars.$gray3;
+
+  &:hover {
+    background-color: vars.$darkblue;
+  }
 
   &:disabled {
     background-color: vars.$gray4;
