@@ -146,7 +146,7 @@ export default function Explorer({ directory }: ExplorerProps) {
         </div>
 
         {items.value.length > 0 ? (
-          <ol className={style.grid} onClick={() => selectedItems.value = []}>
+          <ol id="items" className={style.grid} onClick={() => selectedItems.value = []}>
             {items.value.map(item => <Item key={item.id} item={item} selected={selectedItems.value.includes(item)} onClick={handleSelect} onDoubleClick={handleEnter}></Item>)}
           </ol>
         ) : (
@@ -157,7 +157,7 @@ export default function Explorer({ directory }: ExplorerProps) {
       <aside className={style.storage}>
         <div className={style.progress}>
           <RadialProgress progress={used} total={total} />
-          <p>
+          <p id="status">
           {
             downloading.value
               ? "Preparing download..."
@@ -165,7 +165,7 @@ export default function Explorer({ directory }: ExplorerProps) {
           }
           </p>
         </div>
-        <button className={style.download} disabled={selectedItems.value.length < 1 || downloading} onClick={handleDownload}><DownloadIcon className={style.icon} /></button>
+        <button id="download_btn" className={style.download} disabled={selectedItems.value.length < 1 || downloading} onClick={handleDownload}><DownloadIcon className={style.icon} /></button>
       </aside>
     </div>
   )

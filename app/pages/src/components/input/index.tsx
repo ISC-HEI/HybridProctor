@@ -3,6 +3,7 @@ import style from './index.module.scss';
 import type { TargetedInputEvent } from 'preact';
 
 interface InputProps {
+  id?: string;
   required?: boolean;
   placeholder?: string;
   type?: "text"|"password";
@@ -13,13 +14,13 @@ interface InputProps {
   onInput?: ((evt: TargetedInputEvent<HTMLInputElement|HTMLTextAreaElement>) => void)|(() => void);
 }
 
-export default function Input({ required, placeholder, type, area, className, name, value, onInput }: InputProps) {
+export default function Input({ id, required, placeholder, type, area, className, name, value, onInput }: InputProps) {
   return (
     <>
       { area ?
-        <textarea required={required} placeholder={placeholder} className={`${style.input} ${className}`} name={name} value={value} onInput={onInput}></textarea>
+        <textarea id={id} required={required} placeholder={placeholder} className={`${style.input} ${className}`} name={name} value={value} onInput={onInput}></textarea>
         :
-        <input required={required} placeholder={placeholder} type={type} className={`${style.input} ${className}`} name={name} value={value} onInput={onInput}/>
+        <input id={id} required={required} placeholder={placeholder} type={type} className={`${style.input} ${className}`} name={name} value={value} onInput={onInput}/>
       }
     </>
   )

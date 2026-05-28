@@ -31,12 +31,12 @@ export default function Auth() {
   return (
     <main className={style.page}>
       <form onSubmit={handleVerify} className={style.login}>
-        <h2 className={style.title}>Login</h2>
+        <h2 id="title" className={style.title}>Login</h2>
         <label className={style.label}>
           Password
-          <Input type="password" name="password" value={password} onInput={evt => password.value = evt.currentTarget.value} />
+          <Input id="password" type="password" name="password" value={password} onInput={evt => password.value = evt.currentTarget.value} />
         </label>
-        <button type="submit" className={style.btn}>Login <LogInIcon className={style.icon}/></button>
+        <button id="submit_btn" type="submit" className={style.btn}>Login <LogInIcon className={style.icon}/></button>
       </form>
     </main>
   )

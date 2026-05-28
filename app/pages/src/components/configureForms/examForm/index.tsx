@@ -1,5 +1,3 @@
-'use client'
-
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-preact';
 import FormButtons from '@components/formButtons';
@@ -93,7 +91,7 @@ export default function ExamForm() {
   return (
     <form onSubmit={handleSubmit} className={style.form}>
       <fieldset className={style.field}>
-        <h2 className={style.title}>Upload Exam</h2>
+        <h2 id="title" className={style.title}>Upload Exam</h2>
 
         <label className={`${style.label} ${isDragging ? style.dragging : ''}`} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}>
           <div className={style.text}>
@@ -101,7 +99,7 @@ export default function ExamForm() {
             Upload exam here
           </div>
 
-          <input ref={fileInputRef} type="file" name="examFile" accept=".htm,.html" onChange={handleChooseFile} required/>
+          <input id="exam_file" ref={fileInputRef} type="file" name="examFile" accept=".htm,.html" onChange={handleChooseFile} required/>
         </label>
 
         <div className={style.file_zone}>
@@ -112,18 +110,18 @@ export default function ExamForm() {
               <div className={style.text}>
                 <div className={style.name}>
                   <FileIcon className={style.icon}/>
-                  <p><strong>{fileName}</strong></p>
+                  <p><strong id="file_name">{fileName}</strong></p>
                 </div>
 
-                {fileInputRef.current!.files![0] && <p className={style.size}>{formatSize(fileInputRef.current!.files![0].size)}</p>}
+                {fileInputRef.current!.files![0] && <p id="file_size" className={style.size}>{formatSize(fileInputRef.current!.files![0].size)}</p>}
               </div>
 
-              <button className={style.delete} onClick={handleDeleteFile}>
+              <button id="delete_btn" className={style.delete} onClick={handleDeleteFile}>
                 <XIcon size={16}/>
               </button>
             </article>
             :
-            <article className={style.no_file}>
+            <article id="no_file" className={style.no_file}>
               No files
             </article>
           }

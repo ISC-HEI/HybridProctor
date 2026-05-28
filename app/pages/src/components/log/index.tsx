@@ -1,5 +1,3 @@
-'use client'
-
 import { useRelativeTime } from "@/lib/utils/hooks/useRelativeTime";
 import { type LogRecord } from "@srvtypes/logger";
 

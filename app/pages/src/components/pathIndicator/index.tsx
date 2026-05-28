@@ -15,7 +15,7 @@ export default function PathIndicator({ path }: PathIndicatorProps) {
   }
 
   return (
-    <ol className={style.path}>
+    <ol id="path" className={style.path}>
       <li className={style.dir}>
         <a href="/admin/explorer">
           <p>root</p>

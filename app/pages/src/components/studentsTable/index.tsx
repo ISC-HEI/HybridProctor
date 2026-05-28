@@ -22,7 +22,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
   }
 
   return (
-    <table className={style.table}>
+    <table id="student_table" className={style.table}>
       <thead>
         <tr>
           <th>IP</th>
@@ -32,7 +32,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>Connected</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="table_body">
         {
           Array.from(students.value.values()).map(
             (student, idx) =>

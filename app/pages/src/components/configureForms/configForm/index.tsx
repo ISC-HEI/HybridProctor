@@ -1,5 +1,3 @@
-'use client'
-
 import FormButtons from "@/components/formButtons";
 import style from "./index.module.scss";
 import { XIcon } from "lucide-preact";
@@ -64,17 +62,17 @@ export default function ConfigForm() {
   return (
     <form onSubmit={handleSubmit} className={style.form}>
       <fieldset className={style.field}>
-        <h2 className={style.title}>Configuration</h2>
+        <h2 id="title" className={style.title}>Configuration</h2>
 
         <label className={style.label}>
           Students need to upload files
-          <input type="checkbox" checked={enable} onInput={evt => enable.value = evt.currentTarget.checked} name="enabled" />
+          <input id="enable_cbx" type="checkbox" checked={enable} onInput={evt => enable.value = evt.currentTarget.checked} name="enabled" />
         </label>
         { enable.value &&
           <>
             <label className={`${style.label} ${style.desc}`}>
               Label
-              <Input name="label" placeholder={DEFAULT_LABEL} area value={label} onInput={evt => label.value = evt.currentTarget.value}/>
+              <Input id="label" name="label" placeholder={DEFAULT_LABEL} area value={label} onInput={evt => label.value = evt.currentTarget.value}/>
             </label>
 
             <div className={style.filesContainer}>
@@ -82,11 +80,11 @@ export default function ConfigForm() {
                 <span>
                   Add file <span className="required">*</span>
                 </span>
-                <Input value={fileToAdd} onInput={evt => fileToAdd.value = evt.currentTarget.value} />
-                <button onClick={handleAddFile} className={style.addButton}>Add</button>
+                <Input id="file_to_add" value={fileToAdd} onInput={evt => fileToAdd.value = evt.currentTarget.value} />
+                <button id="add_btn" onClick={handleAddFile} className={style.addButton}>Add</button>
               </label> 
 
-              <ol className={style.files}>
+              <ol id="files" className={style.files}>
                 {
                   files.value.length !== 0
                     ?
@@ -100,13 +98,12 @@ export default function ConfigForm() {
                         </li>
                     )
                     :
-                    <li className={style.noFiles}>
+                    <li id="no_files" className={style.noFiles}>
                       <p><strong>No files</strong></p>
                     </li>
                 }
               </ol>
             </div>
-
           </>
         }
       </fieldset> 

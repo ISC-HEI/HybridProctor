@@ -14,11 +14,11 @@ export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
       <LockInfo />
       <div className={style.infos}>
         <div className={style.students}>
-          <p>Connected students : <span className={style.number}>{connected}</span></p>
-          <p>Total students : <span className={style.number}>{total}</span></p>
+          <p>Connected students : <span id="connected_students" className={style.number}>{connected}</span></p>
+          <p>Total students : <span id="total_students" className={style.number}>{total}</span></p>
         </div>
 
-        <a href="/admin/explorer" className={style.link}>File Explorer</a>
+        <a id="explorer_link" href="/admin/explorer" className={style.link}>File Explorer</a>
       </div>
     </div>
   )

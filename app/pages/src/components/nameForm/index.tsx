@@ -63,21 +63,21 @@ export default function NameForm() {
   }
 
   return (
-    <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
+    <dialog id="name_form" className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <h2>Please enter your full name</h2>
       <form className={style.form} id='form' onSubmit={handleSubmit}>
         <div className={`input-group ${style.inputs}`}>
           <label className={style.label}>
             Surname
-            <Input type="text" name='surname' value={surname} required onInput={evt => surname.value = evt.currentTarget.value} />
+            <Input id="surname" type="text" name='surname' value={surname} required onInput={evt => surname.value = evt.currentTarget.value} />
           </label>
           <label className={style.label}>
             Name
-            <Input type="text" name='name' value={name} required onInput={evt => name.value = evt.currentTarget.value} />
+            <Input id="lastname" type="text" name='name' value={name} required onInput={evt => name.value = evt.currentTarget.value} />
           </label>
         </div>
-        <p className={`status-${ok ? "success" : "error"}`}>{message}</p>
-        <button className={`${style.btn} submit-btn btn-primary`} type='submit'>
+        <p id="message" className={ok ? style.success : style.error}>{message}</p>
+        <button id="submit" className={style.btn} type='submit'>
           { loading.value
             ? <Loader />
             : "Start"

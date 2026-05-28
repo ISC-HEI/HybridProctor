@@ -1,5 +1,3 @@
-'use client'
-
 import Logs from '@/components/logs';
 import style from './index.module.scss';
 import { useEffect, useRef} from 'preact/hooks';

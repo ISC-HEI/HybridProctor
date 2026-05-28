@@ -1,5 +1,3 @@
-'use client'
-
 import { type LogRecord, type LogType } from "@srvtypes/logger";
 import style from './index.module.scss';
 import Log from "../log";

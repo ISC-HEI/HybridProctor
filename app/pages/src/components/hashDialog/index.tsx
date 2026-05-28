@@ -22,13 +22,13 @@ export default function HashDialog({ hash, onClose }: HashDialogProps) {
   return (
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
       <div className={style.content}>
-        <h2 className={style.title}>This is the hash of your files.</h2>
+        <h2 id="title" className={style.title}>This is the hash of your files.</h2>
         <p>You will need it at the end of the exam to validate which version of your files you want to be used.</p>
         <p>Please save it if it&apos;s your final version.</p>
 
-        <p>Hash : <span className={style.hash}>{hash}</span></p>
+        <p>Hash : <span id="hash" className={style.hash}>{hash}</span></p>
 
-        <button className={style.close} onClick={onClose}>Close</button>
+        <button id="close_btn" className={style.close} onClick={onClose}>Close</button>
       </div>
     </dialog>
   )

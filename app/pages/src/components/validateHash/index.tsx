@@ -60,17 +60,17 @@ export default function ValidateHash({ show, onClose }: ValidateHashProps) {
 
         <label className={style.label}>
           Hash
-          <Input type="text" name="hash" value={hash} required onInput={evt => hash.value = evt.currentTarget.value}/>
+          <Input id="hash" type="text" name="hash" value={hash} required onInput={evt => hash.value = evt.currentTarget.value}/>
         </label>
 
         <div className={style.btns}>
-          <button className={style.end} type='submit'>
+          <button id="submit" className={style.end} type='submit'>
             { loading.value
               ? <Loader />
               : "Validate"
             }
           </button>
-          <button className={style.close} type='reset' onClick={handleClose}>
+          <button id="cancel" className={style.close} type='reset' onClick={handleClose}>
             Cancel
           </button>
         </div>

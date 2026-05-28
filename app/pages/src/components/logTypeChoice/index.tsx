@@ -16,22 +16,22 @@ export default function LogTypeChoice({ onChoice }: LogTypeChoiceProps) {
     <form className={style.form}>
       <label className={style.label}>
         All
-        <input type="radio" name="type" value="all" defaultChecked onChange={handleTypeChange} />
+        <input id="all_radio" type="radio" name="type" value="all" defaultChecked onChange={handleTypeChange} />
         <span className={style.checkbox}></span>
       </label>
       <label className={style.label}>
         Infos
-        <input type="radio" name="type" value="infos" onChange={handleTypeChange} />
+        <input id="infos_radio" type="radio" name="type" value="infos" onChange={handleTypeChange} />
         <span className={style.checkbox}></span>
       </label>
       <label className={style.label}>
         Warnings
-        <input type="radio" name="type" value="warnings" onChange={handleTypeChange} />
+        <input id="warnings_radio" type="radio" name="type" value="warnings" onChange={handleTypeChange} />
         <span className={style.checkbox}></span>
       </label>
       <label className={style.label}>
         Errors
-        <input type="radio" name="type" value="errors" onChange={handleTypeChange} />
+        <input id="errors_radio" type="radio" name="type" value="errors" onChange={handleTypeChange} />
         <span className={style.checkbox}></span>
       </label>
     </form>

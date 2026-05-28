@@ -9,7 +9,7 @@ interface GotoProps {
 
 export default function Goto({ href, Icon }: GotoProps) {
   return (
-    <a href={href} className={style.goto}>
+    <a id="goto" href={href} className={style.goto}>
       <div className={style.container}>
         <Icon className={style.icon} />
       </div>

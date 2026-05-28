@@ -16,9 +16,9 @@ export default function NewPassword({ password }: NewPasswordProps) {
 
   return (
     <main className={style.newPassword}>
-      <h1>A new password has been randomly generated</h1>
-      <p>Please note it somewhere safe/remember it : <span className={style.password}>{password}</span></p>
-      <button className={style.next} onClick={next}>Continue</button>
+      <h1 id="title">A new password has been randomly generated</h1>
+      <p>Please note it somewhere safe/remember it : <span id="password" className={style.password}>{password}</span></p>
+      <button id="continue_btn" className={style.next} onClick={next}>Continue</button>
     </main>
   )
 }

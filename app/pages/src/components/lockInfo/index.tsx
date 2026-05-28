@@ -1,5 +1,3 @@
-'use client'
-
 import { useSignal } from "@preact/signals";
 import style from "./index.module.scss";
 import { useEffect } from "preact/hooks"

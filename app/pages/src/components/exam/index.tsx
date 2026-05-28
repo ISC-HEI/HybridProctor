@@ -83,7 +83,7 @@ export default function Exam({ conf }: ExamProps) {
               <input name='files' id='files' type="file" multiple onChange={handleChooseFiles} ref={fileInputRef} />
             </div>
         }
-        <button className={style.submit_btn} disabled={!conf || ( conf.enable && files.value.length < 1 ) } type='submit'>
+        <button id="submit_btn" className={style.submit_btn} disabled={!conf || ( conf.enable && files.value.length < 1 ) } type='submit'>
           { loading.value
             ? <Loader light />
             : conf && conf.enable ? "Upload" : "Finish"
@@ -91,7 +91,7 @@ export default function Exam({ conf }: ExamProps) {
         </button>
       </form>
       { conf && conf.enable &&
-        <button className={style.end_btn} disabled={!conf} onClick={handleShowValidate}>
+        <button id="end_btn" className={style.end_btn} disabled={!conf} onClick={handleShowValidate}>
           { loading.value
             ? <Loader light />
             : "Validate and finish"

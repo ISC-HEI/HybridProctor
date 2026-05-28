@@ -1,5 +1,3 @@
-'use client'
-
 import style from './index.module.scss';
 import { HardDriveUploadIcon, FileIcon, XIcon } from 'lucide-preact';
 import FormButtons from '@components/formButtons';
@@ -103,22 +101,16 @@ export default function ResourcesForm() {
   return (
     <form onSubmit={handleSubmit} className={style.form}>
     <fieldset className={style.field}>
-        <h2 className={style.title}>Upload resources to be download by students</h2>
+        <h2 id="title" className={style.title}>Upload resources to be download by students</h2>
 
-        <label
-          className={`${style.label} ${isDragging ? style.dragging : ''}`}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
+        <label className={`${style.label} ${isDragging ? style.dragging : ''}`} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}>
           <div className={style.text}>
             <HardDriveUploadIcon className={style.uploadIcon} size={56} />
             Upload resources here
           </div>
-          <input ref={fileInputRef} type="file" name="resourcesFiles" onChange={handleChooseFiles} multiple />
+          <input id="resourcesFiles" ref={fileInputRef} type="file" name="resourcesFiles" onChange={handleChooseFiles} multiple />
         </label>
-      <ul className={style.file_zone}>
+      <ul id="file_zone" className={style.file_zone}>
         {
           files.value.length > 0
             ?
@@ -139,7 +131,7 @@ export default function ResourcesForm() {
                   </article>
               )
               :
-              <article className={style.noFiles}>
+              <article id="no_files" className={style.noFiles}>
                 No files
               </article>
           }
