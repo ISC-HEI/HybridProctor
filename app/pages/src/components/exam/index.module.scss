@@ -1,0 +1,56 @@
+
+@use "@style/_vars.scss";
+
+.form {
+  background-color: white;
+  padding: 30px;
+}
+.form input-group {
+  margin-bottom: 15px;
+}
+.form label {
+  display: block;
+  margin-bottom: 10px;
+}
+.form input {
+  padding: 12px 20px;
+  width: 100%;
+  border: 1px solid #ccc;
+}
+
+.submit_btn {
+  width: 100%;
+  font-size: 18px;
+  border-radius: 3px;
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  height: 4em;
+  background-color: vars.$blue;
+  color: vars.$gray3;
+
+  &:hover {
+    background-color: vars.$darkblue;
+  }
+
+  &:disabled {
+    background-color: vars.$gray4;
+    cursor: default;
+  }
+}
+
+.end_btn {
+  width: 100%;
+  font-size: 18px;
+  border-radius: 3px;
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  height: 4em;
+  background-color: vars.$pink;
+  color: white;
+
+  &:hover {
+    background-color: vars.$darkpink;
+  }
+}

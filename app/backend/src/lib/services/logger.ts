@@ -9,6 +9,7 @@ import sseManager from "@/lib/services/sse";
 import Mutex from "../utils/mutex";
 import { v4 as uuidv4 } from "uuid";
 import { getTime } from "../utils/time";
+import { type LogRecord, type LogType } from "../types/logger";
 
 dayjs.locale("fr-ch");
 
@@ -18,17 +19,6 @@ const DEFAULT_LOG_PATH = "/mount_point/logs";
 interface LogRecordOpts {
   issuer?: string;
   action?: string;
-}
-
-export type LogType = "all"|"errors"|"warnings"|"infos"|"debug";
-
-export type LogRecord = {
-  uuid: string;
-  type: LogType;
-  timestamp: string;
-  issuer?: string;
-  action?: string;
-  message: string;
 }
 
 class Logger {

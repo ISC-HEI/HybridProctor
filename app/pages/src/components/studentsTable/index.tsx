@@ -1,10 +1,11 @@
-import { Student } from "@/lib/types/student";
+import { type Student } from "@srvtypes/student";
 
 import style from "./index.module.scss";
 import dayjs from "dayjs";
+import type { Signal } from "@preact/signals";
 
 interface StudentsTableProps {
-  students: Map<string, Student>;
+  students: Signal<Map<string, Student>>;
 }
 
 export default function StudentsTable({ students }: StudentsTableProps) {
@@ -21,7 +22,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
   }
 
   return (
-    <table className={style.table}>
+    <table id="student_table" className={style.table}>
       <thead>
         <tr>
           <th>IP</th>
@@ -31,9 +32,9 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>Connected</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="table_body">
         {
-          Array.from(students.values()).map(
+          Array.from(students.value.values()).map(
             (student, idx) =>
               <tr key={idx}>
                 <td>{student.ip}</td>

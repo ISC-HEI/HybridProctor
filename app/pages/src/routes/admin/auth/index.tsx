@@ -1,0 +1,43 @@
+
+import Input from "@/components/input";
+import style from "./index.module.scss";
+import { LogInIcon } from "lucide-preact";
+import dayjs from "dayjs";
+
+import { useSignal } from "@preact/signals";
+import type { TargetedSubmitEvent } from "preact";
+
+export default function Auth() {
+  const password = useSignal<string>("");
+
+  const handleVerify = async (evt: TargetedSubmitEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    const { redirect } = await (await (fetch("/api/auth/verify", {
+      method: "POST",
+      body: JSON.stringify({
+        password,
+        timestamp: dayjs().toISOString()
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    }))).json();
+
+    navigation.navigate(redirect)
+  }
+
+  return (
+    <main className={style.page}>
+      <form onSubmit={handleVerify} className={style.login}>
+        <h2 id="title" className={style.title}>Login</h2>
+        <label className={style.label}>
+          Password
+          <Input id="password" type="password" name="password" value={password} onInput={evt => password.value = evt.currentTarget.value} />
+        </label>
+        <button id="submit_btn" type="submit" className={style.btn}>Login <LogInIcon className={style.icon}/></button>
+      </form>
+    </main>
+  )
+}

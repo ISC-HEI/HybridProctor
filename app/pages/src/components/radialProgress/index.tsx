@@ -1,15 +1,15 @@
 
-import { CSSProperties } from "react";
 import style from "./index.module.scss";
 import Loader from "../loader";
+import type { Signal } from "@preact/signals";
 
 interface RadialProgressProps {
-  progress: number;
-  total: number;
+  progress: Signal<number>;
+  total: Signal<number>;
 }
 
 export default function RadialProgress({ progress, total }: RadialProgressProps) {
-  const percentage = Math.ceil((progress / total) * 100);
+  const percentage = Math.ceil((progress.value / total.value) * 100);
 
   return (
     <div className={style.radialContainer}>
@@ -17,7 +17,7 @@ export default function RadialProgress({ progress, total }: RadialProgressProps)
         !isNaN(percentage)
           ?
           <div
-            style={{ '--progress': `${percentage}%` } as CSSProperties}
+            style={{ '--progress': `${percentage}%` }}
             className={style.radial}
             role="progressbar"
             aria-valuenow={25}

@@ -14,6 +14,8 @@ export async function filesPostHandler(req: Request, res: Response) {
   const name = student.name;
 
   if (storage.locked) {
+    logger.warn(`tried to upload files while locked`, { issuer: name, action: "upload" })
+
     return res.status(423).json({
       ok: false,
       message: "The exam hasn't started yet, or has already ended.",
@@ -22,6 +24,8 @@ export async function filesPostHandler(req: Request, res: Response) {
   }
 
   if (student.finished) {
+    logger.warn(`tried to upload files after end`, { issuer: name, action: "upload" })
+
     return res.status(423).json({
       ok: false,
       message: "You already validated your latest version.",
@@ -58,7 +62,7 @@ export async function filesPostHandler(req: Request, res: Response) {
     });
   }
 
-  const uploadedNames = files.map(f => f.filename);
+  const uploadedNames = files.map(f => f.originalname);
 
   const missing = storage.examConfig.studentsFiles.filter(req => !uploadedNames.includes(req));
 

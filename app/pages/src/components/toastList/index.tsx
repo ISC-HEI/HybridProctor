@@ -1,22 +1,15 @@
-'use client'
-
-import { AnimatePresence } from "motion/react";
 import style from "./index.module.scss";
 import Toast from "../toast";
-import { useNotifications } from "@/lib/utils/hooks/useNotifications";
+import { notifications } from "@/lib/utils/signals/notificationsStore";
 
 export default function ToastList() {
-  const notifications = useNotifications().notifications;
-
   return (
-    <ol className={style.toastList}>
-      <AnimatePresence initial={false} mode="popLayout">
-        {
-          notifications && notifications.map(notification => 
-            <Toast key={notification.id} notification={notification} />
-          )
-        }
-      </AnimatePresence>
+    <ol id="toast_list" className={style.toastList}>
+    {
+      notifications.value && notifications.value.map(notification => 
+        <Toast key={notification.id} notification={notification} />
+      )
+    }
     </ol>
   )
 }

@@ -1,76 +1,76 @@
-'use client'
-
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { useRef } from "preact/hooks";
 import Input from "../input";
 import style from "./index.module.scss";
 import Loader from "../loader";
-import { useNotifications } from "@/lib/utils/hooks/useNotifications";
+import { Signal, useSignal, useSignalEffect } from "@preact/signals";
+import { addNotification } from "@/lib/utils/signals/notificationsStore";
 
 interface ValidateHashProps {
-  show: boolean;
+  show: Signal<boolean>;
   onClose: () => void;
 }
 
 export default function ValidateHash({ show, onClose }: ValidateHashProps) {
-  const [hash, setHash] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const addNotification = useNotifications().addNotification
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const hash = useSignal("");
+  const loading = useSignal(false);
 
-  useEffect(() => {
-    if (show) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useSignalEffect(() => {
+    if (show.value) {
       dialogRef.current?.showModal();
     }
     else {
       dialogRef.current?.close();
     }
-  }, [show]);
+  });
 
-  const handleValidate = async (evt: FormEvent) => {
+  const handleValidate = async (evt: SubmitEvent) => {
     evt.preventDefault()
 
-    setLoading(true);
+    loading.value = true;
 
     const state = await (await fetch("/api/hash", {
       method: "POST",
-      body: JSON.stringify({ hash }),
+      body: JSON.stringify({ hash: hash.value }),
       headers: {
         "Content-Type": "application/json"
       }
     })).json();
 
-    setLoading(false);
+    loading.value = false;
 
     addNotification({ success: state.ok, text: state.message, infinite: false })
 
-    setHash("");
+    hash.value = ""
 
     onClose();
   }
 
   const handleClose = () => {
-    setHash("");
+    formRef.current?.reset()
     onClose();
   }
 
   return (
     <dialog className={style.dialog} ref={dialogRef} onCancel={evt => evt.preventDefault()}>
-      <form className={style.form} onSubmit={handleValidate}>
+      <form className={style.form} ref={formRef} onSubmit={handleValidate}>
         <h2>Please enter the last hash you got</h2>       
 
         <label className={style.label}>
           Hash
-          <Input type="text" name='surname' value={hash} required onChange={e => setHash(e.target.value)}/>
+          <Input id="hash" type="text" name="hash" value={hash} required onInput={evt => hash.value = evt.currentTarget.value}/>
         </label>
 
         <div className={style.btns}>
-          <button className={style.end} type='submit'>
-            { loading
+          <button id="submit" className={style.end} type='submit'>
+            { loading.value
               ? <Loader />
               : "Validate"
             }
           </button>
-          <button className={style.close} type='reset' onClick={handleClose}>
+          <button id="cancel" className={style.close} type='reset' onClick={handleClose}>
             Cancel
           </button>
         </div>

@@ -1,5 +1,4 @@
 
-
 export interface Notification {
   id?: string;
   success: boolean;

@@ -1,15 +1,15 @@
-import { ElementType } from "react";
+import type { JSX } from "preact";
 import style from "./index.module.scss";
 
 interface GotoProps {
   href: string;
-  Icon: ElementType;
+  Icon: JSX.ElementType;
 }
 
 
 export default function Goto({ href, Icon }: GotoProps) {
   return (
-    <a href={href} className={style.goto}>
+    <a id="goto" href={href} className={style.goto}>
       <div className={style.container}>
         <Icon className={style.icon} />
       </div>

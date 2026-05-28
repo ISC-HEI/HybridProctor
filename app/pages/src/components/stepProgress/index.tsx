@@ -1,9 +1,8 @@
 
-import { useContext } from "react";
 import style from "./index.module.scss";
-import { StepContext } from "@/lib/utils/hooks/stepContext";
-import { CheckIcon } from "lucide-react";
-import { StepPair } from "@/lib/types/StepPair";
+import { CheckIcon } from "lucide-preact";
+import { type StepPair } from "@/lib/types/step";
+import { currentStep } from "@/lib/utils/signals/configure";
 
 interface StepSidebarProps {
   className?: string;
@@ -11,16 +10,14 @@ interface StepSidebarProps {
 }
 
 export default function StepProgress({ className, steps }: StepSidebarProps) {
-  const stepContext = useContext(StepContext);
-
   return (
     <aside className={`${style.progress} ${className}`}>
       <ol className={style.list}>
         {
           steps.map((v, i) => {
             const num = i + 1;
-            const isActive = stepContext!.step === num;
-            const isDone = stepContext!.step > num;
+            const isActive = currentStep.value === num;
+            const isDone = currentStep.value > num;
 
             return (
               <li key={i} className={style.step}>

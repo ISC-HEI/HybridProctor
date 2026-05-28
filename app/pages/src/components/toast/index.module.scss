@@ -1,6 +1,21 @@
 
 @use "@style/_vars.scss";
 
+@keyframes toast_animation {
+  0% {
+    transform: translateX(80%);
+  }
+  10% {
+    transform: translateX(0);
+  }
+  90% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}
+
 .toast {
   position: relative;
   display: flex;
@@ -10,6 +25,8 @@
   width: 35em;
   border-radius: 1em;
   padding: 1em;
+  animation: 5.1s toast_animation;
+  transition: ease-in;
 
   &.success {
     background-image: linear-gradient(45deg, #021533 0%, vars.$dark-background-color 100%);

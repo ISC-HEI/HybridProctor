@@ -10,8 +10,9 @@ const NEW_PASSWORD = "/password";
 export default async function middleware(req: Request, res: Response, next: () => void) {
   const path = req.path;
 
-  const isAsset = path.startsWith("/_next/") || path === "/favicon.ico";
-  if (isAsset) {
+  const asset_reg = /.*\.(js|css)$/i;
+
+  if(path.startsWith("/assets/") || asset_reg.test(path) || path === "/favicon.ico") {
     return next();
   }
 

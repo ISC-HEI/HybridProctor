@@ -1,0 +1,28 @@
+
+@use "@style/_vars.scss";
+@use "@fontsource/poppins";
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border: none;
+  font-family: "Poppins", sans-serif;
+}
+
+h1, h2, h3, strong, label, li, input {
+  color: vars.$primary-text-color;
+}
+
+p, h4, h5 ,h6, h7 {
+  color: vars.$secondary-text-color
+}
+
+input[type=text]:focus {
+  outline: 1pt solid vars.$blue;
+}
+
+.required {
+  color: vars.$pink;
+}

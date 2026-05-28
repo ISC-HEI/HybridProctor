@@ -7,7 +7,7 @@ interface LoaderProps {
 
 export default function Loader({ light }: LoaderProps) {
   return (
-    <div className={style.loaderWrapper}>
+    <div id="loader" className={style.loaderWrapper}>
       <span className={`${style.loader} ${light ? style.light : ""}`}></span>
     </div>
   )

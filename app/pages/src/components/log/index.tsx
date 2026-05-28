@@ -1,7 +1,5 @@
-'use client'
-
 import { useRelativeTime } from "@/lib/utils/hooks/useRelativeTime";
-import { LogRecord } from "@lib/types/logger";
+import { type LogRecord } from "@srvtypes/logger";
 
 import style from "./index.module.scss"
 

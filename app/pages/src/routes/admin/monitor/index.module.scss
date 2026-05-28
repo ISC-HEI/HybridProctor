@@ -1,0 +1,44 @@
+@use "@style/_vars.scss";
+
+.page {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  overflow-y: hidden;
+  background-color: vars.$secondary-background-color;
+  
+  .main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: {
+      top: 7em;
+      left: 7em;
+      right: 7em;
+      bottom: 15em;
+    }
+    position: relative;
+
+    .tableContainer {
+      max-height: 100%;
+      display: inline-block;
+      overflow-y: scroll;
+      border: 1pt solid vars.$gray4;
+      border-radius: 25px;
+    }
+  }
+
+  .logs {
+    width: 100em;
+    height: 100vh;
+    background-color: vars.$primary-background-color;
+    padding: 2em 0;
+    position: relative;
+    border-right: 1pt solid vars.$gray4;
+    display: flex;          // ← ajoute ça
+    flex-direction: column; // ← ajoute ça
+  }
+}

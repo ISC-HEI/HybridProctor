@@ -1,19 +1,19 @@
-'use client'
-
+import { useSignal } from "@preact/signals";
 import style from "./index.module.scss";
-import { useEffect, useState } from "react"
+import { useEffect } from "preact/hooks"
 
 export default function LockInfo() {
-  const [locked, setLocked] = useState<boolean>(true);
+  const locked = useSignal<boolean>(true);
 
   useEffect(() => {
     (async () => {
-      setLocked((await (await fetch("/api/fetch/locked")).json()).locked);
+       locked.value = (await (await fetch("/api/fetch/locked")).json()).locked;
     })()
   }, []);
 
   const handleLock = () => {
-    setLocked(!locked);
+    locked.value = !locked.value;
+    console.log("rah")
 
     fetch("/api/lock", {
       method: "POST"
@@ -22,7 +22,7 @@ export default function LockInfo() {
 
   return (
     <article className={style.lockinfo}>
-      <p>The exam is currently <span className={`${locked ? style.locked : style.unlocked}`}>{ locked ? "locked" : "unlocked" }</span></p>
+      <p>The exam is currently <span className={`${locked.value ? style.locked : style.unlocked}`}>{ locked.value ? "locked" : "unlocked" }</span></p>
       <button className={style.button} onClick={handleLock}>{ locked ? "Unlock" : "Lock" }</button>
     </article>
   )

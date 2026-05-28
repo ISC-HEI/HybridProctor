@@ -1,8 +1,7 @@
 
-import { DirItem } from "@/lib/types/dirItem";
+import { type DirItem } from "@srvtypes/dirItem";
 import style from "./index.module.scss";
-import { FolderIcon, FileIcon } from "lucide-react";
-import { MouseEvent } from "react";
+import { FolderIcon, FileIcon } from "lucide-preact";
 
 interface ItemProps {
   item: DirItem;
@@ -24,7 +23,7 @@ export default function Item({ item, selected, onClick, onDoubleClick }: ItemPro
   }
 
   return (
-    <article className={`${style.item} ${ selected ? style.selected : '' }`} onClick={handleClick} onDoubleClick={handleDoubleClick}>
+    <article className={`${style.item} ${ selected ? style.selected : '' }`} onClick={handleClick} onDblClick={handleDoubleClick}>
       <div className={style.iconContainer}>
         { item.type === "directory"
           ? <FolderIcon className={`${style.icon} ${style.directory} ${item.name.endsWith("_validated") ? style.validated : ''}`} />

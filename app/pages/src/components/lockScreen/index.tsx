@@ -1,9 +1,8 @@
-'use client'
 
 import style from "./index.module.scss";
 
 interface LockScreenProps {
-  finished: boolean;
+  finished: boolean
 }
 
 export default function LockScreen({ finished }: LockScreenProps) {
@@ -13,7 +12,7 @@ export default function LockScreen({ finished }: LockScreenProps) {
 
   return (
     <main className={style.lockscreen}>
-      <h1 className={style.title}>
+      <h1 id="title" className={style.title}>
         { finished
           ? "You already finished the exam."
           : "The exam hasn't started yet, please wait."
@@ -21,7 +20,7 @@ export default function LockScreen({ finished }: LockScreenProps) {
       </h1>
 
       <div className={style.container}>
-        <button className={style.refresh} onClick={refresh}>Refresh</button>
+        <button id="refresh_btn" className={style.refresh} onClick={refresh}>Refresh</button>
       </div> 
     </main>
   )
