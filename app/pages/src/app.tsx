@@ -1,4 +1,5 @@
 import { ErrorBoundary, lazy, LocationProvider, Route, Router } from 'preact-iso'
+import ToastList from './components/toastList/index.tsx';
 
 const ExamPage = lazy(() => import("./routes/index.tsx"));
 const PasswordPage = lazy(() => import("./routes/password"));
@@ -11,6 +12,7 @@ const NotFound = lazy(() => import("./404.tsx"));
 export function App() {
   return (
     <>
+      <ToastList /> 
       <LocationProvider>
         <ErrorBoundary onError={e => console.log(e)}>
           <Router>
