@@ -44,7 +44,8 @@ yapp/arn-error.log*
 app/pages/*.tsbuildinfo
 app/pages/next-env.d.ts
 
-app/pages/logs/
-app/pages/uploads/
-app/pages/resources/db/*
-app/pages/resources/.password
+app/backend/logs/
+app/backend/uploads/
+app/backend/resources/db/*
+app/backend/resources/.password
+app/backebd/public/*
