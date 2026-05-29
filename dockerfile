@@ -5,7 +5,7 @@ RUN : "${VERSION:?VERSION is required}"
 
 WORKDIR /app
 
-COPY app/pages/out ./pages
+COPY app/pages/dist ./pages
 COPY app/backend/dist ./dist
 COPY app/backend/package.json app/backend/package-lock.json ./
 COPY app/backend/.env.container ./.env
@@ -18,7 +18,7 @@ RUN npm version --no-git-tag-version $VERSION
 RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
 
 RUN curl -w %{http_code} -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm&version=v1.2.0" && chmod +x /usr/local/bin/node-prune
-RUN node-prune /app
+RUN node-prune /app/node_modules
 
 ENV NEXT_TELEMETRY_DISABLE=1
 

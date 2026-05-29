@@ -75,14 +75,14 @@ jobs:
 
           cd /app; 
           mkdir -p release_package/pages; 
-          cp -a app/pages/out/. release_package/pages/; 
+          cp -a app/pages/dist/. release_package/pages/; 
           cp -r app/backend/dist release_package/; 
           cp app/backend/package.json app/backend/package-lock.json release_package/; 
           cp app/start.sh release_package
 
           cd release_package; 
           npm ci --omit=dev;
-          /usr/local/bin/node-prune;
+          /usr/local/bin/node-prune ./node_modules;
 
           cd /app;
           cp app/backend/.env.native release_package/.env;
