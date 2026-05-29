@@ -1,0 +1,4 @@
+enable: true
+label: 'Please upload the following files at the end: '
+studentsFiles:
+  - test.txt

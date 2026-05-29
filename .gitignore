@@ -48,4 +48,3 @@ app/backend/logs/
 app/backend/uploads/
 app/backend/resources/db/*
 app/backend/resources/.password
-app/backebd/public/*
