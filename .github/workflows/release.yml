@@ -82,7 +82,7 @@ jobs:
 
           cd release_package; 
           npm ci --omit=dev;
-          /usr/local/bin/node-prune /app/node_modules;
+          /usr/local/bin/node-prune ./node_modules;
 
           cd /app;
           cp app/backend/.env.native release_package/.env;
