@@ -13,6 +13,7 @@ import { statusPostHandler } from "./status";
 import { registerPatchHandler, registerPostHandler } from "./register";
 import { lockPostHandler } from "./lock";
 import { hashPostHandler } from "./hash";
+import { timePostHandler } from "./time";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.post("/register", registerPostHandler);
 router.patch("/register", registerPatchHandler);
 router.post("/lock", lockPostHandler);
 router.post("/hash", hashPostHandler);
+router.post("/time", timePostHandler)
 
 router.use("/upload", uploadRouter);
 router.use("/fetch", fetchRouter);
