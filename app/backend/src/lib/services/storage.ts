@@ -20,8 +20,6 @@ const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
 const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
 
-const AVERAGE_LATENCY = 165;
-
 class Storage {
   rootLocation: string;
   examLocation: string;
@@ -61,6 +59,7 @@ class Storage {
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
     this.examLocation = path.join(this.local("public"), process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
     this.resourcesLocation = this.local("public/resources");
+    this.timeOffset = 0
   }
 
   public async init() {
@@ -167,7 +166,7 @@ class Storage {
 
     const session = this.sessions.get(id) as Session;
 
-    if (session.until <= await unixTime()) {
+    if (session.until <= unixTime()) {
       this.sessions.delete(id);
 
       return false;
@@ -183,14 +182,11 @@ class Storage {
   }
 
   public setOffset(timestamp: string) {
-    const offset = dayjs().diff(dayjs(timestamp)) - AVERAGE_LATENCY;
-    logger.info(`Time offset set to ${offset + AVERAGE_LATENCY}`)
+    const offset = dayjs().diff(dayjs(timestamp));
+    logger.info(`Time offset set to ${offset}`)
 
-    if (this.timeOffset <= 0 && offset >= 10000) {
+    if (offset > 0) {
       this.timeOffset = offset;
-    }
-    else if (this.timeOffset <= 0) {
-      this.timeOffset = 0;
     }
   }
 
@@ -200,7 +196,7 @@ class Storage {
     this.sessions.set(id, {
       id,
       ip,
-      until: (await getTime()).add(2, "hours").valueOf(),
+      until: (getTime()).add(2, "hours").valueOf(),
     });
 
     return id;
@@ -239,7 +235,7 @@ class Storage {
       return "";
     }
 
-    const namePath = join(this.uploadLocation, (await getTime()).format(`DD_MM_YYYY`), name);
+    const namePath = join(this.uploadLocation, (getTime()).format(`DD_MM_YYYY`), name);
 
     if (!existsSync(namePath)) {
       await fs.mkdir(namePath, { recursive: true });

@@ -77,7 +77,7 @@ class Logger {
   }
 
   private async buildRecord(type: LogType, message: string, opts?: LogRecordOpts): Promise<LogRecord> {
-    const timestamp = await getTime();
+    const timestamp = getTime();
     const uuid = uuidv4();
 
     return {
