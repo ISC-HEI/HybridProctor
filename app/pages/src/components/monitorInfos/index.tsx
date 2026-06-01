@@ -15,7 +15,7 @@ export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
   }
 
   const handleSetTime = async () => {
-    const { time } = await (await fetch("/api/auth/time", {
+    const { time } = await (await fetch("/api/time", {
       method: "POST",
       body: JSON.stringify({
         timestamp: dayjs().toISOString()
@@ -38,7 +38,7 @@ export default function MonitorInfos({ connected, total }: MonitorInfosProps) {
           <p>Total students : <span id="total_students" className={style.number}>{total}</span></p>
         </div>
 
-        <button className={style.link} onClick={handleSetTime}>Set Time</button>
+        <button className={style.time_btn} onClick={handleSetTime}>Set Time</button>
 
         <a id="explorer_link" href="/admin/explorer" className={style.link}>File Explorer</a>
       </div>

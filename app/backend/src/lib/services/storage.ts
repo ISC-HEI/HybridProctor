@@ -20,6 +20,8 @@ const DEFAULT_UPLOAD_PATH = "/mount_point/uploads";
 const DEFAULT_EXAM_FILE_NAME = "exam.html";
 const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
 
+const AVERAGE_LATENCY = 200;
+
 class Storage {
   rootLocation: string;
   examLocation: string;
@@ -182,7 +184,7 @@ class Storage {
   }
 
   public setOffset(timestamp: string) {
-    const offset = dayjs().diff(dayjs(timestamp));
+    const offset = dayjs().diff(dayjs(timestamp)) - AVERAGE_LATENCY;
     logger.info(`Time offset set to ${offset}`)
 
     if (offset > 0) {
