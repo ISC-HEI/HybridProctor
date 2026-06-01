@@ -27,7 +27,7 @@ class Network {
   private async callback() {
     const unlock = await this.studentsMutex.lock();
     try {
-      const now = await unixTime();
+      const now = unixTime();
       const allIps = new Set([...this.students.keys(), ...this.heartbeats.keys()]);
 
       for (const ip of allIps) {
@@ -68,7 +68,7 @@ class Network {
   }
 
   public async recordHeartbeat(ip: string) {
-    this.heartbeats.set(ip, await unixTime());
+    this.heartbeats.set(ip, unixTime());
   }
 
   private update(ip: string, update: StudentUpdate) {
@@ -86,7 +86,7 @@ class Network {
     const unlock = await this.studentsMutex.lock();
     try {
       if (!this.students.has(ip)) {
-        const now = await unixTime();
+        const now = unixTime();
         const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
         this.students.set(ip, newStudent);
       }
@@ -131,7 +131,7 @@ class Network {
     const unlock = await this.studentsMutex.lock();
     try {
       if (!this.students.has(ip)) {
-        const now = await unixTime();
+        const now = unixTime();
         const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
         this.students.set(ip, newStudent);
       }
