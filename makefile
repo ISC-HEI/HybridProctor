@@ -4,6 +4,8 @@ DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
 VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/backend/package.json)
 FULL_VERSION := $(shell git describe --tags --always --first-parent --dirty=.dev)
+NODE_PRUNE_URL := https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm&version=v1.2.0
+NODE_PRUNE_64_URL := https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm64&version=v1.2.0
 
 CACHE_DIR := ./.buildx-cache
 
@@ -23,6 +25,7 @@ imageProd: ## Build docker image for Mikrotik armV7
 	@echo ">>> Docker image created ($(USER_NAME)/$(IMAGE_NAME)-arm:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev: 
+	@curl -sL -o node-prune "$(NODE_PRUNE_URL)"
 	@docker buildx build \
 		--platform=linux/arm/v7 \
 		--build-arg VERSION=$(FULL_VERSION) \
@@ -30,6 +33,7 @@ imageDev:
 	@echo ">>> Docker image created ($(DEV_NAME)/$(IMAGE_NAME)-arm-dev:$(VERSION)). Push on dockerHub from Docker Desktop and then pull the image from the Mikrotik container manager."
 
 imageDev64:
+	@curl -sL -o node-prune "$(NODE_PRUNE_64_URL)"
 	@docker buildx build \
 		--platform=linux/arm64 \
 		--build-arg VERSION=$(FULL_VERSION) \

@@ -15,12 +15,10 @@ ENV NODE_ENV=production
 RUN npm ci --omit=dev --verbose
 RUN npm version --no-git-tag-version $VERSION
 
-RUN apt-get update && apt-get install -y nginx openssh-server curl vim bash
+COPY node-prune /usr/local/bin/node-prune
+RUN chmod +x /usr/local/bin/node-prune && node-prune /app/node_modules
 
-RUN curl -w %{http_code} -sL -o /usr/local/bin/node-prune "https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm&version=v1.2.0" && chmod +x /usr/local/bin/node-prune
-RUN node-prune /app/node_modules
-
-ENV NEXT_TELEMETRY_DISABLE=1
+RUN apt-get update && apt-get install -y --no-install-recommends nginx dropbear openssh-sftp-server bash && rm -rf /var/lib/apt/lists/*
 
 COPY proxy/nginx.conf /etc/nginx/nginx.conf
 COPY proxy/default.conf /etc/nginx/sites-available/default

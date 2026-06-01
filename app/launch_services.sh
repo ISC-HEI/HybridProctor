@@ -1,11 +1,11 @@
 #!/bin/bash
 
-service ssh restart
-echo "Starting SSH"
+dropbear -p 22 -E
+echo "Starting SSH (dropbear)"
 
 service nginx restart
 echo "Starting Nginx"
 
 npm start
-echo "Starting nextjs"
+echo "Starting HybridProctor"
 

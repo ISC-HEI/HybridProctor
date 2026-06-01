@@ -1,3 +1,5 @@
+node-prune
+
 site/
 *.old/
 *.old
