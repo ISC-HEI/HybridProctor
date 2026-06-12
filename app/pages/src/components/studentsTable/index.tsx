@@ -2,13 +2,15 @@ import { type Student } from "@srvtypes/student";
 
 import style from "./index.module.scss";
 import dayjs from "dayjs";
-import type { Signal } from "@preact/signals";
+import { useSignal, type Signal } from "@preact/signals";
 
 interface StudentsTableProps {
   students: Signal<Map<string, Student>>;
 }
 
 export default function StudentsTable({ students }: StudentsTableProps) {
+  const showHidden = useSignal<boolean>(false);
+
   const releaseStudent = (student: Student) => {
     fetch("/api/status", {
       method: "POST",
@@ -21,6 +23,18 @@ export default function StudentsTable({ students }: StudentsTableProps) {
     }); 
   }
 
+  const hideStudent = (student: Student) => {
+    fetch("/api/hide", {
+      method: "POST",
+      body: JSON.stringify({
+        student
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }
+
   return (
     <table id="student_table" className={style.table}>
       <thead>
@@ -30,19 +44,24 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>Since</th>
           <th>Finished</th>
           <th>Connected</th>
+          <th>Hide</th>
         </tr>
       </thead>
       <tbody id="table_body">
         {
           Array.from(students.value.values()).map(
-            (student, idx) =>
+            (student, idx) => (
+              showHidden.value &&
+
               <tr key={idx}>
                 <td>{student.ip}</td>
                 <td>{student.name}</td>
                 <td>{dayjs(student.since * 1000).format("HH:mm:ss").replace(":", "h")}</td>
                 <td><span className={`${style.indicator} ${student.finished ? style.on : style.off} ${style.clickable}`} onClick={() => releaseStudent(student)}></span></td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
+                <td><button className={style.hide_btn} onClick={() => hideStudent(student)}>Hide</button></td>
               </tr>
+            )
           )
         }
       </tbody>

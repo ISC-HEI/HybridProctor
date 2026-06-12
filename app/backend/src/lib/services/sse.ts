@@ -25,10 +25,7 @@ class SSEManager {
 
   private safeWrite(client: Client, event: SSEEvent, data: any) {
     try {
-      client.res.write(`event: ${event}
-data: ${JSON.stringify({ message: data })}
-
-`);
+      client.res.write(`event: ${event}\ndata: ${JSON.stringify({ message: data })}\n\n`);
     } catch (e) {
       logger.error(`Failed to send SSE to ${client.ip}.`);
       console.error(e);
@@ -41,9 +38,7 @@ data: ${JSON.stringify({ message: data })}
 
     const intervalId = setInterval(() => {
       try {
-        res.write(`: heartbeat
-
-`);
+        res.write(`: heartbeat\n\n`);
       } catch {
         this.removeClient(ip, admin);
       }

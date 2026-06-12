@@ -13,7 +13,6 @@ export default function LockInfo() {
 
   const handleLock = () => {
     locked.value = !locked.value;
-    console.log("rah")
 
     fetch("/api/lock", {
       method: "POST"

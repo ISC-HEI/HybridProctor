@@ -61,6 +61,16 @@
         background-color: vars.$gray4;
       }
     }
+
+    td .hide_btn {
+      background: none;
+      color: vars.$blue;
+
+      &:hover {
+        color: vars.$darkblue;
+        cursor: pointer;
+      }
+    }
   }
 }
 
