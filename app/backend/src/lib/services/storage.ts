@@ -35,17 +35,17 @@ class Storage {
   resources!: string[];
   version!: string;
 
-  public get locked(): boolean {
+  get locked(): boolean {
     return appState.locked;
   }
-  private set locked(value: boolean) {
+  set locked(value: boolean) {
     appState.locked = value;
   }
 
-  public get timeOffset(): number {
+  get timeOffset(): number {
     return appState.timeOffset;
   }
-  private set timeOffset(value: number) {
+  set timeOffset(value: number) {
     appState.timeOffset = value;
   }
 
@@ -65,6 +65,7 @@ class Storage {
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
     this.examLocation = path.join(this.local("public"), process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
     this.resourcesLocation = this.local("public/resources");
+
     this.timeOffset = 0
   }
 
