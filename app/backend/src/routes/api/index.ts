@@ -8,7 +8,7 @@ import { sseStudentHandler } from "./sse/student";
 import uploadRouter from "./upload";
 import fetchRouter from "./fetch";
 import authRouter from "./auth";
-import { prepareDownloadPostHandler } from "./prepare";
+import { preparePostHandler } from "./prepare";
 import { statusPostHandler } from "./status";
 import { registerPatchHandler, registerPostHandler } from "./register";
 import { lockPostHandler } from "./lock";
@@ -18,7 +18,7 @@ import { hidePostHandler } from "./hide";
 
 const router = Router();
 
-router.post("/preparedownload", prepareDownloadPostHandler);
+router.post("/prepare", preparePostHandler);
 router.post("/heartbeat", heartbeatPostHandler);
 router.get("/download/:id", downloadGetHandler);
 router.get("/resources/:file", resourcesGetHandler);
