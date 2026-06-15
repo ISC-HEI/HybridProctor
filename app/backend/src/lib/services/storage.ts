@@ -23,32 +23,36 @@ const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
 const AVERAGE_LATENCY = 200;
 
 class Storage {
+  initialized: boolean = false;
+
   rootLocation: string;
   examLocation: string;
   resourcesLocation: string;
   uploadLocation: string;
   passwordLocation: string;
-  initialized: boolean = false;
+
   examConfig!: Yamlconf;
   resources!: string[];
   version!: string;
 
-  get locked(): boolean {
+  public get locked(): boolean {
     return appState.locked;
   }
-  set locked(value: boolean) {
+  private set locked(value: boolean) {
     appState.locked = value;
   }
 
-  get timeOffset(): number {
+  public get timeOffset(): number {
     return appState.timeOffset;
   }
-  set timeOffset(value: number) {
+  private set timeOffset(value: number) {
     appState.timeOffset = value;
   }
 
-  private sessions: Map<string, Session> = new Map<string, Session>();
+
   newPassword: string|undefined;
+
+  private sessions: Map<string, Session> = new Map<string, Session>();
   private password!: string;
 
   constructor() {
