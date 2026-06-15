@@ -37,7 +37,7 @@ class Network {
 
         if (!student) {
           if (isConnected) {
-            const newStudent: Student = { ip, name: "", connected: true, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+            const newStudent: Student = { ip, name: "", connected: true, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
             this.students.set(ip, newStudent);
             this.update(ip, newStudent);
             logger.warn(`New student connected: ${ip}`, { issuer: ip, action: "connected" });
@@ -87,7 +87,7 @@ class Network {
     try {
       if (!this.students.has(ip)) {
         const now = unixTime();
-        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
         this.students.set(ip, newStudent);
       }
       return this.students.get(ip)!;
@@ -132,7 +132,7 @@ class Network {
     try {
       if (!this.students.has(ip)) {
         const now = unixTime();
-        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, latestVersion: { hash: "", path: "" } };
+        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
         this.students.set(ip, newStudent);
       }
       this.update(ip, update);

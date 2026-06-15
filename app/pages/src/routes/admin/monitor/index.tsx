@@ -9,12 +9,12 @@ import Loader from '@/components/loader';
 import Goto from '@/components/goto';
 import { CogIcon } from 'lucide-preact';
 import MonitorInfos from '@/components/monitorInfos';
-import { useSignal } from '@preact/signals';
+import { Signal, useSignal } from '@preact/signals';
 
 export default function Monitor() {
   const type = useSignal<LogType>("all");
   const logs = useSignal<LogRecord[]>([]);
-  const students = useSignal<Map<string, Student>>(new Map());
+  const students = useSignal<Map<string, Student>|null>(null);
   const connected = useSignal<boolean>(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,6 +44,7 @@ export default function Monitor() {
         };
 
         es.addEventListener("init", (evt) => {
+          console.log("init")
           const data = JSON.parse(evt.data) as { message: Student[] };
           students.value = new Map(data.message.map(student => [student.ip, student]));
         });
@@ -114,15 +115,15 @@ export default function Monitor() {
       </aside>
 
       <main className={style.main}>
-        { students.value.size === 0 && connected
+        { !students.value || !connected
           ? <Loader />
           : 
           <div className={style.tableContainer}>
-            <StudentsTable students={students} />
+            <StudentsTable students={students as Signal<Map<string, Student>>} />
           </div>
         }
 
-        <MonitorInfos connected={[...students.value.values()].filter(student => student.connected).length} total={students.value.size} />
+        <MonitorInfos connected={students.value ? [...students.value.values()].filter(student => student.connected).length : 0} total={students.value ? students.value.size : 0} />
       </main>
     </div>
   )

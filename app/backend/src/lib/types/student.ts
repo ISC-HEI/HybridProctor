@@ -7,6 +7,7 @@ export type Student = {
   since: number
   finished: boolean;
   attempts: number;
+  hidden: boolean;
   latestVersion: {
     hash: string;
     path: string;
@@ -19,4 +20,5 @@ export type StudentUpdate = {
   connected?: boolean;
   since?: number;
   finished?: boolean;
+  hidden?: boolean;
 }

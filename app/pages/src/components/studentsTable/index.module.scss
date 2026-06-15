@@ -61,6 +61,24 @@
         background-color: vars.$gray4;
       }
     }
+
+    .hide_btn {
+      background: none;
+      color: vars.$blue;
+
+      &:hover {
+        color: vars.$darkblue;
+        cursor: pointer;
+      }
+    }
+
+    &.hidden {
+      background-color: vars.$gray3;
+    }
+
+    &.hide {
+      display: none;
+    }
   }
 }
 
