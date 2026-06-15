@@ -62,7 +62,7 @@
       }
     }
 
-    td .hide_btn {
+    .hide_btn {
       background: none;
       color: vars.$blue;
 
@@ -70,6 +70,14 @@
         color: vars.$darkblue;
         cursor: pointer;
       }
+    }
+
+    &.hidden {
+      background-color: vars.$gray3;
+    }
+
+    &.hide {
+      display: none;
     }
   }
 }

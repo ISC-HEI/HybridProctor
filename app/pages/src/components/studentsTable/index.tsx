@@ -44,22 +44,20 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>Since</th>
           <th>Finished</th>
           <th>Connected</th>
-          <th>Hide</th>
+          <th><button className={style.hide_btn} onClick={() => showHidden.value = !showHidden.value}>{showHidden.value ? "Hide" : "Show"} hidden</button></th>
         </tr>
       </thead>
       <tbody id="table_body">
         {
           Array.from(students.value.values()).map(
             (student, idx) => (
-              showHidden.value &&
-
-              <tr key={idx}>
+              <tr className={`${student.hidden ? style.hidden : ""} ${!showHidden.value && student.hidden ? style.hide : ""}`} key={idx}>
                 <td>{student.ip}</td>
                 <td>{student.name}</td>
                 <td>{dayjs(student.since * 1000).format("HH:mm:ss").replace(":", "h")}</td>
                 <td><span className={`${style.indicator} ${student.finished ? style.on : style.off} ${style.clickable}`} onClick={() => releaseStudent(student)}></span></td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
-                <td><button className={style.hide_btn} onClick={() => hideStudent(student)}>Hide</button></td>
+                <td><button className={style.hide_btn} onClick={() => hideStudent(student)}>{student.hidden ? "Show" : "Hide"}</button></td>
               </tr>
             )
           )
