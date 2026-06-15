@@ -18,6 +18,22 @@ class Network {
     this.runner();
   }
 
+  private createStudent(ip: string, time: number) {
+    const newStudent: Student = { ip, name: "", connected: true, finished: false, since: time, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
+
+    this.students.set(ip, newStudent);
+
+    return newStudent
+  }
+
+  private createStudentIfNotExists(ip: string) {
+    if (this.students.has(ip)) return;
+
+    const now = unixTime();
+
+    this.createStudent(ip, now);
+  }
+
   private runner() {
     this.callback().finally(() => {
       setTimeout(this.runner.bind(this), CHECK_INTERVAL);
@@ -37,14 +53,14 @@ class Network {
 
         if (!student) {
           if (isConnected) {
-            const newStudent: Student = { ip, name: "", connected: true, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
-            this.students.set(ip, newStudent);
+            const newStudent = this.createStudent(ip, now);
             this.update(ip, newStudent);
+
             logger.warn(`New student connected: ${ip}`, { issuer: ip, action: "connected" });
           }
           continue;
         }
-        
+
         if (student.connected !== isConnected) {
           if (isConnected === false && student.attempts < 3) {
             student.attempts++;
@@ -85,11 +101,8 @@ class Network {
   public async getStudent(ip: string): Promise<Student> {
     const unlock = await this.studentsMutex.lock();
     try {
-      if (!this.students.has(ip)) {
-        const now = unixTime();
-        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
-        this.students.set(ip, newStudent);
-      }
+      this.createStudentIfNotExists(ip);
+
       return this.students.get(ip)!;
     } finally {
       unlock();
@@ -108,7 +121,7 @@ class Network {
     if (length === 1) {
       return students[0];
     }
-    
+
     if (length > 1) {
       logger.error(`${length} students have the same name !`)
       return students[length - 1];
@@ -130,11 +143,8 @@ class Network {
   public async addUpdate(ip: string, update: StudentUpdate) {
     const unlock = await this.studentsMutex.lock();
     try {
-      if (!this.students.has(ip)) {
-        const now = unixTime();
-        const newStudent: Student = { ip, name: "", connected: false, finished: false, since: now, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
-        this.students.set(ip, newStudent);
-      }
+      this.createStudentIfNotExists(ip);
+      
       this.update(ip, update);
     } finally {
       unlock();

@@ -23,12 +23,14 @@ const DEFAULT_PASSWORD_FILE = "/mount_point/.password";
 const AVERAGE_LATENCY = 200;
 
 class Storage {
+  initialized: boolean = false;
+
   rootLocation: string;
   examLocation: string;
   resourcesLocation: string;
   uploadLocation: string;
   passwordLocation: string;
-  initialized: boolean = false;
+
   examConfig!: Yamlconf;
   resources!: string[];
   version!: string;
@@ -47,8 +49,10 @@ class Storage {
     appState.timeOffset = value;
   }
 
-  private sessions: Map<string, Session> = new Map<string, Session>();
+
   newPassword: string|undefined;
+
+  private sessions: Map<string, Session> = new Map<string, Session>();
   private password!: string;
 
   constructor() {
@@ -61,6 +65,7 @@ class Storage {
     this.uploadLocation = process.env.UPLOAD_PATH !== "default" ? process.env.UPLOAD_PATH : DEFAULT_UPLOAD_PATH;
     this.examLocation = path.join(this.local("public"), process.env.EXAM_FILE_NAME !== "default" ? process.env.EXAM_FILE_NAME : DEFAULT_EXAM_FILE_NAME);
     this.resourcesLocation = this.local("public/resources");
+
     this.timeOffset = 0
   }
 

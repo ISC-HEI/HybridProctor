@@ -22,10 +22,8 @@ const publicDir = path.join(process.cwd(), "public");
 app.use(express.static(staticDir));
 app.use(express.static(publicDir));
 
-app.get(/.*/, (req, res) => {
+app.get(/.*/, (_, res) => {
   res.sendFile(path.join(staticDir, "index.html"))
 });
-
-
 
 export default app;

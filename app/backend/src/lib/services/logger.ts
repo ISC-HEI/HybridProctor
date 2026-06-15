@@ -108,26 +108,27 @@ class Logger {
     sseManager.broadcast([record], "log");
   }
 
-  public async info(message: string, opts?: LogRecordOpts) {
-    const record = await this.buildRecord("infos", message, opts);
+  private async log(message: string, type: LogType, opts?: LogRecordOpts) {
+    const record = await this.buildRecord(type, message, opts);
     await this.writeRecord(record);
+  }
+
+  public async info(message: string, opts?: LogRecordOpts) {
+    this.log(message, "infos", opts);
   }
 
   public async warn(message: string, opts?: LogRecordOpts) {
-    const record = await this.buildRecord("warnings", message, opts);
-    await this.writeRecord(record);
+    this.log(message, "warnings", opts);
   }
 
   public async error(message: string, opts?: LogRecordOpts) {
-    const record = await this.buildRecord("errors", message, opts);
-    await this.writeRecord(record);
+    this.log(message, "errors", opts);
   }
 
   public async debug(message: string, opts?: LogRecordOpts) {
     if (this.logLevel !== "debug") return;
 
-    const record = await this.buildRecord("debug", message, opts);
-    await this.writeRecord(record);
+    this.log(message, "debug", opts);
   }
 
   public getLogs(): LogRecord[] {
