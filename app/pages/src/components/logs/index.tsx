@@ -11,20 +11,33 @@ interface LogsProps {
 
 export default function Logs({ type, logs }: LogsProps) {
   const filteredLogs = logs.value.filter(log => type.value === "all" || log.type === type.value).reverse();
+  const length: number = filteredLogs.length;
 
-  const lastUUID = type.value === "all" 
-    ? logs.value[0].uuid 
-    : filteredLogs[filteredLogs.indexOf(filteredLogs.filter(log => log.type === type.value)[0])].uuid;
+  const lastUUID = length === 0 ? "" :
+    type.value === "all" 
+      ? logs.value[0].uuid 
+      : filteredLogs[length - 1].uuid;
+
+  console.log(lastUUID)
 
   return (
-    <VList className={style.logs}>
-      {filteredLogs.map(log => {
-        return (
-          <div>
-            <Log record={log} isNew={true} isLast={log.uuid === lastUUID} />
-          </div>
-        );
-      })}
-    </VList>
+    <>
+    { length === 0
+      ?
+      <div className={style.no_entry}>
+        <p>No entry matching the "{type}" filter</p>
+      </div>
+      :
+      <VList className={style.logs}>
+        {filteredLogs.map(log => {
+          return (
+            <div>
+              <Log record={log} isNew={false} isLast={log.uuid === lastUUID} />
+            </div>
+          );
+        })}
+      </VList>
+    }
+    </>
   );
 }

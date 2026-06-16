@@ -22,7 +22,7 @@ export default function LockInfo() {
   return (
     <article className={style.lockinfo}>
       <p>The exam is currently <span className={`${locked.value ? style.locked : style.unlocked}`}>{ locked.value ? "locked" : "unlocked" }</span></p>
-      <button className={style.button} onClick={handleLock}>{ locked ? "Unlock" : "Lock" }</button>
+      <button className={style.button} onClick={handleLock}>{ locked.value ? "Unlock" : "Lock" }</button>
     </article>
   )
 }
