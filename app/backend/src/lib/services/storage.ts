@@ -193,9 +193,7 @@ class Storage {
     logger.debug(`Time offset set to ${offset}`);
     logger.info(`Router time set to ${getTime().format("ddd DD-MM-YYYY HH:mm:ss")}`);
 
-    if (offset > 0) {
-      this.timeOffset = offset;
-    }
+    this.timeOffset = offset;
   }
 
   public async createSession(ip: string) {
