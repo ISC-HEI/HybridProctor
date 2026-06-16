@@ -18,7 +18,7 @@ export default function Log({ record, isNew, isLast }: LogProps) {
   }
 
   return (
-    <li className={`${style.record} ${isNew ? style.new : ''} ${isLast ? style.last : ''}`}>
+    <li className={`${style.record} ${isNew ? style.new : ''} ${isLast ? style.last : ''}`} id={`log_${record.uuid}`}>
       <div className={style.type}>
         <span>{record.type[0].toUpperCase()}</span>
       </div>
