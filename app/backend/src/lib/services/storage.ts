@@ -190,7 +190,8 @@ class Storage {
 
   public setOffset(timestamp: string) {
     const offset = dayjs(timestamp).diff(dayjs()) - AVERAGE_LATENCY;
-    logger.info(`Time offset set to ${offset}`)
+    logger.debug(`Time offset set to ${offset}`);
+    logger.info(`Router time set to ${getTime().format("ddd DD-MM-YYYY HH:mm:ss")}`);
 
     if (offset > 0) {
       this.timeOffset = offset;
@@ -205,6 +206,8 @@ class Storage {
       ip,
       until: (getTime()).add(2, "hours").valueOf(),
     });
+
+    logger.debug(`Session created for ip: ${ip}`);
 
     return id;
   }
@@ -221,6 +224,8 @@ class Storage {
     await fs.writeFile("public/config.yml", yamlConfString);
 
     this.examConfig = conf;
+
+    logger.info(`Exam config modified`);
   }
 
   public async writeResources(files: Express.Multer.File[]) {
@@ -231,6 +236,8 @@ class Storage {
       await this.write(this.local("public/resources"), file);
       this.resources.push(file.originalname);
     }
+
+    logger.info(`Exam resources modified`);
   }
 
   public async writeStudentFiles(ip: string, files: Express.Multer.File[]) {
