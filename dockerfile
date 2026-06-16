@@ -13,7 +13,7 @@ COPY app/*.sh ./
 
 ENV NODE_ENV=production
 RUN npm ci --omit=dev --verbose
-RUN npm version --no-git-tag-version $VERSION
+RUN npm version --no-git-tag-version --allow-same-version $VERSION
 
 COPY node-prune /usr/local/bin/node-prune
 RUN chmod +x /usr/local/bin/node-prune && node-prune /app/node_modules

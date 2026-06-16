@@ -3,7 +3,7 @@ USER_NAME = stevedevenes
 DEV_NAME = enderastronaute
 IMAGE_NAME = hybridproctor
 VERSION := $(shell grep -oP '"version": "\K(.*?)(?=")' app/backend/package.json)
-FULL_VERSION := $(shell git describe --tags --always --first-parent --dirty=.dev)
+FULL_VERSION := $(shell git describe --tags --always --first-parent --dirty=-dev)
 NODE_PRUNE_URL := https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm&version=v1.2.0
 NODE_PRUNE_64_URL := https://gobinaries.com/binary/github.com/tj/node-prune?os=linux&arch=arm64&version=v1.2.0
 
