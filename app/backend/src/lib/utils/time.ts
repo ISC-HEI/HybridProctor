@@ -6,5 +6,5 @@ export function getTime() {
 }
 
 export function unixTime() {
-  return (getTime()).unix();
+  return getTime().unix();
 }
