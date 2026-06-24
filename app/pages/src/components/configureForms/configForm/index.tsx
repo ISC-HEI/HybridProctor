@@ -10,6 +10,7 @@ const DEFAULT_LABEL = "Please upload the following files at the end: ";
 
 export default function ConfigForm() {
   const enable = useSignal<boolean>(true);
+  const validate = useSignal<boolean>(false);
   const label = useSignal<string>("");
   const files = useSignal<string[]>([]);
   const fileToAdd = useSignal<string>("");
@@ -25,7 +26,8 @@ export default function ConfigForm() {
         method: "POST",
         body: JSON.stringify({
           config: {
-            enable,
+            enable: enable.value,
+            validate: validate.value,
             label: label.value !== "" ? label : DEFAULT_LABEL,
             studentsFiles: files
           }
@@ -70,6 +72,11 @@ export default function ConfigForm() {
         </label>
         { enable.value &&
           <>
+            <label className={style.label}>
+              Students need to validate their files
+              <input id="enable_cbx" type="checkbox" checked={validate} onInput={evt => validate.value = evt.currentTarget.checked} name="validated" />
+            </label>
+
             <label className={`${style.label} ${style.desc}`}>
               Label
               <Input id="label" name="label" placeholder={DEFAULT_LABEL} area value={label} onInput={evt => label.value = evt.currentTarget.value}/>
