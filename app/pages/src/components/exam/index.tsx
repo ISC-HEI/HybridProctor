@@ -50,8 +50,6 @@ export default function Exam({ conf }: ExamProps) {
         body: formData,
       });
 
-      console.log("ouias")
-
       const state = await response.json();
 
       addNotification({ success: state.ok, text: state.message, infinite: false });
@@ -90,7 +88,7 @@ export default function Exam({ conf }: ExamProps) {
           }
         </button>
       </form>
-      { conf && conf.enable &&
+      { conf && conf.enable && conf.validation &&
         <button id="end_btn" className={style.end_btn} disabled={!conf} onClick={handleShowValidate}>
           { loading.value
             ? <Loader light />

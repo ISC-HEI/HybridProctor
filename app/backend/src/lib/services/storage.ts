@@ -97,6 +97,7 @@ class Storage {
       logger.debug("No config, falling back to default");
       this.examConfig = {
         enable: false,
+        validate: false,
         label: "Default config",
         studentsFiles: []
       }
