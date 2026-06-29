@@ -28,7 +28,6 @@ class SSEManager {
       client.res.write(`event: ${event}\ndata: ${JSON.stringify({ message: data })}\n\n`);
     } catch (e) {
       logger.error(`Failed to send SSE to ${client.ip}.`);
-      console.error(e);
       this.removeClient(client.ip, client.admin);
     }
   }
@@ -36,13 +35,16 @@ class SSEManager {
   public async addClient(ip: string, res: Response, admin: boolean) {
     const client: Client = { ip, res, admin }; 
 
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       try {
         res.write(`: heartbeat\n\n`);
       } catch {
+        const student = await network.getStudent(ip);
+        logger.warn(`SSE heartbeat couldn't been send to ${student.name || student.ip}`)
+
         this.removeClient(ip, admin);
       }
-    }, 15000);
+    }, 10000);
 
     client.intervalId = intervalId;
 
