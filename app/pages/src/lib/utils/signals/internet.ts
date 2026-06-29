@@ -17,7 +17,7 @@ async function hasExternalInternetAccess(ms: number = 3000) {
 
     return true;
   }
-  catch {
+  catch (e) {
     return false;
   }
   finally {
@@ -30,7 +30,10 @@ async function reportStudent(connected: boolean) {
     method: "POST",
     body: JSON.stringify({
       hasInternet: connected
-    })
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
   })
 }
 

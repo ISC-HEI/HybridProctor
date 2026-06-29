@@ -15,6 +15,7 @@ import { lockPostHandler } from "./lock";
 import { hashPostHandler } from "./hash";
 import { timePostHandler } from "./time";
 import { hidePostHandler } from "./hide";
+import { reportPostHandler } from "./report";
 
 const router = Router();
 
@@ -31,6 +32,7 @@ router.post("/lock", lockPostHandler);
 router.post("/hash", hashPostHandler);
 router.post("/time", timePostHandler);
 router.post("/hide", hidePostHandler);
+router.post("/report", reportPostHandler);
 
 router.use("/upload", uploadRouter);
 router.use("/fetch", fetchRouter);
