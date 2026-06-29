@@ -4,7 +4,8 @@ export type Student = {
   ip: string;
   name: string;
   connected: boolean;
-  since: number
+  since: number;
+  sent: boolean;
   finished: boolean;
   attempts: number;
   hidden: boolean;
@@ -19,6 +20,7 @@ export type StudentUpdate = {
   name?: string;
   connected?: boolean;
   since?: number;
+  sent?: boolean;
   finished?: boolean;
   hidden?: boolean;
 }

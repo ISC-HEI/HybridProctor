@@ -7,6 +7,5 @@ export async function timePostHandler(req: Request, res: Response) {
   const timestamp: string = req.body.timestamp;
   storage.setOffset(timestamp)
 
-
   return res.json({ time: unixTime() });
 }

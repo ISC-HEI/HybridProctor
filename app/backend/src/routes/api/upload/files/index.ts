@@ -44,7 +44,7 @@ export async function filesPostHandler(req: Request, res: Response) {
   if (storage.examConfig.studentsFiles.length === 0) {
     logger.info(`${name} finished the exam.`, { issuer: name, action: "Finished" })
 
-    await network.addUpdate(ip, { ip, finished: true });
+    network.addUpdate(ip, { ip, finished: true });
     sseManager.send(ip, { locked: storage.locked, finished: true }, "std", false);
 
     return res.status(200).json({
@@ -66,8 +66,6 @@ export async function filesPostHandler(req: Request, res: Response) {
 
   const missing = storage.examConfig.studentsFiles.filter(req => !uploadedNames.includes(req));
 
-  logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
-
   const hash = await storage.writeStudentFiles(ip, files);
 
   if (hash === "") {
@@ -77,6 +75,10 @@ export async function filesPostHandler(req: Request, res: Response) {
       hash: ""
     });
   }
+
+  logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
+
+  network.addUpdate(ip, { ip, sent: true });
 
   return res.status(200).json({
     ok: true,

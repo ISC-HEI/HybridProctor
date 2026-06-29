@@ -19,7 +19,7 @@ class Network {
   }
 
   private createStudent(ip: string, time: number) {
-    const newStudent: Student = { ip, name: "", connected: true, finished: false, since: time, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
+    const newStudent: Student = { ip, name: "", connected: true, sent: false, finished: false, since: time, attempts: 0, hidden: false, latestVersion: { hash: "", path: "" } };
 
     this.students.set(ip, newStudent);
 
