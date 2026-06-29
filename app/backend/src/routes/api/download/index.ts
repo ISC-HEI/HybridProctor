@@ -30,14 +30,12 @@ export async function downloadGetHandler(req: Request, res: Response) {
       fs.unlink(tempPath, (err) => {
         if (err) {
           logger.error(`Failed to delete temp file ${tempPath}`);
-          console.error(err);
         }
       });
     });
 
     dataStream.on("error", (err) => {
       logger.error(`Error reading temp file ${tempPath}`);
-      console.error(err);
       passThrough.end();
     });
 
@@ -49,7 +47,7 @@ export async function downloadGetHandler(req: Request, res: Response) {
 
   } catch (error) {
     logger.error("An error occured creating temp file.");
-    console.error(error);
+
     return res.status(500).send("An error occurred");
   }
 }
