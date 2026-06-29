@@ -2,14 +2,27 @@ import { type Student } from "@srvtypes/student";
 
 import style from "./index.module.scss";
 import dayjs from "dayjs";
-import { useSignal, type Signal } from "@preact/signals";
+import { useSignal, useSignalEffect, type Signal } from "@preact/signals";
+import type { Yamlconf } from "@srvtypes/yamlconf";
 
 interface StudentsTableProps {
   students: Signal<Map<string, Student>>;
 }
 
 export default function StudentsTable({ students }: StudentsTableProps) {
+  const yamlconf = useSignal<Yamlconf>();
   const showHidden = useSignal<boolean>(false);
+
+  useSignalEffect(() => {
+    (async () => {
+      yamlconf.value = await (await fetch("/api/fetch/config")).json();
+    })();
+  });
+
+  const canFinish = () => {
+    console.log(yamlconf.value)
+    return yamlconf.value && ( yamlconf.value.validation || !yamlconf.value.enable )
+  }
 
   const releaseStudent = (student: Student) => {
     fetch("/api/status", {
@@ -42,7 +55,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>IP</th>
           <th>Name</th>
           <th>Since</th>
-          <th>Finished</th>
+          <th>{canFinish() ? "Finished" : "Sent files"}</th>
           <th>Connected</th>
           <th><button className={style.hide_btn} onClick={() => showHidden.value = !showHidden.value}>{showHidden.value ? "Hide" : "Show"} hidden</button></th>
         </tr>
@@ -55,7 +68,12 @@ export default function StudentsTable({ students }: StudentsTableProps) {
                 <td>{student.ip}</td>
                 <td>{student.name}</td>
                 <td>{dayjs(student.since * 1000).format("HH:mm:ss").replace(":", "h")}</td>
-                <td><span className={`${style.indicator} ${student.finished ? style.on : style.off} ${style.clickable}`} onClick={() => releaseStudent(student)}></span></td>
+                <td>
+                  <span
+                    className={`${style.indicator} ${(canFinish() ? student.finished : student.sent) ? style.on : style.off} ${canFinish() ? style.clickable : ""}`}
+                    onClick={() => canFinish() ? releaseStudent(student) : null}
+                  >{canFinish() ? student.finished : student.sent}</span>
+                </td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
                 <td><button className={style.hide_btn} onClick={() => hideStudent(student)}>{student.hidden ? "Show" : "Hide"}</button></td>
               </tr>
