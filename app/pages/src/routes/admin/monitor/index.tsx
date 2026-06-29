@@ -16,6 +16,7 @@ export default function Monitor() {
   const logs = useSignal<LogRecord[]>([]);
   const students = useSignal<Map<string, Student>|null>(null);
   const connected = useSignal<boolean>(false);
+
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   

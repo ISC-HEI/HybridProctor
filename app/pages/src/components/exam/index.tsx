@@ -54,7 +54,7 @@ export default function Exam({ conf }: ExamProps) {
 
       addNotification({ success: state.ok, text: state.message, infinite: false });
 
-      if (state.ok) {
+      if (state.ok && conf && conf.validation) {
         hash.value = state.hash
       }
     } catch (error) {

@@ -9,8 +9,8 @@ import type { TargetedMouseEvent, TargetedEvent } from "preact";
 const DEFAULT_LABEL = "Please upload the following files at the end: ";
 
 export default function ConfigForm() {
-  const enable = useSignal<boolean>(true);
-  const validate = useSignal<boolean>(false);
+  const enabled = useSignal<boolean>(true);
+  const validation = useSignal<boolean>(false);
   const label = useSignal<string>("");
   const files = useSignal<string[]>([]);
   const fileToAdd = useSignal<string>("");
@@ -26,8 +26,8 @@ export default function ConfigForm() {
         method: "POST",
         body: JSON.stringify({
           config: {
-            enable: enable.value,
-            validate: validate.value,
+            enable: enabled.value,
+            validation: validation.value,
             label: label.value !== "" ? label : DEFAULT_LABEL,
             studentsFiles: files
           }
@@ -68,13 +68,13 @@ export default function ConfigForm() {
 
         <label className={style.label}>
           Students need to upload files
-          <input id="enable_cbx" type="checkbox" checked={enable} onInput={evt => enable.value = evt.currentTarget.checked} name="enabled" />
+          <input id="enable_cbx" type="checkbox" checked={enabled} onInput={evt => enabled.value = evt.currentTarget.checked} name="enabled" />
         </label>
-        { enable.value &&
+        { enabled.value &&
           <>
             <label className={style.label}>
               Students need to validate their files
-              <input id="enable_cbx" type="checkbox" checked={validate} onInput={evt => validate.value = evt.currentTarget.checked} name="validated" />
+              <input id="enable_cbx" type="checkbox" checked={validation} onInput={evt => validation.value = evt.currentTarget.checked} name="validated" />
             </label>
 
             <label className={`${style.label} ${style.desc}`}>
@@ -115,7 +115,7 @@ export default function ConfigForm() {
         }
       </fieldset> 
 
-      <FormButtons disabled={enable.value && files.value.length === 0} loading={isPending}/>
+      <FormButtons disabled={enabled.value && files.value.length === 0} loading={isPending}/>
     </form>
   )
 }
