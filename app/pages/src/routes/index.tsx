@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'preact/hooks';
 import { type Yamlconf } from '@srvtypes/yamlconf';
 import LockScreen from '@components/lockScreen';
 import { useSignal } from '@preact/signals';
+import { startExternalConnectivityWatcher } from '@/lib/utils/signals/internet';
 
 const HEARTBEAT_INTERVAL = 5000;
 
@@ -92,6 +93,8 @@ export default function ExamPage() {
   }, []);
 
   useEffect(() => {
+    const internatInterval = startExternalConnectivityWatcher();
+
     const sendHeartbeat = async () => {
       try {
         await fetch('/api/heartbeat', {
@@ -110,6 +113,7 @@ export default function ExamPage() {
 
     return () => {
       clearInterval(intervalId);
+      clearInterval(internatInterval);
     };
   }, []);
 

@@ -4,6 +4,7 @@ export type Student = {
   ip: string;
   name: string;
   connected: boolean;
+  hasInternet: boolean;
   since: number;
   sent: boolean;
   finished: boolean;
@@ -19,6 +20,7 @@ export type StudentUpdate = {
   ip: string;
   name?: string;
   connected?: boolean;
+  hasInternet?: boolean;
   since?: number;
   sent?: boolean;
   finished?: boolean;

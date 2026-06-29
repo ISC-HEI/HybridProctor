@@ -57,6 +57,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
           <th>Since</th>
           <th>{canFinish() ? "Finished" : "Sent files"}</th>
           <th>Connected</th>
+          <th>Has internet</th>
           <th><button className={style.hide_btn} onClick={() => showHidden.value = !showHidden.value}>{showHidden.value ? "Hide" : "Show"} hidden</button></th>
         </tr>
       </thead>
@@ -75,6 +76,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
                   >{canFinish() ? student.finished : student.sent}</span>
                 </td>
                 <td><span className={`${style.indicator} ${student.connected ? style.on : style.off}`}></span></td>
+                <td><span className={`${style.indicator} ${student.hasInternet ? style.on : style.off}`}></span></td>
                 <td><button className={style.hide_btn} onClick={() => hideStudent(student)}>{student.hidden ? "Show" : "Hide"}</button></td>
               </tr>
             )
