@@ -17,7 +17,7 @@ export async function statusPostHandler(req: Request, res: Response) {
   const ip = student.ip;
   const finished = !student.finished;
 
-  network.addUpdate(ip, { ip, finished });
+  network.addUpdate({ ip, finished });
 
   logger.warn(`Admin changed 'finished' status of ${student.name !== '' ? student.name : `${student.ip} (Unknown name)`}`, { action: "Changed a status", issuer: "Admin" });
 

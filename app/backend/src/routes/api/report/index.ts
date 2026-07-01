@@ -12,7 +12,7 @@ export async function reportPostHandler(req: Request, res: Response) {
   const ip = getIp(req);
   const hasInternet = req.body.hasInternet;
 
-  network.addUpdate(ip, { ip, hasInternet })
+  network.addUpdate({ ip, hasInternet })
 
   return res.sendStatus(200);
 }

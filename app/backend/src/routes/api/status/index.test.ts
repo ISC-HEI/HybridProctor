@@ -35,7 +35,6 @@ describe("POST /api/status", () => {
     await request(app).post("/api/status").send({ student });
 
     expect(networkMock.addUpdate).toHaveBeenCalledWith(
-      student.ip,
       expect.objectContaining({ finished: false })
     )
   })

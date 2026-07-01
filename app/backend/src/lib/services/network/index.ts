@@ -186,12 +186,13 @@ class Network {
 
   /**
    * Atomically applies a partial update to a student. Creates the student first if it does not exist.
-   * @param ip - The student's IP address.
    * @param update - The partial update to apply.
    */
-  public async addUpdate(ip: string, update: StudentUpdate) {
+  public async addUpdate(update: StudentUpdate) {
     const unlock = await this.studentsMutex.lock();
     try {
+      const ip = update.ip;
+
       this.createStudentIfNotExists(ip);
       
       this.update(ip, update);

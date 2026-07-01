@@ -14,7 +14,7 @@ export async function hidePostHandler(req: Request, res: Response) {
   const ip = student.ip;
   const hidden = !student.hidden;
 
-  network.addUpdate(ip, { ip, hidden });
+  network.addUpdate({ ip, hidden });
 
   logger.warn(`Admin changed 'hidden' status of ${student.name !== '' ? student.name : `${student.ip} (Unknown name)`}`, { action: "Changed a status", issuer: "Admin" });
 

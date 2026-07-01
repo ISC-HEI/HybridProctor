@@ -54,7 +54,7 @@ export async function registerPatchHandler(req: Request, res: Response) {
     });
   }
 
-  network.addUpdate(ip, { ip, name: fullname });
+  network.addUpdate({ ip, name: fullname });
 
   logger.info(`${ip} Registered as ${fullname}.`, { issuer: fullname, action: "Registered" });
 

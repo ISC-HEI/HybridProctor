@@ -32,7 +32,7 @@ describe("Network service", () => {
 
     expect(student.name).toBe("");
 
-    network.addUpdate("127.0.0.1", { ip: "127.0.0.1", name: "John Doe" });
+    network.addUpdate({ ip: "127.0.0.1", name: "John Doe" });
 
     student = await network.getStudent("127.0.0.1");
 

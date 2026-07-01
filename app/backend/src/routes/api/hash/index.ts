@@ -33,7 +33,7 @@ export async function hashPostHandler(req: Request, res: Response) {
     });
   }
 
-  network.addUpdate(ip, { ip, finished: true });
+  network.addUpdate({ ip, finished: true });
 
   sseManager.send(ip, { locked: storage.locked, finished: true }, "std", false);
   logger.info(`Student ${student.name} finished`, { action: "Finished", issuer: student.name })

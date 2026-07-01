@@ -50,7 +50,7 @@ export async function filesPostHandler(req: Request, res: Response) {
   if (storage.examConfig.studentsFiles.length === 0) {
     logger.info(`${name} finished the exam.`, { issuer: name, action: "Finished" })
 
-    network.addUpdate(ip, { ip, finished: true });
+    network.addUpdate({ ip, finished: true });
     sseManager.send(ip, { locked: storage.locked, finished: true }, "std", false);
 
     return res.status(200).json({
@@ -84,7 +84,7 @@ export async function filesPostHandler(req: Request, res: Response) {
 
   logger.info(`files uploaded by ${name}.`, { issuer: name, action: "Uploaded files" })
 
-  network.addUpdate(ip, { ip, sent: true });
+  network.addUpdate({ ip, sent: true });
 
   return res.status(200).json({
     ok: true,
