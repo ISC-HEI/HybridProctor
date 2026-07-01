@@ -3,6 +3,12 @@ import sseManager from "@services/sse";
 import storage from "@services/storage";
 import { type Request, type Response } from "express";
 
+/**
+ * Establishes a Server-Sent Events connection for an admin. Verifies the session cookie
+ * before streaming; sends an error event if unauthorized.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function sseAdminHandler(req: Request, res: Response) {
   const ip = getIp(req);
   const sessionId = req.cookies?.sid;

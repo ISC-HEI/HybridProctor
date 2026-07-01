@@ -4,6 +4,11 @@ import network from "@/lib/services/network";
 import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
 
+/**
+ * Validates that the requesting student's name matches their registered IP.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function registerPostHandler(req: Request, res: Response) {
   const name = req.body.name;
   
@@ -16,6 +21,12 @@ export async function registerPostHandler(req: Request, res: Response) {
   return res.status(200).json({ status: true });
 }
 
+/**
+ * Registers or confirms a student's name. Rejects with a conflict if another student already
+ * registered the same name.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function registerPatchHandler(req: Request, res: Response) {
   const { surname, name } = req.body;
   const fullname = surname + ' ' + name;

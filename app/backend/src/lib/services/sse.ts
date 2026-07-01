@@ -23,6 +23,12 @@ class SSEManager {
     this.encoder = new TextEncoder();
   }
 
+  /**
+   * Writes an SSE event frame to a client. Removes the client on write failure.
+   * @param client - The target SSE client.
+   * @param event - The event name.
+   * @param data - The data payload to send.
+   */
   private safeWrite(client: Client, event: SSEEvent, data: any) {
     try {
       client.res.write(`event: ${event}\ndata: ${JSON.stringify({ message: data })}\n\n`);
@@ -32,6 +38,14 @@ class SSEManager {
     }
   }
 
+  /**
+   * Registers a new SSE client and starts a heartbeat interval (10s) to keep the connection alive.
+   * On first connect, sends the appropriate initialisation data (log history for admins,
+   * connection signal for students).
+   * @param ip - The client IP address.
+   * @param res - The Express response object.
+   * @param admin - Whether the client is an admin.
+   */
   public async addClient(ip: string, res: Response, admin: boolean) {
     const client: Client = { ip, res, admin }; 
 
@@ -65,6 +79,11 @@ class SSEManager {
     }
   }
 
+  /**
+   * Deregisters an SSE client, clears its heartbeat interval, and ends the response.
+   * @param ip - The client IP address.
+   * @param admin - Whether the client is an admin.
+   */
   public removeClient(ip: string, admin: boolean) {
     const client = admin ? this.admins.get(ip) : this.students.get(ip);
     if (client) {
@@ -81,6 +100,12 @@ class SSEManager {
     }
   }
 
+  /**
+   * Sends an event to all connected clients of a given type (admin or student).
+   * @param message - The data to send.
+   * @param event - The event name.
+   * @param [admin=true] - Broadcast to admin clients (true) or student clients (false).
+   */
   public broadcast(message: object, event: SSEEvent, admin: boolean = true) {
     const clients = admin ? this.admins : this.students;
     for (const client of clients.values()) {
@@ -88,6 +113,13 @@ class SSEManager {
     }
   }
 
+  /**
+   * Sends an event to a single client identified by IP address.
+   * @param ip - The client IP address.
+   * @param message - The data to send.
+   * @param event - The event name.
+   * @param admin - Whether the target is an admin client.
+   */
   public send(ip: string, message: object, event: SSEEvent, admin: boolean) {
     const client = admin ? this.admins.get(ip) : this.students.get(ip);
 

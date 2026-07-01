@@ -6,6 +6,12 @@ import storage from "@/lib/services/storage";
 import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
 
+/**
+ * Handles student file submissions. Validates the exam is not locked, the student is not
+ * already finished, and checks for missing required files before storing.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function filesPostHandler(req: Request, res: Response) {
   const ip = getIp(req);
   const files = req.files as Express.Multer.File[];

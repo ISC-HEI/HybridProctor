@@ -4,6 +4,11 @@ import { type Request, type Response } from 'express';
 import mime from 'mime-types';
 import logger from '@/lib/services/logger';
 
+/**
+ * Serves an exam resource file by name, with MIME-type detection and path-traversal protection.
+ * @param req - The Express request object (contains :file param).
+ * @param res - The Express response object.
+ */
 export async function resourcesGetHandler(req: Request, res: Response) {
   const file = req.params.file as string;
 

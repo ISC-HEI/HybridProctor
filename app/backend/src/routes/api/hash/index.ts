@@ -6,6 +6,12 @@ import storage from "@/lib/services/storage";
 import { getIp } from "@/lib/utils/network";
 import { type Request, type Response } from "express";
 
+/**
+ * Validates that the submitted hash matches the student's latest uploaded version, finalizes
+ * the submission, and marks the student as finished.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function hashPostHandler(req: Request, res: Response) {
   const ip = getIp(req);
   
