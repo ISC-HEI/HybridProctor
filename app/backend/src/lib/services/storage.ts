@@ -35,6 +35,9 @@ class Storage {
   resources!: string[];
   version!: string;
 
+  // Temp password shown on first run, cleared once admin sets a new one
+  newPassword: string|undefined;
+
   get locked(): boolean {
     return appState.locked;
   }
@@ -49,12 +52,14 @@ class Storage {
     appState.timeOffset = value;
   }
 
-
-  newPassword: string|undefined;
-
-  private sessions: Map<string, Session> = new Map<string, Session>();
+  // SHA-256 hash of the stored admin password
   private password!: string;
 
+  private sessions: Map<string, Session> = new Map<string, Session>();
+
+  /**
+   * Resolves file and location paths from environment variables, falling back to defaults.
+   */
   constructor() {
     if (!process.env.UPLOAD_PATH || !process.env.EXAM_FILE_NAME || !process.env.PASSWORD_FILE || !process.env.ROOT_PATH) {
       throw new Error(".env is not configured correctly!!!");
@@ -69,6 +74,11 @@ class Storage {
     this.timeOffset = 0
   }
 
+  /**
+   * Initializes storage: loads the admin password, exam config, and app version;
+   * creates required directories if they do not exist.
+   * @throws {Error} If storage has already been initialized.
+   */
   public async init() {
     if (this.initialized) {
       throw new Error("Storage already initialized!");
@@ -118,11 +128,20 @@ class Storage {
     logger.debug("Initialized storage.");
   }
 
+  /**
+   * Computes a SHA-256 base64 digest of the input string.
+   * @param data - The string to hash.
+   * @returns The base64-encoded hash.
+   */
   private createHash(data: string) {
     const hashObject = crypto.createHash("sha256");
     return hashObject.update(data).digest("base64");
   }
 
+  /**
+   * Generates a random password, writes its SHA-256 hash to the password file,
+   * and stores the plain-text version in `newPassword` for first-time display.
+   */
   private async generatePassword() {
     this.newPassword = Buffer.from(crypto.randomBytes(20)).toString("base64").replace('=', '');
     const hash = this.createHash(this.newPassword);
@@ -132,6 +151,11 @@ class Storage {
     logger.info("New password generated.");
   }
 
+  /**
+   * Moves a multer-uploaded file to the target directory, sanitizing the filename.
+   * @param location - The destination directory.
+   * @param file - The uploaded file to persist.
+   */
   private async write(location: string, file: Express.Multer.File) {
     const sanitizedFileName = path.basename(file.originalname);
     const fullLocation = path.join(location, sanitizedFileName);
@@ -141,10 +165,19 @@ class Storage {
     logger.debug(`Created file "${fullLocation}".`);
   }
 
+  /**
+   * Resolves a path relative to the current working directory.
+   * @param p - The relative path.
+   * @returns The absolute path.
+   */
   private local(p: string) {
     return path.join(process.cwd(), p);
   }
 
+  /**
+   * Removes all files inside the given directory.
+   * @param directory - The directory to clear.
+   */
   private async deleteContent(directory: string) {
     const files = await fs.readdir(directory);
 
@@ -153,6 +186,11 @@ class Storage {
     }
   }
 
+  /**
+   * Copies a file from source to destination, then removes the source file.
+   * @param source - The path to the source file.
+   * @param destination - The destination path.
+   */
   public async moveFile(source: string, destination: string) {
     try {
       await fs.copyFile(source, destination);
@@ -163,10 +201,22 @@ class Storage {
     }
   }
 
+  /**
+   * Compares a plaintext password against the stored SHA-256 hash.
+   * @param password - The plaintext password to check.
+   * @returns Whether the password is correct.
+   */
   public verifyPassword(password: string) {
     return this.password === this.createHash(password);
   }
 
+  /**
+   * Validates an admin session by ID, IP address, and expiry time.
+   * Expired sessions are automatically removed.
+   * @param id - The session ID.
+   * @param ip - The client IP to match against the session.
+   * @returns Whether the session is valid.
+   */
   public async verifySession(id: string, ip: string) {
     if (!this.sessions.has(id)) {
       return false;
@@ -189,6 +239,11 @@ class Storage {
     return true;
   }
 
+  /**
+   * Calibrates the server clock offset using a client-provided timestamp,
+   * accounting for average network latency.
+   * @param timestamp - The ISO timestamp from the client.
+   */
   public setOffset(timestamp: string) {
     const offset = dayjs(timestamp).diff(dayjs()) - AVERAGE_LATENCY;
     logger.debug(`Time offset set to ${offset}`);
@@ -197,6 +252,11 @@ class Storage {
     this.timeOffset = offset;
   }
 
+  /**
+   * Creates a new admin session valid for 2 hours.
+   * @param ip - The IP address of the admin.
+   * @returns The newly created session ID.
+   */
   public async createSession(ip: string) {
     const id = crypto.randomUUID();
 
@@ -211,12 +271,20 @@ class Storage {
     return id;
   }
 
+  /**
+   * Saves the uploaded exam HTML file to the configured exam location.
+   * @param file - The uploaded exam file.
+   */
   public async writeExam(file: Express.Multer.File) {
     await this.moveFile(file.path, this.examLocation);
 
     logger.debug(`Exam created at "${this.examLocation}".`);
   }
 
+  /**
+   * Persists a YAML exam configuration to disk and updates the in-memory config.
+   * @param conf - The exam configuration object.
+   */
   public async writeConfig(conf: Yamlconf) {
     const yamlConfString = yaml.dump(conf);
 
@@ -227,6 +295,10 @@ class Storage {
     logger.info(`Exam config modified`);
   }
 
+  /**
+   * Replaces all exam resource files with a new set of uploaded files.
+   * @param files - The new resource files.
+   */
   public async writeResources(files: Express.Multer.File[]) {
     await this.deleteContent("public/resources");
     this.resources = [];
@@ -239,6 +311,13 @@ class Storage {
     logger.info(`Exam resources modified`);
   }
 
+  /**
+   * Saves student submission files with automatic versioning and computes an MD5 digest
+   * of the uploaded content. The files are stored under a date- and name-based directory tree.
+   * @param ip - The student's IP address.
+   * @param files - The uploaded submission files.
+   * @returns The MD5 hash of the submission, or an empty string on failure.
+   */
   public async writeStudentFiles(ip: string, files: Express.Multer.File[]) {
     const student = await network.getStudent(ip);
     const name = student.name;
@@ -290,6 +369,12 @@ class Storage {
     return hash;
   }
 
+  /**
+   * Finalizes a student's submission by writing the MD5 hash file and renaming the
+   * version folder with a `_validated` suffix.
+   * @param ip - The student's IP address.
+   * @returns Whether the validation succeeded.
+   */
   public async validateAndEnd(ip: string) {
     const student = await network.getStudent(ip);
     const name = student.name;
@@ -307,6 +392,11 @@ class Storage {
     return true;
   }
 
+  /**
+   * Lists the contents of a directory relative to `rootLocation`, with path-traversal protection.
+   * @param [relativePath] - The directory path relative to root.
+   * @returns An array of directory items, or false on error or traversal attempt.
+   */
   public async readDir(relativePath?: PathLike) {
     const currentPath = relativePath?.toString() || "";
     const absolutePath = join(this.rootLocation, currentPath);
@@ -340,6 +430,10 @@ class Storage {
     }
   }
 
+  /**
+   * Returns the total and used disk space (in bytes) on the root storage mount.
+   * @returns Disk usage statistics.
+   */
   public async getDiskUsage() {
     const path = this.rootLocation !== '.' ? this.rootLocation : '/';
 
@@ -351,6 +445,12 @@ class Storage {
     return { total, used };
   }
 
+  /**
+   * Creates a zip archive of the selected directory items in a temporary location.
+   * Each item is validated against path-traversal before being added.
+   * @param items - The files and directories to include.
+   * @returns The filename of the created zip archive.
+   */
   public prepareDownload(items: DirItem[]): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const archive = archiver("zip", {

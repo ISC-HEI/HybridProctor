@@ -5,6 +5,11 @@ import fs from "fs";
 import { PassThrough } from "stream";
 import logger from "@/lib/services/logger";
 
+/**
+ * Downloads a prepared zip archive from a temporary file and removes it after streaming.
+ * @param req - The Express request object (contains :id param).
+ * @param res - The Express response object.
+ */
 export async function downloadGetHandler(req: Request, res: Response) {
   const { id } = req.params;
   const sanitizedId = path.basename(id?.toString() as string);

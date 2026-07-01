@@ -2,6 +2,11 @@ import { getIp } from "@/lib/utils/network";
 import sseManager from "@services/sse";
 import { type Request, type Response } from "express";
 
+/**
+ * Establishes a Server-Sent Events connection for a student. No authentication required.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ */
 export async function sseStudentHandler(req: Request, res: Response) {
   const ip = getIp(req);
 

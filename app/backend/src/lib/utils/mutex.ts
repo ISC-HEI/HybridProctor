@@ -8,6 +8,10 @@ class Mutex {
   private locked: number = 0;
   private waitList: ((value: () => void) => void)[] = []
 
+  /**
+   * Creates a mutex with an optional maximum number of concurrent locks.
+   * @param [options] - Configuration options.
+   */
   constructor(options?: Options) {
     if (options) {
       if (options.maxLocks) {
@@ -16,6 +20,10 @@ class Mutex {
     }
   }
 
+  /**
+   * Acquires a lock. If at capacity, the caller is queued until a lock is released.
+   * @returns A function that releases the lock when called.
+   */
   public lock(): Promise<() => void> {
     return new Promise((resolve, reject) => {
       if (this.locked >= this.maxLocks) {
@@ -41,6 +49,10 @@ class Mutex {
     }
   }
 
+  /**
+   * Returns a one-shot unlock guard. Calling it more than once is a no-op.
+   * @returns The unlock function.
+   */
   public createUnlock(): () => void {
     let hasUnlocked = false;
 
@@ -52,6 +64,10 @@ class Mutex {
     }
   }
 
+  /**
+   * Returns the current number of acquired locks.
+   * @returns The lock count.
+   */
   public isLocked() {
     return this.locked;
   }
